@@ -1,0 +1,21 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Secure by default: lock down all collections
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Example user-specific rules:
+    // Only authenticated users can read/write their own user profile document
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Public read access for general collections (like subjects, resources) but write access restricted to admins
+    match /subjects/{subjectId} {
+      allow read: if true;
+      allow write: if request.auth != null && request.auth.token.admin == true;
+    }
+  }
+}
