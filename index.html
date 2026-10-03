@@ -5,23 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <!-- 1. Meta Tags -->
-    <title>JITS Notes | JNTUH R22 Notes, Previous Papers & Important Questions</title>
-    <meta name="description" content="Free JNTUH R22 Notes, Previous Question Papers, Important Questions and Study Resources for JITS CSE & AIML Students." />
-    <meta name="keywords" content="JITS Notes, JITS CSE Notes, JITS AIML Notes, JNTUH R22 Notes, Previous Question Papers, Important Questions, Engineering Notes, Study Material" />
+    <title>JITS Notes | JNTUH R22 Notes, Previous Papers &amp; Study Material</title>
+    <meta name="description" content="JITS Notes provides free JNTUH B.Tech R22 notes, CSE and AIML study material, previous question papers, important questions, and engineering lecture notes." />
+    <meta name="keywords" content="JITS Notes, JNTUH R22 Notes, JITS CSE Notes, JITS AIML Notes, Previous Question Papers, Important Questions, Engineering Lecture Notes, B.Tech Study Material" />
+    <meta name="author" content="MOHD DANISH" />
+    <meta name="application-name" content="JITS Notes" />
+    <meta name="theme-color" content="#0B1120" />
     <meta name="robots" content="index, follow" />
     
     <!-- Canonical URL -->
     <link rel="canonical" href="https://jitsnotes.web.app/" />
 
     <!-- Favicon & Icons -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
     <link rel="icon" type="image/webp" sizes="512x512" href="/icons.webp" />
     <link rel="icon" type="image/webp" sizes="192x192" href="/icons_192.webp" />
     <link rel="apple-touch-icon" sizes="180x180" href="/icons.png" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/icons.png" />
+    <link rel="manifest" href="/manifest.json" />
 
     <!-- Open Graph (Facebook / WhatsApp / LinkedIn) -->
-    <meta property="og:title" content="JITS Notes" />
-    <meta property="og:description" content="Free Notes, Previous Papers and Important Questions for JITS Students." />
+    <meta property="og:title" content="JITS Notes | JNTUH R22 Notes, Previous Papers &amp; Study Material" />
+    <meta property="og:description" content="JITS Notes provides free JNTUH B.Tech R22 notes, CSE and AIML study material, previous question papers, important questions, and engineering lecture notes." />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://jitsnotes.web.app/" />
     <meta property="og:image" content="https://jitsnotes.web.app/icons.png" />
@@ -31,8 +35,8 @@
 
     <!-- Twitter/X Cards -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="JITS Notes" />
-    <meta name="twitter:description" content="Free Notes, Previous Papers and Important Questions for JITS Students." />
+    <meta name="twitter:title" content="JITS Notes | JNTUH R22 Notes, Previous Papers &amp; Study Material" />
+    <meta name="twitter:description" content="JITS Notes provides free JNTUH B.Tech R22 notes, CSE and AIML study material, previous question papers, important questions, and engineering lecture notes." />
     <meta name="twitter:image" content="https://jitsnotes.web.app/icons.png" />
 
     <!-- Language & Geo Tags (India / Telangana) -->
@@ -42,23 +46,34 @@
     <meta name="ICBM" content="17.9689, 79.5941" />
     <meta name="language" content="English" />
 
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
     <!-- Network Preconnect for API Endpoint -->
     <link rel="preconnect" href="https://bzoqsgkrbwnqnvsorxjb.supabase.co" crossorigin />
 
-    <!-- Google Analytics 4 — Loaded asynchronously after page interactive -->
+    <!-- Google Analytics 4 — Loaded asynchronously only on student pages; isolated from Admin CMS -->
     <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-FJQ8RXJLRG', { send_page_view: false });
+      (function() {
+        if (window.location.pathname.startsWith('/admin')) {
+          return;
+        }
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-FJQ8RXJLRG', { send_page_view: false });
 
-      window.addEventListener('load', function() {
-        var script = document.createElement('script');
-        script.async = true;
-        script.src = 'https://www.googletagmanager.com/gtag/js?id=G-FJQ8RXJLRG';
-        document.head.appendChild(script);
-      }, { once: true });
+        window.addEventListener('load', function() {
+          if (window.location.pathname.startsWith('/admin')) return;
+          var script = document.createElement('script');
+          script.async = true;
+          script.src = 'https://www.googletagmanager.com/gtag/js?id=G-FJQ8RXJLRG';
+          document.head.appendChild(script);
+        }, { once: true });
+      })();
     </script>
 
     <!-- 2. Structured Data (Schema.org JSON-LD) -->
@@ -67,10 +82,18 @@
         "@context": "https://schema.org",
         "@type": "WebSite",
         "name": "JITS Notes",
-        "url": "https://jitsnotes.web.app",
+        "alternateName": "JITS B.Tech Notes",
+        "url": "https://jitsnotes.web.app/",
+        "description": "JITS Notes is a free educational platform providing JNTUH B.Tech R22 notes, CSE and AIML study material, previous question papers, important questions, and engineering lecture notes.",
         "author": {
           "@type": "Person",
           "name": "MOHD DANISH"
+        },
+        "publisher": {
+          "@type": "Organization",
+          "name": "JITS Notes",
+          "url": "https://jitsnotes.web.app/",
+          "logo": "https://jitsnotes.web.app/icons.png"
         },
         "potentialAction": {
           "@type": "SearchAction",
@@ -84,9 +107,13 @@
         "@context": "https://schema.org",
         "@type": "EducationalOrganization",
         "name": "JITS Notes",
-        "alternateName": "Jayamukhi Institute of Technological Sciences (JITS)",
-        "url": "https://jitsnotes.web.app",
+        "url": "https://jitsnotes.web.app/",
         "logo": "https://jitsnotes.web.app/icons.png",
+        "description": "JITS Notes is a free educational platform providing JNTUH B.Tech R22 notes, CSE and AIML study material, previous question papers, important questions, and engineering lecture notes.",
+        "sameAs": [
+          "https://github.com/mohddanish305",
+          "https://www.linkedin.com/in/mohd-danish-986a5b2a3/"
+        ],
         "address": {
           "@type": "PostalAddress",
           "addressLocality": "Narsampet, Warangal",
@@ -98,6 +125,10 @@
   </head>
   <body>
     <div id="root"></div>
+    <noscript>
+      <h1>JITS Notes - JNTUH B.Tech R22 Notes &amp; Study Material</h1>
+      <p>JITS Notes is a free educational platform providing JNTUH B.Tech R22 notes, CSE and AIML study material, previous question papers, important questions, and engineering lecture notes.</p>
+    </noscript>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

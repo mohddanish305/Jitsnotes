@@ -3,7 +3,7 @@ import { Navigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAuth } from "../context/AuthContext";
 
-const AdminPanel = lazy(() => import("./AdminPanel"));
+const AdminCMS = lazy(() => import("./AdminCMS"));
 
 export default function AdminRoute() {
   const { user, isAdmin, loading, roleLoading } = useAuth();
@@ -54,16 +54,12 @@ export default function AdminRoute() {
 
   console.log("[admin-route] admin confirmed, rendering dashboard");
   return (
-    <div className="min-h-screen bg-[#f7f7f5] px-4 py-4 sm:px-6 lg:px-8 lg:py-6">
-      <div className="mx-auto w-full max-w-7xl">
-        <Suspense fallback={
-          <div className="flex items-center justify-center p-12">
-            <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-200 border-t-black" />
-          </div>
-        }>
-          <AdminPanel isOpen={true} onRefresh={() => {}} />
-        </Suspense>
+    <Suspense fallback={
+      <div className="flex min-h-screen items-center justify-center bg-[#F7F8FA] p-12 dark:bg-[#0B0D12]">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-200 border-t-[#2C3480]" />
       </div>
-    </div>
+    }>
+      <AdminCMS />
+    </Suspense>
   );
 }

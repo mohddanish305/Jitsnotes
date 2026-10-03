@@ -8,12 +8,6 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://jitsnotes.web.app/resources</loc>
-    <lastmod>2026-06-22</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
     <loc>https://jitsnotes.web.app/jits-notes</loc>
     <lastmod>2026-06-22</lastmod>
     <changefreq>weekly</changefreq>
@@ -150,7 +144,7 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://jitsnotes.web.app/year/1/m1%2C2</loc>
+    <loc>https://jitsnotes.web.app/year/1/m1-2</loc>
     <lastmod>2026-06-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>

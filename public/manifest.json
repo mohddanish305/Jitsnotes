@@ -1,0 +1,27 @@
+{
+  "name": "JITS Notes",
+  "short_name": "JITS Notes",
+  "description": "Free JNTUH R22 notes, previous papers, important questions and study material.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0B1120",
+  "theme_color": "#0B1120",
+  "icons": [
+    {
+      "src": "/icons_192.webp",
+      "sizes": "192x192",
+      "type": "image/webp"
+    },
+    {
+      "src": "/icons.webp",
+      "sizes": "512x512",
+      "type": "image/webp",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ]
+}

@@ -24,6 +24,9 @@ export default defineConfig({
             if (id.includes('@emailjs')) {
               return 'vendor-emailjs';
             }
+            if (id.includes('pdfjs-dist')) {
+              return 'vendor-pdf';
+            }
           }
         },
       },

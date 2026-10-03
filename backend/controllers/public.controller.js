@@ -21,7 +21,7 @@ export const getSubjectsByYear = asyncHandler(async (req, res) => {
 
   const { data, error } = await supabase
     .from("subjects")
-    .select("id, name, short_name, drive_link, thumbnail_url")
+    .select("id, name, short_name, thumbnail_url")
     .eq("year_id", yearId)
     .eq("is_deleted", false)
     .order("name", { ascending: true });

@@ -8,13 +8,26 @@
  *   - Log to console in development so you can verify calls
  *   - Never fire duplicate page_view events (send_page_view: false in HTML)
  */
+export const GA_MEASUREMENT_ID = "G-FJQ8RXJLRG";
 
-const GA_MEASUREMENT_ID = "G-FJQ8RXJLRG";
+const isAnalyticsAllowed = () => {
+  if (typeof window === "undefined") return false;
+  // Isolate Admin CMS routes completely from Google Analytics
+  if (window.location.pathname.startsWith("/admin")) return false;
+  return true;
+};
 
-/** Safe wrapper — guards against gtag not yet available in the window */
+/** Safe wrapper — guards against gtag not yet available, errors, and admin routes */
 const fireEvent = (command, ...args) => {
-  if (typeof window !== "undefined" && typeof window.gtag === "function") {
-    window.gtag(command, ...args);
+  if (!isAnalyticsAllowed()) return;
+  try {
+    if (typeof window !== "undefined" && typeof window.gtag === "function") {
+      window.gtag(command, ...args);
+    }
+  } catch (err) {
+    if (!import.meta.env.PROD) {
+      console.warn("[Analytics] Suppressed non-critical event error:", err);
+    }
   }
 };
 
@@ -22,6 +35,9 @@ const fireEvent = (command, ...args) => {
 // Page View — called by App.jsx on every React Router location change
 // ---------------------------------------------------------------------------
 export const trackPageView = (path) => {
+  if (!isAnalyticsAllowed()) return;
+  if (path && String(path).startsWith("/admin")) return;
+
   if (import.meta.env.PROD) {
     fireEvent("event", "page_view", {
       page_path: path,
@@ -55,27 +71,13 @@ export const trackSubjectClick = (subjectName, year) => {
 };
 
 // ---------------------------------------------------------------------------
-// Note Click — called when student opens a Drive notes link
+// Note Click — called when student opens a notes document
 // ---------------------------------------------------------------------------
-export const trackNoteClick = (subjectName, link) => {
+export const trackNoteClick = (subjectName, docIdOrTitle) => {
   if (import.meta.env.PROD) {
-    fireEvent("event", "note_click", { subject_name: subjectName, drive_link: link });
+    fireEvent("event", "note_click", { subject_name: subjectName, document: docIdOrTitle });
   } else {
-    console.log(`[GA4] note_click → "${subjectName}" — ${link}`);
-  }
-};
-
-// ---------------------------------------------------------------------------
-// Resource Click — called when student opens a resource from ResourcesPage
-// ---------------------------------------------------------------------------
-export const trackResourceClick = (resourceTitle, type) => {
-  if (import.meta.env.PROD) {
-    fireEvent("event", "resource_click", {
-      resource_title: resourceTitle,
-      resource_type: type,
-    });
-  } else {
-    console.log(`[GA4] resource_click → "${resourceTitle}" (${type})`);
+    console.log(`[GA4] note_click → "${subjectName}" — ${docIdOrTitle}`);
   }
 };
 

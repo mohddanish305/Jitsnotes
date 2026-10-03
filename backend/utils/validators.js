@@ -2,14 +2,6 @@ import { ApiError } from "./apiError.js";
 
 export const sanitizeText = (value) => String(value ?? "").trim().replace(/\s+/g, " ");
 
-export const validateDriveLink = (link) => {
-  const safeLink = sanitizeText(link);
-  if (!safeLink.includes("drive.google.com")) {
-    throw new ApiError(400, "drive_link must contain drive.google.com");
-  }
-  return safeLink;
-};
-
 export const validateSubjectPayload = (payload, isUpdate = false) => {
   const result = {};
 
@@ -17,10 +9,6 @@ export const validateSubjectPayload = (payload, isUpdate = false) => {
     const name = sanitizeText(payload.name);
     if (!name) throw new ApiError(400, "name cannot be empty");
     result.name = name;
-  }
-
-  if (!isUpdate || payload.drive_link !== undefined) {
-    result.drive_link = validateDriveLink(payload.drive_link);
   }
 
   if (payload.short_name !== undefined) {

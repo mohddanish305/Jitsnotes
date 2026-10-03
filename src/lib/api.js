@@ -17,7 +17,6 @@ const normalizeYearValue = (value) => {
 
 const normalizeSubjectRow = (subject) => {
   const yearValue = normalizeYearValue(subject.year ?? subject.year_id ?? subject.year_name);
-  const driveLink = subject.drive_link ?? subject.driveLink ?? subject.pdf_url ?? subject.pdfPath ?? '';
   const thumbnailUrl = typeof subject.thumbnail_url === 'string' && subject.thumbnail_url.startsWith('http')
     ? subject.thumbnail_url
     : typeof subject.thumbnailUrl === 'string' && subject.thumbnailUrl.startsWith('http')
@@ -31,7 +30,6 @@ const normalizeSubjectRow = (subject) => {
     short_name: subject.short_name ?? '',
     year: yearValue,
     year_id: yearValue,
-    drive_link: driveLink,
     thumbnail_url: thumbnailUrl,
     pdf_url: subject.pdf_url ?? subject.pdfPath ?? subject.pdf_path ?? null,
   };
@@ -108,21 +106,6 @@ const getUserRole = async (user) => {
     return await promise;
   } finally {
     activeRoleRequests.delete(user.id);
-  }
-};
-
-const withTimeout = async (promise, timeoutMs, label) => {
-  let timeoutId;
-  const timeoutPromise = new Promise((_, reject) => {
-    timeoutId = window.setTimeout(() => {
-      reject(new Error(`${label} timed out after ${timeoutMs}ms`));
-    }, timeoutMs);
-  });
-
-  try {
-    return await Promise.race([promise, timeoutPromise]);
-  } finally {
-    if (timeoutId) window.clearTimeout(timeoutId);
   }
 };
 
@@ -311,49 +294,5 @@ export const userApi = {
     const { data, error } = await supabase.from('users').select('*').eq('id', userId).single();
     if (error) return null;
     return data;
-  },
-};
-
-export const resourcesApi = {
-  // Get all resources
-  async getAll() {
-    const { data, error } = await supabase
-      .from('resources')
-      .select('*')
-      .eq('is_deleted', false)
-      .order('created_at', { ascending: false });
-    if (error) throw error;
-    return data || [];
-  },
-
-  // Admin: Create resource
-  async create(resource) {
-    await requireAdmin();
-    const payload = {
-      ...resource,
-      is_deleted: false,
-    };
-    const { data, error } = await supabase.from('resources').insert([payload]).select().single();
-    if (error) throw normalizeSupabaseError(error, 'Failed to create resource.');
-    return data;
-  },
-
-  // Admin: Update resource
-  async update(id, updates) {
-    await requireAdmin();
-    const payload = {
-      ...updates,
-      is_deleted: false,
-    };
-    const { data, error } = await supabase.from('resources').update(payload).eq('id', id).select().single();
-    if (error) throw normalizeSupabaseError(error, 'Failed to update resource.');
-    return data;
-  },
-
-  // Admin: Delete resource (soft delete)
-  async delete(id) {
-    await requireAdmin();
-    const { error } = await supabase.from('resources').update({ is_deleted: true }).eq('id', id);
-    if (error) throw normalizeSupabaseError(error, 'Failed to delete resource.');
   },
 };

@@ -1,31 +1,27 @@
-import { useState, useRef, useEffect, lazy, Suspense } from "react";
+import { useState, useEffect, lazy, Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaGithub, FaLinkedin, FaEnvelope, FaSun, FaMoon, FaBars, FaTimes } from "./components/icons";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, Navigate } from "react-router-dom";
 import Modal from "./components/Modal";
 import NotesSection from "./components/NotesSection";
-import ResourcesSection from "./components/ResourcesSection";
 import { subjectsApi, feedbackApi } from "./lib/api";
 import { sendFeedbackEmailNotification } from "./lib/email";
 import { useAuth } from "./context/AuthContext";
 import SEO from "./components/SEO";
 import Breadcrumbs from "./components/Breadcrumbs";
+import AcceptTeacherInvitation from "./components/AcceptTeacherInvitation";
 import { trackPageView, trackYearSelection, trackFeedbackSubmit } from "./utils/analytics";
+import heroBg from "./assets/Hero_image.png";
 
 const AdminRoute = lazy(() => import("./components/AdminRoute"));
-const ResourcesPage = lazy(() => import("./components/ResourcesPage"));
 const SeoLandingPage = lazy(() => import("./components/SeoLandingPage"));
 
 export default function App() {
-  const { user, isAdmin, signIn, signInWithGoogle, signOut } = useAuth();
+  const { isAdmin, signIn, signInWithGoogle, signOut } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const isAdminRoute = location.pathname === "/admin-login" || location.pathname.startsWith("/admin");
   const shouldShowAdmin = isAdmin || isAdminRoute;
-
-  console.log("Current route:", location.pathname);
-  console.log("Show admin:", shouldShowAdmin);
-  console.log("Admin authenticated:", isAdmin);
 
   const isAdminLoginRoute = location.pathname === "/admin-login";
   const isAdminDashboardRoute = location.pathname.startsWith("/admin") && !isAdminLoginRoute;
@@ -34,7 +30,6 @@ export default function App() {
   const [subjects, setSubjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
-  const [isQuestionsOpen, setIsQuestionsOpen] = useState(false);
   const [isAdminLoginOpen, setIsAdminLoginOpen] = useState(false);
   const [feedbackForm, setFeedbackForm] = useState({ name: "", email: "", message: "" });
   const [isFeedbackSubmitting, setIsFeedbackSubmitting] = useState(false);
@@ -72,22 +67,22 @@ export default function App() {
     localStorage.setItem("theme", theme);
   }, [theme]);
 
-  // Track page views on every React Router route change (SPA navigation)
+  // Track page views on every React Router route change
   useEffect(() => {
-    trackPageView(location.pathname + location.search);
+    if (!location.pathname.startsWith("/admin")) {
+      trackPageView(location.pathname + location.search);
+    }
   }, [location]);
 
   const toggleTheme = () => {
     setTheme((prev) => (prev === "light" ? "dark" : "light"));
   };
 
-  const resourcesSectionRef = useRef(null);
-
   const years = [
-    { id: 1, label: "First Year" },
-    { id: 2, label: "Second Year" },
-    { id: 3, label: "Third Year" },
-    { id: 4, label: "Fourth Year" },
+    { id: 1, label: "1st Year" },
+    { id: 2, label: "2nd Year" },
+    { id: 3, label: "3rd Year" },
+    { id: 4, label: "4th Year" },
   ];
 
   const fetchSubjects = async () => {
@@ -104,7 +99,7 @@ export default function App() {
   };
 
   useEffect(() => {
-    fetchSubjects(); // eslint-disable-line react-hooks/set-state-in-effect
+    fetchSubjects();
   }, []);
 
   useEffect(() => {
@@ -163,13 +158,6 @@ export default function App() {
     }
   };
 
-  const handleViewResources = () => {
-    const section = document.getElementById("resources-section");
-    if (section) {
-      section.scrollIntoView({ behavior: "smooth" });
-    }
-  };
-
   const handleSendFeedback = () => {
     setIsFeedbackOpen(true);
   };
@@ -196,7 +184,6 @@ export default function App() {
       });
 
       if (result && result.success) {
-        // Send email notification via EmailJS after successful database save
         sendFeedbackEmailNotification({
           name: name,
           email: email,
@@ -264,65 +251,15 @@ export default function App() {
     setIsAdminLoginOpen(true);
   };
 
-  // Animation variants
-  const buttonTransition = {
-    type: "spring",
-    stiffness: 400,
-    damping: 17,
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.5,
-        ease: [0.25, 0.1, 0.25, 1]
-      }
-    }
-  };
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.1,
-        ease: "easeOut"
-      }
-    }
-  };
-
-  const staggerContainer = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.08,
-        ease: "easeOut"
-      }
-    }
-  };
-
-  const fadeInUp = {
-    hidden: { opacity: 0, y: 40 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.6,
-        ease: "easeOut"
-      }
-    }
-  };
+  if (location.pathname === "/admin/accept-invitation") {
+    return <AcceptTeacherInvitation />;
+  }
 
   if (isAdminDashboardRoute) {
     return (
       <Suspense fallback={
-        <div className="min-h-screen bg-[#f7f7f5] flex items-center justify-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-200 border-t-black" />
+        <div className="min-h-screen bg-[#F7F8FA] dark:bg-[#0B0D12] flex items-center justify-center">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#E5E5E5] border-t-[#2C3480]" />
         </div>
       }>
         <AdminRoute />
@@ -331,22 +268,18 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-[#0B1120] text-gray-900 dark:text-[#F8FAFC] transition-colors duration-300">
+    <div className="min-h-screen bg-white dark:bg-[#0B0D12] text-[#000000] dark:text-[#FFFFFF] transition-colors duration-200">
       <SEO yearNumber={selectedYear} />
-      {/* HEADER */}
-      <motion.header
-        initial={false}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, ease: "easeOut" }}
-        className="sticky top-0 z-50 backdrop-blur-xl bg-white/80 dark:bg-[#0B1120]/80 border-b border-gray-100 dark:border-gray-800/60 shadow-sm transition-colors duration-300"
+      
+      {/* 1. HEADER (Section 9) */}
+      <header
+        className="sticky top-0 z-50 backdrop-blur-md bg-white/95 dark:bg-[#10131A]/95 border-b border-[#E5E5E5] dark:border-[#292E3A] transition-colors duration-200"
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <motion.div
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.05, duration: 0.3 }}
-              className="flex items-center gap-3 cursor-pointer"
+        <div className="w-full max-w-content mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16 sm:h-[68px]">
+            {/* Logo */}
+            <div
+              className="flex items-center gap-3 cursor-pointer select-none"
               onClick={() => {
                 if (location.pathname !== "/") {
                   navigate("/");
@@ -355,30 +288,27 @@ export default function App() {
                 }
               }}
             >
-              <motion.img
+              <img
                 src="/icons.webp"
                 alt="JITS Notes logo"
-                width="40"
-                height="40"
+                width="38"
+                height="38"
                 decoding="async"
                 fetchPriority="high"
-                whileHover={{ rotate: [0, -8, 8, 0] }}
-                transition={{ duration: 0.4 }}
-                className="w-10 h-10 rounded-xl shadow-md object-cover border border-gray-100 dark:border-gray-800"
+                className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl object-cover border border-[#E5E5E5] dark:border-[#292E3A]"
               />
-              <div>
-                <span className="font-bold text-base sm:text-lg tracking-tight text-gray-900 dark:text-[#F8FAFC]">JITS Notes</span>
-                <p className="text-[10px] sm:text-xs text-gray-505 dark:text-[#94A3B8] font-medium">Free Learning Platform</p>
+              <div className="flex flex-col">
+                <span className="font-bold text-base sm:text-lg tracking-tight text-[#000000] dark:text-[#FFFFFF]">
+                  JITS Notes
+                </span>
+                <span className="text-[10px] sm:text-xs text-[#555555] dark:text-[#858B99] font-medium leading-none">
+                  B.Tech CSE & AIML
+                </span>
               </div>
-            </motion.div>
+            </div>
 
             {/* Desktop Navigation */}
-            <motion.nav
-              initial={{ opacity: 0, x: 10 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.05, duration: 0.3 }}
-              className="hidden md:flex items-center gap-7 text-sm font-medium"
-            >
+            <nav className="hidden md:flex items-center gap-6 lg:gap-7 text-sm font-semibold">
               <button
                 onClick={() => {
                   if (location.pathname !== "/") {
@@ -387,25 +317,19 @@ export default function App() {
                     handleYearClick(selectedYear);
                   }
                 }}
-                className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-[#F8FAFC] transition-colors"
+                className="text-[#555555] dark:text-[#B8BDCA] hover:text-[#000000] dark:hover:text-[#FFFFFF] transition-colors"
               >
                 Notes
               </button>
               <button
-                onClick={() => navigate("/resources")}
-                className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-[#F8FAFC] transition-colors"
-              >
-                Resources
-              </button>
-              <button
                 onClick={() => navigate("/jits-notes")}
-                className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-[#F8FAFC] transition-colors"
+                className="text-[#555555] dark:text-[#B8BDCA] hover:text-[#000000] dark:hover:text-[#FFFFFF] transition-colors"
               >
                 JITS Info
               </button>
               <button
                 onClick={handleSendFeedback}
-                className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-[#F8FAFC] transition-colors"
+                className="text-[#555555] dark:text-[#B8BDCA] hover:text-[#000000] dark:hover:text-[#FFFFFF] transition-colors"
               >
                 Feedback
               </button>
@@ -414,7 +338,7 @@ export default function App() {
                 <button
                   type="button"
                   onClick={handleAdminClick}
-                  className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-[#F8FAFC] transition-colors"
+                  className="text-[#2C3480] dark:text-[#3D4CC4] hover:underline transition-colors"
                 >
                   Admin
                 </button>
@@ -422,7 +346,7 @@ export default function App() {
               {isAdmin && (
                 <button
                   onClick={handleLogout}
-                  className="text-red-500 hover:text-red-600 transition-colors"
+                  className="text-red-600 hover:text-red-700 text-xs font-bold transition-colors"
                 >
                   Logout
                 </button>
@@ -431,19 +355,19 @@ export default function App() {
               {/* Theme Toggle */}
               <button
                 onClick={toggleTheme}
-                className="p-2 rounded-xl bg-gray-100 hover:bg-gray-250 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors flex items-center justify-center"
+                className="p-2 rounded-xl bg-[#F7F8FA] hover:bg-gray-200 dark:bg-[#1A1E28] dark:hover:bg-[#292E3A] text-[#555555] dark:text-[#B8BDCA] transition-colors flex items-center justify-center border border-[#E5E5E5] dark:border-[#292E3A]"
                 aria-label="Toggle theme"
               >
                 {theme === "light" ? <FaMoon className="w-4 h-4" /> : <FaSun className="w-4 h-4" />}
               </button>
-            </motion.nav>
+            </nav>
 
             {/* Mobile Actions */}
             <div className="md:hidden flex items-center gap-2">
               {/* Theme Toggle */}
               <button
                 onClick={toggleTheme}
-                className="p-2 rounded-xl bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors flex items-center justify-center"
+                className="p-2 rounded-xl bg-[#F7F8FA] hover:bg-gray-200 dark:bg-[#1A1E28] dark:hover:bg-[#292E3A] text-[#555555] dark:text-[#B8BDCA] transition-colors flex items-center justify-center border border-[#E5E5E5] dark:border-[#292E3A]"
                 aria-label="Toggle theme"
               >
                 {theme === "light" ? <FaMoon className="w-4 h-4" /> : <FaSun className="w-4 h-4" />}
@@ -452,7 +376,7 @@ export default function App() {
               {/* Hamburger Button */}
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 transition-colors flex items-center justify-center"
+                className="p-2 rounded-xl hover:bg-[#F7F8FA] dark:hover:bg-[#1A1E28] text-[#000000] dark:text-[#FFFFFF] transition-colors flex items-center justify-center border border-[#E5E5E5] dark:border-[#292E3A]"
                 aria-label="Toggle menu"
               >
                 {isMobileMenuOpen ? <FaTimes className="w-5 h-5" /> : <FaBars className="w-5 h-5" />}
@@ -461,17 +385,17 @@ export default function App() {
           </div>
         </div>
 
-        {/* Mobile Dropdown Menu */}
+        {/* Mobile Dropdown Menu (Section 32) */}
         <AnimatePresence>
           {isMobileMenuOpen && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.2 }}
-              className="md:hidden border-b border-gray-100 dark:border-gray-800 bg-white dark:bg-[#0B1120] overflow-hidden"
+              transition={{ duration: 0.15 }}
+              className="md:hidden border-b border-[#E5E5E5] dark:border-[#292E3A] bg-white dark:bg-[#10131A] overflow-hidden"
             >
-              <div className="px-4 py-3 space-y-2.5 font-medium text-sm">
+              <div className="px-4 py-3 space-y-1 font-semibold text-sm">
                 <button
                   onClick={() => {
                     setIsMobileMenuOpen(false);
@@ -481,25 +405,16 @@ export default function App() {
                       handleYearClick(selectedYear);
                     }
                   }}
-                  className="block w-full text-left px-3 py-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-55 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-[#F8FAFC]"
+                  className="block w-full text-left px-3 py-2.5 rounded-xl text-[#555555] dark:text-[#B8BDCA] hover:bg-[#F7F8FA] dark:hover:bg-[#1A1E28] hover:text-[#000000] dark:hover:text-[#FFFFFF] min-h-[44px] flex items-center"
                 >
                   Notes
-                </button>
-                 <button
-                  onClick={() => {
-                    setIsMobileMenuOpen(false);
-                    navigate("/resources");
-                  }}
-                  className="block w-full text-left px-3 py-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-55 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-[#F8FAFC]"
-                >
-                  Resources
                 </button>
                 <button
                   onClick={() => {
                     setIsMobileMenuOpen(false);
                     navigate("/jits-notes");
                   }}
-                  className="block w-full text-left px-3 py-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-55 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-[#F8FAFC]"
+                  className="block w-full text-left px-3 py-2.5 rounded-xl text-[#555555] dark:text-[#B8BDCA] hover:bg-[#F7F8FA] dark:hover:bg-[#1A1E28] hover:text-[#000000] dark:hover:text-[#FFFFFF] min-h-[44px] flex items-center"
                 >
                   JITS Info
                 </button>
@@ -508,7 +423,7 @@ export default function App() {
                     setIsMobileMenuOpen(false);
                     handleSendFeedback();
                   }}
-                  className="block w-full text-left px-3 py-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-[#F8FAFC]"
+                  className="block w-full text-left px-3 py-2.5 rounded-xl text-[#555555] dark:text-[#B8BDCA] hover:bg-[#F7F8FA] dark:hover:bg-[#1A1E28] hover:text-[#000000] dark:hover:text-[#FFFFFF] min-h-[44px] flex items-center"
                 >
                   Feedback
                 </button>
@@ -519,7 +434,7 @@ export default function App() {
                       setIsMobileMenuOpen(false);
                       handleAdminClick();
                     }}
-                    className="block w-full text-left px-3 py-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-[#F8FAFC]"
+                    className="block w-full text-left px-3 py-2.5 rounded-xl text-[#2C3480] dark:text-[#3D4CC4] hover:bg-[#F7F8FA] dark:hover:bg-[#1A1E28] min-h-[44px] flex items-center"
                   >
                     Admin
                   </button>
@@ -530,7 +445,7 @@ export default function App() {
                       setIsMobileMenuOpen(false);
                       handleLogout();
                     }}
-                    className="block w-full text-left px-3 py-2 rounded-lg text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20"
+                    className="block w-full text-left px-3 py-2.5 rounded-xl text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20 min-h-[44px] flex items-center"
                   >
                     Logout
                   </button>
@@ -539,13 +454,13 @@ export default function App() {
             </motion.div>
           )}
         </AnimatePresence>
-      </motion.header>
+      </header>
 
-      {/* MAIN CONTENT PAGE CHANGER */}
+      {/* 2. MAIN CONTENT PAGE CHANGER */}
       {location.pathname.startsWith("/resources") ? (
-        <Suspense fallback={<div className="min-h-[50vh]" />}>
-          <ResourcesPage onBackToHome={() => navigate("/")} />
-        </Suspense>
+        <Navigate to="/" replace />
+      ) : location.pathname === "/notes" ? (
+        <Navigate to="/" replace state={{ scrollTo: "notes-section" }} />
       ) : ["/jits-notes", "/jits-r22-notes", "/jits-previous-papers", "/jits-important-questions", "/jits-placement-materials"].includes(location.pathname) ? (
         <Suspense fallback={<div className="min-h-[50vh]" />}>
           <SeoLandingPage />
@@ -553,139 +468,115 @@ export default function App() {
       ) : (
         <main id="main-content">
           {/* HERO SECTION */}
-          <section className="w-full max-w-[1450px] mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 md:py-16 flex flex-col lg:flex-row items-center justify-between gap-10 lg:gap-14">
+          <section
+            className="relative w-full min-h-[540px] lg:h-[580px] lg:min-h-[560px] lg:max-h-[620px] flex items-center overflow-hidden border-b border-[#E5E5E5] dark:border-[#292E3A] bg-cover bg-no-repeat bg-[center_right] lg:bg-right"
+            style={{ backgroundImage: `url(${heroBg})` }}
+          >
+            {/* Neutral Readability & Dark Mode Overlays */}
+            <div className="absolute inset-0 bg-white/60 sm:bg-white/40 dark:bg-[#0B0D12]/80 sm:dark:bg-[#0B0D12]/70 pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-r from-white/90 via-white/60 to-transparent dark:from-[#0B0D12]/90 dark:via-[#0B0D12]/70 dark:to-transparent pointer-events-none" />
 
-            {/* LEFT */}
-            <motion.div
-              initial={false}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, ease: "easeOut" }}
-              className="w-full max-w-2xl text-left"
-            >
-              <motion.div
-                initial={false}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.1, duration: 0.4 }}
-                className="mb-4 inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-100 dark:border-indigo-900/30 text-indigo-600 dark:text-[306D29] text-xs font-semibold"
-              >
-                <span className="w-1.5 h-1.5 rounded-full bg-indigo-650 dark:bg-[#6366F1] animate-pulse" />
-                Updated for JNTUH R22 Regulation
-              </motion.div>
+            <div className="relative z-10 w-full max-w-content mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12 lg:py-0">
+              <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.15fr)_minmax(340px,0.85fr)] gap-8 lg:gap-14 items-center">
+                
+                {/* LEFT COLUMN: HERO CONTENT */}
+                <div className="text-left">
+                  {/* Small badge */}
+                  <div className="mb-3.5 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#2C3480]/10 dark:bg-[#3D4CC4]/20 border border-[#2C3480]/20 dark:border-[#3D4CC4]/30 text-[#2C3480] dark:text-[#FFFFFF] text-xs font-semibold">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#2C3480] dark:bg-[#3D4CC4]" />
+                    JNTUH R22 • B.Tech CSE & AIML
+                  </div>
 
-              <motion.h1
-                initial={false}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.2, duration: 0.5 }}
-                className="text-3xl sm:text-4xl lg:text-5xl font-black mb-4 leading-tight text-gray-900 dark:text-[#F8FAFC]"
-              >
-                B.Tech CSE & AIML <br />
-                <span className="text-[#A82323]">JITS Notes</span>
-              </motion.h1>
+                  {/* Heading */}
+                  <h1 className="text-3xl sm:text-4xl lg:text-[44px] font-extrabold mb-3 leading-tight tracking-tight text-[#000000] dark:text-[#FFFFFF]">
+                    B.Tech CSE & AIML <br />
+                    <span className="text-[#2C3480] dark:text-[#FFFFFF]">JITS Notes</span>
+                  </h1>
 
-              <motion.p
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.3, duration: 0.5 }}
-                className="text-gray-500 dark:text-[#94A3B8] text-sm sm:text-base mb-6 max-w-xl leading-relaxed"
-              >
-                Access free study material, engineering notes, JITS CSE notes, JITS AIML notes, important questions, and previous question papers under the JNTUH R22 regulation. Organised by year for easy access.
-              </motion.p>
+                  {/* Supporting text */}
+                  <p className="text-sm sm:text-base text-[#555555] dark:text-[#B8BDCA] mb-6 max-w-xl leading-relaxed">
+                    Access organized notes, question papers and study material for B.Tech CSE & AIML students following the JNTUH R22 curriculum.
+                  </p>
 
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.4, duration: 0.4 }}
-                className="flex flex-wrap gap-3.5"
-              >
-                <motion.button
-                  whileHover={{ scale: 1.03, y: -1 }}
-                  whileTap={{ scale: 0.97 }}
-                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
-                  onClick={() => handleYearClick(selectedYear)}
-                  className="bg-black dark:bg-[#6366F1] text-white px-6 py-2.5 rounded-xl font-semibold text-sm hover:shadow-lg transition-all"
-                >
-                  Browse Notes
-                </motion.button>
+                  {/* Buttons */}
+                  <div className="flex flex-wrap items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const section = document.getElementById("notes-section");
+                        if (section) section.scrollIntoView({ behavior: "smooth" });
+                      }}
+                      className="bg-[#2C3480] hover:bg-[#3D4CC4] text-white px-6 py-2.5 rounded-xl font-semibold text-sm shadow-sm transition-colors min-h-[44px]"
+                    >
+                      Browse Notes
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const section = document.getElementById("notes-section");
+                        if (section) section.scrollIntoView({ behavior: "smooth" });
+                      }}
+                      className="border border-[#2C3480] dark:border-[#3D4CC4] text-[#2C3480] dark:text-[#FFFFFF] bg-white/80 dark:bg-[#14171F]/80 hover:bg-white dark:hover:bg-[#1A1E28] px-6 py-2.5 rounded-xl font-semibold text-sm shadow-sm transition-colors min-h-[44px]"
+                    >
+                      View Resources
+                    </button>
+                  </div>
+                </div>
 
-                <motion.button
-                  whileHover={{ scale: 1.03, y: -1 }}
-                  whileTap={{ scale: 0.97 }}
-                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
-                  onClick={() => navigate("/resources")}
-                  className="border border-gray-250 dark:border-gray-700 bg-white dark:bg-[#111827] text-gray-705 dark:text-[#F8FAFC] px-6 py-2.5 rounded-xl font-semibold text-sm hover:bg-gray-55 dark:hover:bg-[#1E293B] transition-all"
-                >
-                  View Resources
-                </motion.button>
-              </motion.div>
-            </motion.div>
-
-            {/* RIGHT - YEAR CARD */}
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.2, duration: 0.6 }}
-              className="w-full max-w-md bg-white dark:bg-[#111827] border border-gray-150 dark:border-gray-800/80 shadow-lg rounded-2xl p-5 sm:p-6 transition-all duration-300"
-            >
-              <div className="space-y-3">
-                {years.map((year, index) => (
-                  <motion.div
-                    key={year.id}
-                    initial={{ opacity: 0, x: -10 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.3 + index * 0.08, duration: 0.4 }}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={() => handleYearClick(year.id)}
-                    className={`flex items-center justify-between p-3.5 rounded-xl cursor-pointer transition-all duration-200 border
-                      ${selectedYear === year.id
-                        ? "bg-black dark:bg-[#6366F1] text-white border-black dark:border-[#6366F1] shadow-md"
-                        : "bg-gray-55/40 hover:bg-gray-100/80 dark:bg-gray-800/40 dark:hover:bg-gray-800/80 border-gray-100 dark:border-gray-800/55 text-gray-707 dark:text-[#F8FAFC]"
-                      }`}
-                  >
-                    <div className="flex items-center gap-3.5">
-                      <motion.div
-                        whileHover={{ rotate: 360 }}
-                        transition={{ duration: 0.4 }}
-                        className={`w-9 h-9 flex items-center justify-center rounded-lg font-bold text-sm
-                        ${selectedYear === year.id
-                            ? "bg-white text-black dark:text-[#6366F1]"
-                            : "bg-black dark:bg-gray-800 text-white dark:text-[#F8FAFC]"
-                          }`}
-                      >
-                        {year.id}
-                      </motion.div>
-
-                      <span className="font-semibold text-sm sm:text-base">{year.label}</span>
+                {/* RIGHT COLUMN: ACADEMIC YEARS CARD */}
+                <div className="w-full">
+                  <div className="bg-white/95 dark:bg-[#14171F]/95 backdrop-blur-md border border-[#E5E5E5] dark:border-[#292E3A] rounded-2xl p-5 sm:p-6 shadow-md dark:shadow-2xl">
+                    <div className="flex items-center justify-between pb-3 mb-3 border-b border-[#E5E5E5] dark:border-[#292E3A]">
+                      <span className="text-xs font-bold uppercase tracking-wider text-[#555555] dark:text-[#B8BDCA]">
+                        Academic Years
+                      </span>
+                      <span className="text-xs text-[#858B99] font-medium">
+                        JNTUH R22
+                      </span>
                     </div>
 
-                    <motion.span
-                      animate={{ x: selectedYear === year.id ? [0, 4, 0] : 0 }}
-                      className={selectedYear === year.id ? "text-white" : "text-gray-400 dark:text-gray-505"}
-                    >
-                      →
-                    </motion.span>
-                  </motion.div>
-                ))}
+                    <div className="space-y-2.5">
+                      {years.map((y) => {
+                        const isSelected = selectedYear === y.id;
+                        return (
+                          <div
+                            key={y.id}
+                            onClick={() => handleYearClick(y.id)}
+                            className={`flex items-center justify-between p-3 rounded-xl cursor-pointer transition-all duration-150 border ${
+                              isSelected
+                                ? "bg-[#2C3480] text-white border-[#2C3480] shadow-sm"
+                                : "bg-[#F7F8FA] dark:bg-[#1A1E28] border-[#E5E5E5] dark:border-[#292E3A] text-[#000000] dark:text-[#FFFFFF] hover:border-[#2C3480]/40 dark:hover:border-[#3D4CC4]/40"
+                            }`}
+                          >
+                            <div className="flex items-center gap-3">
+                              <span className={`w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs ${
+                                isSelected
+                                  ? "bg-white text-[#2C3480]"
+                                  : "bg-white dark:bg-[#10131A] text-[#000000] dark:text-[#FFFFFF] border border-[#E5E5E5] dark:border-[#292E3A]"
+                              }`}>
+                                {y.id}
+                              </span>
+                              <span className="font-semibold text-xs sm:text-sm">{y.label}</span>
+                            </div>
+                            <span className={`text-xs ${isSelected ? "text-white" : "text-[#858B99]"}`}>
+                              →
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+
               </div>
-            </motion.div>
+            </div>
           </section>
 
-          {/* RESOURCES PREVIEW SECTION */}
-          <ResourcesSection onViewAll={() => navigate("/resources")} />
-
-          {/* BREADCRUMBS FOR NOTES */}
-          <div className="max-w-[1400px] mx-auto px-4 sm:px-6 mt-6 -mb-6">
+          {/* BREADCRUMBS & SUBJECTS */}
+          <div className="w-full max-w-content mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6 pb-1">
             <Breadcrumbs yearNumber={selectedYear} onYearClick={setSelectedYear} />
           </div>
 
-          {/* NOTES SECTION */}
           <NotesSection
             selectedYear={selectedYear}
             subjects={subjects}
@@ -694,134 +585,71 @@ export default function App() {
             onOpenAdmin={handleAdminClick}
           />
 
-          {/* STATS */}
-          <motion.section
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-40px" }}
-            variants={containerVariants}
-            className="bg-white/60 dark:bg-[#111827]/60 backdrop-blur-sm border-y border-gray-200/55 dark:border-gray-800 shadow-sm transition-colors duration-300"
-          >
-            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 py-6 sm:py-8">
-                {[
-                  ["4", "Years Covered"],
-                  ["50+", "Subjects"],
-                  ["500+", "Question Papers"],
-                  ["R22", "Regulation"]
-                ].map(([val, label], i) => (
-                  <motion.div
-                    key={i}
-                    variants={itemVariants}
-                    className="text-center"
-                  >
-                    <motion.h3
-                      initial={{ scale: 0 }}
-                      whileInView={{ scale: 1 }}
-                      viewport={{ once: true }}
-                      transition={{
-                        delay: 0.15 + i * 0.05,
-                        type: "spring",
-                        stiffness: 200,
-                        damping: 15
-                      }}
-                      className="text-xl sm:text-2xl font-black mb-0.5 text-gray-900 dark:text-[#F8FAFC]"
-                    >
-                      {val}
-                    </motion.h3>
-                    <p className="text-[11px] sm:text-xs text-gray-505 dark:text-[#94A3B8] font-medium">{label}</p>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          </motion.section>
-
-          {/* FEEDBACK */}
-          <motion.section
-            id="resources-section"
-            ref={resourcesSectionRef}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-60px" }}
-            variants={staggerContainer}
-            className="max-w-4xl mx-auto px-4 sm:px-6 py-10 sm:py-14"
-          >
-            <div className="max-w-md mx-auto text-center bg-white dark:bg-[#111827] border border-gray-150 dark:border-gray-800/80 p-6 sm:p-8 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300">
-              <motion.h2 variants={fadeInUp} className="text-lg sm:text-xl font-bold mb-1.5 tracking-tight text-gray-900 dark:text-[#F8FAFC]">
-                Help Us Improve
-              </motion.h2>
-              <motion.p variants={fadeInUp} className="text-gray-555 dark:text-[#94A3B8] text-xs sm:text-sm mb-5 leading-relaxed">
-                Found an issue or suggestion?
-              </motion.p>
-              <motion.button
+          {/* 5. FEEDBACK SECTION */}
+          <section className="w-full max-w-content mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+            <div className="max-w-[560px] mx-auto p-6 sm:p-7 rounded-2xl bg-white dark:bg-[#14171F] border border-[#E5E5E5] dark:border-[#292E3A] text-center shadow-sm">
+              <h2 className="text-lg sm:text-xl font-bold text-[#000000] dark:text-[#FFFFFF] mb-1.5 tracking-tight">
+                Help improve JITS Notes
+              </h2>
+              <p className="text-sm text-[#555555] dark:text-[#B8BDCA] mb-5 leading-relaxed">
+                Found an issue or have a suggestion?
+              </p>
+              <button
+                type="button"
                 onClick={handleSendFeedback}
-                whileHover={{ scale: 1.02, y: -1 }}
-                whileTap={{ scale: 0.98 }}
-                transition={buttonTransition}
-                className="inline-flex items-center justify-center bg-black dark:bg-[#6366F1] text-white px-5 py-2.5 rounded-xl hover:shadow-md transition-all font-bold text-xs shadow-sm"
+                className="inline-flex items-center justify-center bg-[#2C3480] hover:bg-[#3D4CC4] text-white px-6 py-2.5 rounded-xl font-semibold text-xs shadow-sm transition-colors min-h-[44px]"
               >
                 Send Feedback
-              </motion.button>
+              </button>
             </div>
-          </motion.section>
+          </section>
         </main>
       )}
 
-      {/* FOOTER */}
-      <motion.footer
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
-        className="w-full bg-white dark:bg-[#0B1120] border-t border-gray-150 dark:border-gray-850 py-12 transition-colors duration-300"
-      >
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center text-center space-y-8">
-          {/* Logo / Brand Name */}
-          <h3 className="font-extrabold text-xl sm:text-2xl tracking-tight text-gray-900 dark:text-[#F8FAFC]">
+      {/* 7. FOOTER (Section 25) */}
+      <footer className="w-full bg-white dark:bg-[#10131A] border-t border-[#E5E5E5] dark:border-[#292E3A] py-8 sm:py-10 transition-colors duration-200">
+        <div className="w-full max-w-content mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center text-center space-y-5">
+          <h3 className="font-bold text-lg sm:text-xl tracking-tight text-[#000000] dark:text-[#FFFFFF]">
             JITS Notes
           </h3>
 
-          {/* Description */}
-          <p className="text-gray-500 dark:text-[#94A3B8] text-xs sm:text-sm max-w-md mx-auto leading-relaxed">
-            Helping JITS students with organized notes,<br className="hidden sm:inline" />
-            questions & resources
+          <p className="text-xs sm:text-sm text-[#555555] dark:text-[#B8BDCA] max-w-md mx-auto leading-relaxed">
+            Helping JITS students with organized notes, questions & resources.
           </p>
 
-          {/* Social Links */}
-          <div className="flex flex-wrap items-center justify-center gap-4 text-xs sm:text-sm font-semibold text-gray-500 dark:text-[#94A3B8]">
-
+          <div className="flex flex-wrap items-center justify-center gap-4 text-xs sm:text-sm font-semibold text-[#555555] dark:text-[#B8BDCA]">
             <button
               onClick={() => navigate("/jits-notes")}
-              className="flex items-center gap-1.5 hover:text-black dark:hover:text-[#F8FAFC] transition-colors"
+              className="hover:text-[#000000] dark:hover:text-[#FFFFFF] transition-colors"
             >
-              <span>JITS Notes Hub</span>
+              JITS Notes Hub
             </button>
 
-            <span className="text-gray-300 dark:text-gray-700">•</span>
+            <span className="text-[#858B99]">•</span>
 
             <a
               href="https://github.com/mohddanish305"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 hover:text-black dark:hover:text-[#F8FAFC] transition-colors"
+              className="flex items-center gap-1.5 hover:text-[#000000] dark:hover:text-[#FFFFFF] transition-colors"
             >
               <FaGithub className="w-3.5 h-3.5" />
               <span>GitHub</span>
             </a>
 
-            <span className="text-gray-300 dark:text-gray-700">•</span>
+            <span className="text-[#858B99]">•</span>
 
             <a
               href="https://www.linkedin.com/in/mohd-danish-986a5b2a3/"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 hover:text-black dark:hover:text-[#F8FAFC] transition-colors"
+              className="flex items-center gap-1.5 hover:text-[#000000] dark:hover:text-[#FFFFFF] transition-colors"
             >
               <FaLinkedin className="w-3.5 h-3.5" />
               <span>LinkedIn</span>
             </a>
 
-            <span className="text-gray-300 dark:text-gray-700">•</span>
+            <span className="text-[#858B99]">•</span>
 
             <a
               href="https://mail.google.com/mail/?view=cm&fs=1&to=23c41a05a1@jits.in"
@@ -837,23 +665,20 @@ export default function App() {
                 }
                 window.location.href = mailtoUrl;
               }}
-              className="flex items-center gap-1.5 hover:text-black dark:hover:text-[#F8FAFC] transition-colors"
+              className="flex items-center gap-1.5 hover:text-[#000000] dark:hover:text-[#FFFFFF] transition-colors"
             >
               <FaEnvelope className="w-3.5 h-3.5" />
               <span>Email</span>
             </a>
-
           </div>
 
-          {/* Copyright & Author Credits */}
-          <div className="flex flex-col items-center gap-1.5 text-xs text-gray-400 dark:text-gray-500 font-medium">
-            <div>© 2026 JITS Notes</div>
-            <div className="flex items-center gap-1">
-              Made with <span className="text-red-500 animate-pulse">❤️</span> by MOHD DANISH
-            </div>
+          <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-3 text-xs text-[#858B99] font-medium pt-2 border-t border-[#E5E5E5] dark:border-[#292E3A] w-full justify-center">
+            <span>© 2026 JITS Notes</span>
+            <span className="hidden sm:inline">•</span>
+            <span>Made with ❤️ by MOHD DANISH</span>
           </div>
         </div>
-      </motion.footer>
+      </footer>
 
       {/* FEEDBACK MODAL */}
       <Modal
@@ -861,167 +686,107 @@ export default function App() {
         onClose={() => setIsFeedbackOpen(false)}
         title="Send Feedback"
       >
-        <motion.form
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
-          onSubmit={handleFeedbackSubmit}
-        >
-          <div className="space-y-4">
-            <div>
-              <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1.5">Name</label>
-              <input
-                type="text"
-                name="name"
-                value={feedbackForm.name}
-                onChange={handleFeedbackChange}
-                required
-                className="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-black/10 dark:focus:ring-[#6366F1]/20 focus:border-black dark:focus:border-[#6366F1] text-sm text-gray-900 dark:text-[#F8FAFC] outline-none transition"
-                placeholder="Your name"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1.5">Email</label>
-              <input
-                type="email"
-                name="email"
-                value={feedbackForm.email}
-                onChange={handleFeedbackChange}
-                required
-                className="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-black/10 dark:focus:ring-[#6366F1]/20 focus:border-black dark:focus:border-[#6366F1] text-sm text-gray-900 dark:text-[#F8FAFC] outline-none transition"
-                placeholder="your@email.com"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1.5">Message</label>
-              <textarea
-                name="message"
-                value={feedbackForm.message}
-                onChange={handleFeedbackChange}
-                required
-                rows={4}
-                className="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-black/10 dark:focus:ring-[#6366F1]/20 focus:border-black dark:focus:border-[#6366F1] text-sm text-gray-900 dark:text-[#F8FAFC] outline-none transition resize-none"
-                placeholder="Your feedback..."
-              />
-            </div>
-            <motion.button
-              type="submit"
-              disabled={isFeedbackSubmitting}
-              whileHover={{ scale: 1.01 }}
-              whileTap={{ scale: 0.99 }}
-              transition={buttonTransition}
-              className="w-full bg-black dark:bg-[#6366F1] text-white py-2.5 rounded-xl font-bold text-xs hover:bg-gray-900 dark:hover:bg-[#6366F1]/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isFeedbackSubmitting ? "Submitting..." : "Submit Feedback"}
-            </motion.button>
+        <form onSubmit={handleFeedbackSubmit} className="space-y-4">
+          <div>
+            <label className="block text-xs font-semibold text-[#555555] dark:text-[#B8BDCA] mb-1.5">Name</label>
+            <input
+              type="text"
+              name="name"
+              value={feedbackForm.name}
+              onChange={handleFeedbackChange}
+              required
+              className="w-full px-3.5 py-2.5 bg-white dark:bg-[#171B24] border border-[#E5E5E5] dark:border-[#292E3A] rounded-xl focus:border-[#2C3480] dark:focus:border-[#3D4CC4] text-sm text-[#000000] dark:text-[#FFFFFF] outline-none transition"
+              placeholder="Your name"
+            />
           </div>
-        </motion.form>
-      </Modal>
-
-      {/* QUESTIONS PREVIEW MODAL */}
-      <Modal
-        isOpen={isQuestionsOpen}
-        onClose={() => setIsQuestionsOpen(false)}
-        title={`Important Questions - Year ${selectedYear}`}
-      >
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
-          className="space-y-2.5 max-h-96 overflow-y-auto pr-2 admin-scrollbar"
-        >
-          {subjects.length === 0 ? (
-            <p className="text-center text-gray-505 dark:text-gray-400 py-8 text-sm">No subjects for this year yet.</p>
-          ) : (
-            subjects.map((subject, i) => (
-              <motion.div
-                key={subject.id}
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.04, duration: 0.3 }}
-                whileHover={{ scale: 1.01, backgroundColor: "rgba(99, 102, 241, 0.05)" }}
-                className="p-3.5 border border-gray-150 dark:border-gray-800 bg-white dark:bg-[#111827]/40 rounded-xl cursor-pointer transition-all"
-              >
-                <h4 className="font-bold text-sm text-gray-900 dark:text-[#F8FAFC] mb-0.5">{subject.name}</h4>
-                <p className="text-xs text-gray-500 dark:text-[#94A3B8]">{subject.short_name}</p>
-              </motion.div>
-            ))
-          )}
-        </motion.div>
+          <div>
+            <label className="block text-xs font-semibold text-[#555555] dark:text-[#B8BDCA] mb-1.5">Email</label>
+            <input
+              type="email"
+              name="email"
+              value={feedbackForm.email}
+              onChange={handleFeedbackChange}
+              required
+              className="w-full px-3.5 py-2.5 bg-white dark:bg-[#171B24] border border-[#E5E5E5] dark:border-[#292E3A] rounded-xl focus:border-[#2C3480] dark:focus:border-[#3D4CC4] text-sm text-[#000000] dark:text-[#FFFFFF] outline-none transition"
+              placeholder="your@email.com"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-[#555555] dark:text-[#B8BDCA] mb-1.5">Message</label>
+            <textarea
+              name="message"
+              value={feedbackForm.message}
+              onChange={handleFeedbackChange}
+              required
+              rows={4}
+              className="w-full px-3.5 py-2.5 bg-white dark:bg-[#171B24] border border-[#E5E5E5] dark:border-[#292E3A] rounded-xl focus:border-[#2C3480] dark:focus:border-[#3D4CC4] text-sm text-[#000000] dark:text-[#FFFFFF] outline-none transition resize-none"
+              placeholder="Your feedback or suggestion..."
+            />
+          </div>
+          <button
+            type="submit"
+            disabled={isFeedbackSubmitting}
+            className="w-full bg-[#2C3480] hover:bg-[#3D4CC4] text-white py-2.5 rounded-xl font-semibold text-xs transition-colors disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px]"
+          >
+            {isFeedbackSubmitting ? "Submitting..." : "Submit Feedback"}
+          </button>
+        </form>
       </Modal>
 
       {/* ADMIN LOGIN MODAL */}
       <Modal isOpen={isAdminLoginOpen} onClose={() => setIsAdminLoginOpen(false)} title="Admin Login">
-        <motion.form
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
-          onSubmit={handleLogin}
-          className="space-y-4"
-        >
+        <form onSubmit={handleLogin} className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-gray-700 dark:text-gray-305 mb-1.5">Email</label>
+            <label className="block text-xs font-semibold text-[#555555] dark:text-[#B8BDCA] mb-1.5">Email</label>
             <input
               type="email"
               value={loginForm.email}
               onChange={(e) => setLoginForm({ ...loginForm, email: e.target.value })}
               required
-              className="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-black/10 dark:focus:ring-[#6366F1]/20 focus:border-black dark:focus:border-[#6366F1] text-sm text-gray-900 dark:text-[#F8FAFC] outline-none transition"
+              className="w-full px-3.5 py-2.5 bg-white dark:bg-[#171B24] border border-[#E5E5E5] dark:border-[#292E3A] rounded-xl focus:border-[#2C3480] dark:focus:border-[#3D4CC4] text-sm text-[#000000] dark:text-[#FFFFFF] outline-none transition"
               placeholder="admin@example.com"
             />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-gray-700 dark:text-gray-305 mb-1.5">Password</label>
+            <label className="block text-xs font-semibold text-[#555555] dark:text-[#B8BDCA] mb-1.5">Password</label>
             <input
               type="password"
               value={loginForm.password}
               onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
               required
-              className="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-black/10 dark:focus:ring-[#6366F1]/20 focus:border-black dark:focus:border-[#6366F1] text-sm text-gray-900 dark:text-[#F8FAFC] outline-none transition"
+              className="w-full px-3.5 py-2.5 bg-white dark:bg-[#171B24] border border-[#E5E5E5] dark:border-[#292E3A] rounded-xl focus:border-[#2C3480] dark:focus:border-[#3D4CC4] text-sm text-[#000000] dark:text-[#FFFFFF] outline-none transition"
               placeholder="••••••••"
             />
           </div>
           {loginError && (
-            <p className="text-red-550 dark:text-red-400 text-xs">{loginError}</p>
+            <p className="text-red-600 dark:text-red-400 text-xs font-medium">{loginError}</p>
           )}
-          <motion.button
+          <button
             type="submit"
             disabled={isSigningIn}
-            whileHover={{ scale: 1.01 }}
-            whileTap={{ scale: 0.99 }}
-            transition={buttonTransition}
-            className={`w-full py-2.5 rounded-xl font-bold text-xs transition-colors ${isSigningIn
-              ? "bg-gray-550 text-white cursor-not-allowed"
-              : "bg-black dark:bg-[#6366F1] text-white hover:bg-gray-900 dark:hover:bg-[#6366F1]/90"
-              }`}
+            className="w-full py-2.5 rounded-xl font-semibold text-xs transition-colors bg-[#2C3480] hover:bg-[#3D4CC4] text-white disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px]"
           >
             {isSigningIn ? "Signing In..." : "Sign In"}
-          </motion.button>
+          </button>
 
           <div className="relative py-2">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-200 dark:border-gray-800" />
+              <div className="w-full border-t border-[#E5E5E5] dark:border-[#292E3A]" />
             </div>
-            <div className="relative flex justify-center text-[10px] uppercase tracking-wider text-gray-400 dark:text-gray-550 font-bold">
-              <span className="bg-white dark:bg-[#111827] px-3 transition-colors duration-300">or continue with</span>
+            <div className="relative flex justify-center text-[10px] uppercase tracking-wider text-[#858B99] font-bold">
+              <span className="bg-white dark:bg-[#14171F] px-3">or continue with</span>
             </div>
           </div>
 
-          <motion.button
+          <button
             type="button"
             onClick={handleGoogleLogin}
-            whileHover={{ scale: 1.01 }}
-            whileTap={{ scale: 0.99 }}
-            transition={buttonTransition}
-            className="w-full flex items-center justify-center gap-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 py-2.5 rounded-xl font-bold text-xs text-gray-700 dark:text-[#F8FAFC] hover:bg-gray-550 dark:hover:bg-gray-700 transition-colors"
+            className="w-full flex items-center justify-center gap-2 border border-[#E5E5E5] dark:border-[#292E3A] bg-white dark:bg-[#171B24] py-2.5 rounded-xl font-semibold text-xs text-[#000000] dark:text-[#FFFFFF] hover:bg-[#F7F8FA] dark:hover:bg-[#1A1E28] transition-colors min-h-[44px]"
           >
-            <span className="text-sm font-black text-indigo-650 dark:text-[#6366F1]">G</span>
+            <span className="text-sm font-bold text-[#2C3480] dark:text-[#3D4CC4]">G</span>
             Continue with Google
-          </motion.button>
-        </motion.form>
+          </button>
+        </form>
       </Modal>
     </div>
   );

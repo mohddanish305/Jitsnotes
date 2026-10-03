@@ -22,38 +22,38 @@ export default function Modal({ isOpen, onClose, title, children, sizeClassName 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.25, ease: "easeOut" }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
             onClick={onClose}
             className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
           />
           {/* Modal */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 10 }}
+            initial={{ opacity: 0, scale: 0.96, y: 8 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 10 }}
-            transition={{ duration: 0.25, ease: "easeOut" }}
+            exit={{ opacity: 0, scale: 0.96, y: 8 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
             onClick={(e) => e.stopPropagation()}
             className="fixed inset-0 z-[101] flex items-center justify-center p-4 pointer-events-none"
           >
-            <div className={`w-full ${sizeClassName} max-h-[calc(100vh-2rem)] overflow-hidden rounded-2xl border border-gray-150 dark:border-gray-800 bg-white dark:bg-[#111827] shadow-2xl pointer-events-auto`}>
+            <div className={`w-full ${sizeClassName} max-h-[calc(100vh-2rem)] overflow-hidden rounded-2xl border border-[#E5E5E5] dark:border-[#292E3A] bg-white dark:bg-[#14171F] shadow-2xl pointer-events-auto`}>
               {/* Header */}
-              <div className="flex items-center justify-between border-b border-gray-150 dark:border-gray-800 px-5 py-4 sm:px-6">
-                <h2 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-[#F8FAFC] leading-tight">{title}</h2>
-                <motion.button
+              <div className="flex items-center justify-between border-b border-[#E5E5E5] dark:border-[#292E3A] px-5 py-4 sm:px-6 bg-white dark:bg-[#10131A]">
+                <h2 className="text-lg sm:text-xl font-bold text-[#000000] dark:text-[#FFFFFF] leading-tight">{title}</h2>
+                <button
+                  type="button"
                   onClick={onClose}
-                  whileHover={{ scale: 1.1, rotate: 90 }}
-                  whileTap={{ scale: 0.9 }}
-                  transition={{ type: "spring", stiffness: 400, damping: 15 }}
-                  className="w-9 h-9 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-850 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors flex-shrink-0 ml-4"
+                  className="w-9 h-9 flex items-center justify-center rounded-xl bg-[#F7F8FA] dark:bg-[#1A1E28] hover:bg-gray-200 dark:hover:bg-[#292E3A] text-[#555555] dark:text-[#B8BDCA] hover:text-[#000000] dark:hover:text-[#FFFFFF] transition-colors flex-shrink-0 ml-4"
                   aria-label="Close modal"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
-                </motion.button>
+                </button>
               </div>
               {/* Content */}
-              <div className="max-h-[calc(100vh-8rem)] overflow-y-auto px-5 py-5 sm:px-6 sm:py-6">{children}</div>
+              <div className="max-h-[calc(100vh-8rem)] overflow-y-auto px-5 py-5 sm:px-6 sm:py-6 bg-white dark:bg-[#14171F] text-[#000000] dark:text-[#FFFFFF]">
+                {children}
+              </div>
             </div>
           </motion.div>
         </>

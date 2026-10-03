@@ -8,7 +8,7 @@ A modern and responsive notes platform for **JITS (Jayamukhi Institute of Techno
 - 🔍 Fast and responsive UI
 - 📱 Mobile-friendly design
 - ⚡ Optimized performance
-- 📂 PDF & Google Drive integration
+- 📂 Secure PDF Documents (Backblaze B2)
 - 🛡️ Secure admin panel
 - 💬 Student feedback system
 - 📧 Email notifications using EmailJS

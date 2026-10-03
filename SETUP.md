@@ -27,7 +27,7 @@
 5. **Add Sample Subjects** (via Admin Panel)
    - Start the app: `npm run dev`
    - Click **Admin** → Login with admin credentials
-   - Add subjects with Google Drive ZIP links
+   - Manage subjects, folders, and PDF documents (stored securely in Backblaze B2)
 
 ## Architecture
 

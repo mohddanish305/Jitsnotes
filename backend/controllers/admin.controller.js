@@ -28,7 +28,7 @@ export const addSubject = asyncHandler(async (req, res) => {
   const { data, error } = await req.supabase
     .from("subjects")
     .insert(insertPayload)
-    .select("id, name, short_name, year_id, drive_link, thumbnail_url, is_active, is_deleted, last_updated")
+    .select("id, name, short_name, year_id, thumbnail_url, is_active, is_deleted, last_updated")
     .single();
 
   if (error) throw error;
@@ -55,7 +55,7 @@ export const updateSubject = asyncHandler(async (req, res) => {
     .from("subjects")
     .update(payload)
     .eq("id", subjectId)
-    .select("id, name, short_name, year_id, drive_link, thumbnail_url, is_active, is_deleted, last_updated")
+    .select("id, name, short_name, year_id, thumbnail_url, is_active, is_deleted, last_updated")
     .maybeSingle();
 
   if (error) throw error;

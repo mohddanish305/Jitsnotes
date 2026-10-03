@@ -1,4 +1,8 @@
 User-agent: *
 Allow: /
 
+Disallow: /admin
+Disallow: /admin-login
+
 Sitemap: https://jitsnotes.web.app/sitemap.xml
+

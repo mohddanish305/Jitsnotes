@@ -1,10 +1,9 @@
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { FaChevronDown, FaChevronUp, FaBookOpen, FaGraduationCap, FaFolderOpen, FaArrowLeft, FaFileAlt, FaLock } from "./icons";
+import { AnimatePresence, motion } from "framer-motion";
+import { FaChevronDown, FaChevronUp, FaBookOpen, FaGraduationCap, FaFolderOpen, FaArrowLeft } from "./icons";
 import { useNavigate, useLocation } from "react-router-dom";
 import SEO from "./SEO";
 import Breadcrumbs from "./Breadcrumbs";
-// Pageview events are handled globally on route transition inside App.jsx
 
 const PAGE_DATA = {
   "/jits-notes": {
@@ -91,7 +90,6 @@ export default function SeoLandingPage() {
   };
 
   useEffect(() => {
-    // Inject dynamic schemas for the landing pages
     const faqSchema = {
       "@context": "https://schema.org",
       "@type": "FAQPage",
@@ -145,7 +143,7 @@ export default function SeoLandingPage() {
   };
 
   return (
-    <div className="w-full max-w-[1200px] mx-auto px-4 sm:px-6 py-8 transition-colors duration-300">
+    <div className="w-full max-w-content mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 transition-colors duration-200">
       <SEO 
         title={page.title} 
         description={page.description} 
@@ -154,34 +152,32 @@ export default function SeoLandingPage() {
       <div className="space-y-1 text-left mb-6">
         <Breadcrumbs />
         <button
-          onClick={() => {
-            navigate("/");
-          }}
-          className="inline-flex items-center gap-2 text-xs font-semibold text-gray-500 dark:text-[#94A3B8] hover:text-black dark:hover:text-[#F8FAFC] transition-colors mb-3"
+          onClick={() => navigate("/")}
+          className="inline-flex items-center gap-2 text-xs font-semibold text-[#555555] dark:text-[#B8BDCA] hover:text-[#000000] dark:hover:text-[#FFFFFF] transition-colors mb-2"
         >
-          <FaArrowLeft /> Back to Dashboard
+          <FaArrowLeft className="w-3 h-3" /> Back to Notes
         </button>
-        <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-gray-900 dark:text-[#F8FAFC]">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#000000] dark:text-[#FFFFFF]">
           {page.h1}
         </h1>
-        <p className="text-sm text-gray-500 dark:text-[#94A3B8] max-w-2xl">
+        <p className="text-sm text-[#555555] dark:text-[#B8BDCA] max-w-2xl">
           {page.description}
         </p>
       </div>
 
       {/* Main Section */}
-      <section className="grid lg:grid-cols-3 gap-8 items-start mb-16 text-left">
+      <section className="grid lg:grid-cols-3 gap-6 sm:gap-8 items-start mb-12 text-left">
         
-        {/* Left/Main Column */}
+        {/* Left Column */}
         <div className="lg:col-span-2 space-y-6">
-          <div className="bg-white dark:bg-[#111827] border border-gray-200 dark:border-gray-800 p-6 sm:p-8 rounded-2xl shadow-sm">
-            <h2 className="text-xl sm:text-2xl font-bold mb-4 text-gray-900 dark:text-[#F8FAFC]">
+          <div className="bg-white dark:bg-[#14171F] border border-[#E5E5E5] dark:border-[#292E3A] p-6 sm:p-7 rounded-2xl shadow-sm">
+            <h2 className="text-xl sm:text-2xl font-bold mb-3 text-[#000000] dark:text-[#FFFFFF]">
               {page.aboutTitle}
             </h2>
-            <p className="text-gray-600 dark:text-[#94A3B8] text-sm leading-relaxed mb-4">
+            <p className="text-[#555555] dark:text-[#B8BDCA] text-sm leading-relaxed mb-3">
               {page.aboutText}
             </p>
-            <p className="text-gray-600 dark:text-[#94A3B8] text-sm leading-relaxed">
+            <p className="text-[#555555] dark:text-[#B8BDCA] text-sm leading-relaxed">
               Access other critical academic links for Jayamukhi Institute of Technological Sciences (JITS) students below, or return to the main dashboard to browse dynamic subject categories. This database is compiled by JITS students, led by <strong>MOHD DANISH</strong>.
             </p>
           </div>
@@ -189,50 +185,50 @@ export default function SeoLandingPage() {
           {/* Quick Links Grid */}
           <div className="grid sm:grid-cols-2 gap-4">
             
-            <div className="bg-white dark:bg-[#111827] border border-gray-200 dark:border-gray-800 p-5 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
-              <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 flex items-center justify-center mb-4 text-indigo-500">
-                <FaBookOpen className="w-5 h-5" />
+            <div className="bg-white dark:bg-[#14171F] border border-[#E5E5E5] dark:border-[#292E3A] p-5 rounded-2xl shadow-sm">
+              <div className="w-9 h-9 rounded-xl bg-[#2C3480]/10 dark:bg-[#3D4CC4]/20 flex items-center justify-center mb-3 text-[#2C3480] dark:text-[#FFFFFF]">
+                <FaBookOpen className="w-4 h-4" />
               </div>
-              <h3 className="font-bold text-sm text-gray-900 dark:text-[#F8FAFC] mb-2">B.Tech Year Notes</h3>
-              <p className="text-xs text-gray-500 dark:text-[#94A3B8] mb-4">Select your academic year to browse matching lecture files, question banks, and notes.</p>
-              <div className="flex flex-wrap gap-2 text-xxs font-bold uppercase">
-                <button onClick={() => navigate("/year/1")} className="px-2.5 py-1.5 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-black hover:text-white dark:hover:bg-[#6366F1] transition">Year 1</button>
-                <button onClick={() => navigate("/year/2")} className="px-2.5 py-1.5 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-black hover:text-white dark:hover:bg-[#6366F1] transition">Year 2</button>
-                <button onClick={() => navigate("/year/3")} className="px-2.5 py-1.5 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-black hover:text-white dark:hover:bg-[#6366F1] transition">Year 3</button>
-                <button onClick={() => navigate("/year/4")} className="px-2.5 py-1.5 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-black hover:text-white dark:hover:bg-[#6366F1] transition">Year 4</button>
+              <h3 className="font-bold text-sm text-[#000000] dark:text-[#FFFFFF] mb-1.5">B.Tech Year Notes</h3>
+              <p className="text-xs text-[#555555] dark:text-[#B8BDCA] mb-3 leading-relaxed">Select your academic year to browse matching lecture files, question banks, and notes.</p>
+              <div className="flex flex-wrap gap-1.5 text-xs font-semibold">
+                <button onClick={() => navigate("/year/1")} className="px-2.5 py-1 rounded-lg bg-[#F7F8FA] dark:bg-[#1A1E28] text-[#555555] dark:text-[#B8BDCA] hover:bg-[#2C3480] hover:text-white dark:hover:bg-[#3D4CC4] transition border border-[#E5E5E5] dark:border-[#292E3A]">Year 1</button>
+                <button onClick={() => navigate("/year/2")} className="px-2.5 py-1 rounded-lg bg-[#F7F8FA] dark:bg-[#1A1E28] text-[#555555] dark:text-[#B8BDCA] hover:bg-[#2C3480] hover:text-white dark:hover:bg-[#3D4CC4] transition border border-[#E5E5E5] dark:border-[#292E3A]">Year 2</button>
+                <button onClick={() => navigate("/year/3")} className="px-2.5 py-1 rounded-lg bg-[#F7F8FA] dark:bg-[#1A1E28] text-[#555555] dark:text-[#B8BDCA] hover:bg-[#2C3480] hover:text-white dark:hover:bg-[#3D4CC4] transition border border-[#E5E5E5] dark:border-[#292E3A]">Year 3</button>
+                <button onClick={() => navigate("/year/4")} className="px-2.5 py-1 rounded-lg bg-[#F7F8FA] dark:bg-[#1A1E28] text-[#555555] dark:text-[#B8BDCA] hover:bg-[#2C3480] hover:text-white dark:hover:bg-[#3D4CC4] transition border border-[#E5E5E5] dark:border-[#292E3A]">Year 4</button>
               </div>
             </div>
 
-            <div className="bg-white dark:bg-[#111827] border border-gray-200 dark:border-gray-800 p-5 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
-              <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 flex items-center justify-center mb-4 text-emerald-500">
-                <FaFolderOpen className="w-5 h-5" />
+            <div className="bg-white dark:bg-[#14171F] border border-[#E5E5E5] dark:border-[#292E3A] p-5 rounded-2xl shadow-sm">
+              <div className="w-9 h-9 rounded-xl bg-[#2C3480]/10 dark:bg-[#3D4CC4]/20 flex items-center justify-center mb-3 text-[#2C3480] dark:text-[#FFFFFF]">
+                <FaFolderOpen className="w-4 h-4" />
               </div>
-              <h3 className="font-bold text-sm text-gray-900 dark:text-[#F8FAFC] mb-2">Resources Repository</h3>
-              <p className="text-xs text-gray-500 dark:text-[#94A3B8] mb-4">Access placement materials, official syllabus books, question banks, and lab manuals.</p>
+              <h3 className="font-bold text-sm text-[#000000] dark:text-[#FFFFFF] mb-1.5">Academic Notes Catalog</h3>
+              <p className="text-xs text-[#555555] dark:text-[#B8BDCA] mb-3 leading-relaxed">Access lecture notes, previous papers, and organized academic study materials.</p>
               <button 
-                onClick={() => navigate("/resources")} 
-                className="text-xs font-bold text-indigo-600 dark:text-[#6366F1] hover:underline"
+                onClick={() => navigate("/year/1")} 
+                className="text-xs font-semibold text-[#2C3480] dark:text-[#3D4CC4] hover:underline"
               >
-                Go to Resources Repository →
+                Browse Academic Notes →
               </button>
             </div>
 
           </div>
 
           {/* FAQ Accordion Section */}
-          <div className="bg-white dark:bg-[#111827] border border-gray-200 dark:border-gray-800 p-6 sm:p-8 rounded-2xl shadow-sm">
-            <h2 className="text-xl sm:text-2xl font-bold mb-6 text-gray-900 dark:text-[#F8FAFC]">
+          <div className="bg-white dark:bg-[#14171F] border border-[#E5E5E5] dark:border-[#292E3A] p-6 sm:p-7 rounded-2xl shadow-sm">
+            <h2 className="text-xl sm:text-2xl font-bold mb-4 text-[#000000] dark:text-[#FFFFFF]">
               Frequently Asked Questions (FAQ)
             </h2>
-            <div className="space-y-4">
+            <div className="space-y-3">
               {page.faqs.map((faq, index) => (
-                <div key={index} className="border-b border-gray-100 dark:border-gray-800 pb-4">
+                <div key={index} className="border-b border-[#E5E5E5] dark:border-[#292E3A] pb-3 last:border-b-0">
                   <button
                     onClick={() => toggleFaq(index)}
-                    className="w-full flex items-center justify-between text-left font-bold text-sm sm:text-base text-gray-900 dark:text-[#F8FAFC] py-2 outline-none focus:outline-none"
+                    className="w-full flex items-center justify-between text-left font-semibold text-sm sm:text-base text-[#000000] dark:text-[#FFFFFF] py-2"
                   >
                     <span>{faq.question}</span>
-                    {openFaqIndex === index ? <FaChevronUp className="w-4 h-4 text-gray-400" /> : <FaChevronDown className="w-4 h-4 text-gray-400" />}
+                    {openFaqIndex === index ? <FaChevronUp className="w-4 h-4 text-[#858B99]" /> : <FaChevronDown className="w-4 h-4 text-[#858B99]" />}
                   </button>
                   <AnimatePresence initial={false}>
                     {openFaqIndex === index && (
@@ -240,10 +236,10 @@ export default function SeoLandingPage() {
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: "auto", opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.2 }}
+                        transition={{ duration: 0.15 }}
                         className="overflow-hidden"
                       >
-                        <p className="text-xs sm:text-sm text-gray-500 dark:text-[#94A3B8] pt-2 leading-relaxed">
+                        <p className="text-xs sm:text-sm text-[#555555] dark:text-[#B8BDCA] pt-1.5 leading-relaxed">
                           {faq.answer}
                         </p>
                       </motion.div>
@@ -256,37 +252,37 @@ export default function SeoLandingPage() {
 
         </div>
 
-        {/* Right Sidebar/Internal Linking */}
+        {/* Right Sidebar */}
         <div className="space-y-6">
-          <div className="bg-gradient-to-br from-indigo-500 to-purple-600 text-white p-6 sm:p-8 rounded-2xl shadow-md">
-            <h3 className="font-extrabold text-lg sm:text-xl mb-3">Academic Sections</h3>
-            <p className="text-xs text-indigo-100 leading-relaxed mb-6">
+          <div className="bg-[#2C3480] text-white p-6 sm:p-7 rounded-2xl shadow-sm">
+            <h3 className="font-bold text-lg mb-2">Academic Sections</h3>
+            <p className="text-xs text-white/80 leading-relaxed mb-5">
               Our materials are sorted carefully to ensure that JITS engineering students can locate previous papers and target subject notes immediately.
             </p>
-            <div className="space-y-3 text-xs font-semibold">
+            <div className="space-y-2.5 text-xs font-semibold">
               <div className="flex items-center gap-2.5">
-                <FaGraduationCap className="w-4 h-4 text-indigo-200" />
+                <FaGraduationCap className="w-4 h-4 text-white/80" />
                 <span>JNTUH R22 Regulation compliant</span>
               </div>
               <div className="flex items-center gap-2.5">
-                <FaBookOpen className="w-4 h-4 text-indigo-200" />
+                <FaBookOpen className="w-4 h-4 text-white/80" />
                 <span>B.Tech CSE & AIML Resources</span>
               </div>
             </div>
           </div>
 
-          {/* Internal link block for the 5 SEO pages */}
-          <div className="bg-white dark:bg-[#111827] border border-gray-200 dark:border-gray-800 p-5 rounded-2xl shadow-sm text-left">
-            <h4 className="font-bold text-sm text-gray-900 dark:text-[#F8FAFC] mb-3">JITS Study Materials Links</h4>
-            <ul className="text-xs text-gray-500 dark:text-[#94A3B8] space-y-3">
+          {/* Internal Links Block */}
+          <div className="bg-white dark:bg-[#14171F] border border-[#E5E5E5] dark:border-[#292E3A] p-5 rounded-2xl shadow-sm text-left">
+            <h4 className="font-bold text-sm text-[#000000] dark:text-[#FFFFFF] mb-3">JITS Study Materials Links</h4>
+            <ul className="text-xs text-[#555555] dark:text-[#B8BDCA] space-y-2.5">
               {LANDING_PAGES_LIST.map((item) => (
                 <li key={item.path}>
                   <button
                     onClick={() => handlePageChange(item.path)}
-                    className={`hover:underline block text-left font-semibold ${
+                    className={`block text-left ${
                       activePath === item.path 
-                        ? "text-indigo-600 dark:text-[#6366F1] font-bold" 
-                        : "text-gray-650 dark:text-gray-400 hover:text-indigo-500"
+                        ? "text-[#2C3480] dark:text-[#3D4CC4] font-bold" 
+                        : "text-[#555555] dark:text-[#B8BDCA] hover:text-[#000000] dark:hover:text-[#FFFFFF]"
                     }`}
                   >
                     • {item.label}

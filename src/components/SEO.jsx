@@ -3,11 +3,15 @@ import { useLocation } from "react-router-dom";
 
 export default function SEO({ title, description, yearNumber, subjectName }) {
   const location = useLocation();
-  const canonicalUrl = `https://jitsnotes.web.app${location.pathname}${location.search}`;
+  const rawPath = location.pathname === "/" ? "/" : location.pathname;
+  const canonicalUrl = `https://jitsnotes.web.app${rawPath}`;
+
+  const isAdminPage = location.pathname === "/admin-login" || location.pathname.startsWith("/admin");
 
   useEffect(() => {
     // 1. Update Title
-    document.title = title || "JITS Notes | JNTUH R22 Notes, Previous Papers & Important Questions";
+    const defaultTitle = "JITS Notes | JNTUH R22 Notes, Previous Papers & Study Material";
+    document.title = title ? (title.includes("JITS Notes") ? title : `${title} | JITS Notes`) : defaultTitle;
 
     // Helper function to set or create meta tags
     const setMetaTag = (attrName, attrValue, contentValue) => {
@@ -32,108 +36,119 @@ export default function SEO({ title, description, yearNumber, subjectName }) {
     };
 
     // 2. Meta Description
-    const desc = description || "Free JNTUH R22 Notes, Previous Question Papers, Important Questions and Study Resources for JITS CSE & AIML Students.";
+    const desc = description || "JITS Notes provides free JNTUH B.Tech R22 notes, CSE and AIML study material, previous question papers, important questions, and engineering lecture notes.";
     setMetaTag("name", "description", desc);
 
-    // 3. Robots
-    setMetaTag("name", "robots", "index, follow");
+    // 3. Application Name & Author
+    setMetaTag("name", "application-name", "JITS Notes");
+    setMetaTag("name", "author", "MOHD DANISH");
 
-    // 4. Open Graph Tags
-    setMetaTag("property", "og:title", "JITS Notes");
-    setMetaTag("property", "og:description", "Free Notes, Previous Papers and Important Questions for JITS Students.");
+    // 4. Robots - Block indexing for admin routes
+    if (isAdminPage) {
+      setMetaTag("name", "robots", "noindex, nofollow");
+    } else {
+      setMetaTag("name", "robots", "index, follow");
+    }
+
+    // 5. Open Graph Tags
+    setMetaTag("property", "og:title", title ? (title.includes("JITS Notes") ? title : `${title} | JITS Notes`) : defaultTitle);
+    setMetaTag("property", "og:description", desc);
     setMetaTag("property", "og:type", "website");
     setMetaTag("property", "og:url", canonicalUrl);
     setMetaTag("property", "og:image", "https://jitsnotes.web.app/icons.png");
     setMetaTag("property", "og:site_name", "JITS Notes");
 
-    // 5. Twitter/X Meta Tags
-    setMetaTag("name", "twitter:card", "summary");
-    setMetaTag("name", "twitter:title", "JITS Notes");
-    setMetaTag("name", "twitter:description", "Free Notes, Previous Papers and Important Questions for JITS Students.");
+    // 6. Twitter/X Meta Tags
+    setMetaTag("name", "twitter:card", "summary_large_image");
+    setMetaTag("name", "twitter:title", title ? (title.includes("JITS Notes") ? title : `${title} | JITS Notes`) : defaultTitle);
+    setMetaTag("name", "twitter:description", desc);
     setMetaTag("name", "twitter:image", "https://jitsnotes.web.app/icons.png");
 
-    // 6. Canonical link
+    // 7. Canonical link
     setLinkTag("canonical", canonicalUrl);
 
-    // 7. Structured Data (JSON-LD)
+    // 8. Structured Data (JSON-LD) - Skip on admin pages
     const existingScripts = document.querySelectorAll('script[type="application/ld+json"]');
     existingScripts.forEach((script) => script.remove());
 
-    // Website structured data
-    const websiteSchema = {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "JITS Notes",
-      "url": "https://jitsnotes.web.app",
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": "https://jitsnotes.web.app/resources?search={search_term_string}",
-        "query-input": "required name=search_term_string"
-      }
-    };
+    if (!isAdminPage) {
+      // Website structured data
+      const websiteSchema = {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "JITS Notes",
+        "alternateName": "JITS B.Tech Notes",
+        "url": "https://jitsnotes.web.app/",
+        "description": "JITS Notes is a free educational platform providing JNTUH B.Tech R22 notes, CSE and AIML study material, previous question papers, important questions, and engineering lecture notes.",
+        "author": {
+          "@type": "Person",
+          "name": "MOHD DANISH"
+        },
+        "publisher": {
+          "@type": "Organization",
+          "name": "JITS Notes",
+          "url": "https://jitsnotes.web.app/",
+          "logo": "https://jitsnotes.web.app/icons.png"
+        }
+      };
 
-    // Educational Organization structured data
-    const orgSchema = {
-      "@context": "https://schema.org",
-      "@type": "EducationalOrganization",
-      "name": "Jyothishmathi Institute of Technology and Science (JITS)",
-      "url": "https://jitsnotes.web.app",
-      "logo": "https://jitsnotes.web.app/icons.png",
-      "sameAs": [
-        "https://github.com/mohddanish305",
-        "https://www.linkedin.com/in/mohd-danish-986a5b2a3/"
-      ]
-    };
+      // Educational Organization structured data
+      const orgSchema = {
+        "@context": "https://schema.org",
+        "@type": "EducationalOrganization",
+        "name": "JITS Notes",
+        "url": "https://jitsnotes.web.app/",
+        "logo": "https://jitsnotes.web.app/icons.png",
+        "description": "JITS Notes is a free educational platform providing JNTUH B.Tech R22 notes, CSE and AIML study material, previous question papers, important questions, and engineering lecture notes.",
+        "sameAs": [
+          "https://github.com/mohddanish305",
+          "https://www.linkedin.com/in/mohd-danish-986a5b2a3/"
+        ]
+      };
 
-    // BreadcrumbList structured data
-    const breadcrumbItems = [
-      {
-        "@type": "ListItem",
-        "position": 1,
-        "name": "Home",
-        "item": "https://jitsnotes.web.app/"
-      }
-    ];
+      // BreadcrumbList structured data
+      const breadcrumbItems = [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://jitsnotes.web.app/"
+        }
+      ];
 
-    if (location.pathname === "/resources") {
-      breadcrumbItems.push({
-        "@type": "ListItem",
-        "position": 2,
-        "name": "Resources Repository",
-        "item": "https://jitsnotes.web.app/resources"
-      });
-    } else if (yearNumber) {
-      breadcrumbItems.push({
-        "@type": "ListItem",
-        "position": 2,
-        "name": `Year ${yearNumber}`,
-        "item": `https://jitsnotes.web.app/?year=${yearNumber}`
-      });
-      if (subjectName) {
+      if (yearNumber) {
         breadcrumbItems.push({
           "@type": "ListItem",
-          "position": 3,
-          "name": subjectName,
-          "item": `https://jitsnotes.web.app/?year=${yearNumber}&subject=${encodeURIComponent(subjectName)}`
+          "position": 2,
+          "name": `Year ${yearNumber}`,
+          "item": `https://jitsnotes.web.app/year/${yearNumber}`
         });
+        if (subjectName) {
+          breadcrumbItems.push({
+            "@type": "ListItem",
+            "position": 3,
+            "name": subjectName,
+            "item": `https://jitsnotes.web.app/year/${yearNumber}/${encodeURIComponent(subjectName.toLowerCase())}`
+          });
+        }
       }
+
+      const breadcrumbSchema = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": breadcrumbItems
+      };
+
+      const schemas = [websiteSchema, orgSchema, breadcrumbSchema];
+      schemas.forEach((schema) => {
+        const script = document.createElement("script");
+        script.type = "application/ld+json";
+        script.text = JSON.stringify(schema);
+        document.head.appendChild(script);
+      });
     }
 
-    const breadcrumbSchema = {
-      "@context": "https://schema.org",
-      "@type": "BreadcrumbList",
-      "itemListElement": breadcrumbItems
-    };
-
-    const schemas = [websiteSchema, orgSchema, breadcrumbSchema];
-    schemas.forEach((schema) => {
-      const script = document.createElement("script");
-      script.type = "application/ld+json";
-      script.text = JSON.stringify(schema);
-      document.head.appendChild(script);
-    });
-
-  }, [title, description, canonicalUrl, location.pathname, yearNumber, subjectName]);
+  }, [title, description, canonicalUrl, location.pathname, yearNumber, subjectName, isAdminPage]);
 
   return null;
 }

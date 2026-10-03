@@ -1,4 +1,3 @@
-import React from "react";
 
 export const FaGithub = ({ className = "w-4 h-4" }) => (
   <svg viewBox="0 0 24 24" className={className} fill="currentColor" aria-hidden="true">
