@@ -185,29 +185,29 @@ export default function SeoLandingPage() {
           {/* Quick Links Grid */}
           <div className="grid sm:grid-cols-2 gap-4">
             
-            <div className="bg-white dark:bg-[#14171F] border border-[#E5E5E5] dark:border-[#292E3A] p-5 rounded-2xl shadow-sm">
-              <div className="w-9 h-9 rounded-xl bg-[#2C3480]/10 dark:bg-[#3D4CC4]/20 flex items-center justify-center mb-3 text-[#2C3480] dark:text-[#FFFFFF]">
+            <div className="bg-[#FFFFFF] dark:bg-[#0A0A0A] border border-[#EAEAEA] dark:border-[#222222] p-5 rounded-2xl shadow-subtle dark:shadow-subtle-dark">
+              <div className="w-9 h-9 rounded-xl bg-[#F7F7F7] dark:bg-[#111111] border border-[#EAEAEA] dark:border-[#222222] flex items-center justify-center mb-3 text-[#111111] dark:text-white">
                 <FaBookOpen className="w-4 h-4" />
               </div>
-              <h3 className="font-bold text-sm text-[#000000] dark:text-[#FFFFFF] mb-1.5">B.Tech Year Notes</h3>
-              <p className="text-xs text-[#555555] dark:text-[#B8BDCA] mb-3 leading-relaxed">Select your academic year to browse matching lecture files, question banks, and notes.</p>
-              <div className="flex flex-wrap gap-1.5 text-xs font-semibold">
-                <button onClick={() => navigate("/year/1")} className="px-2.5 py-1 rounded-lg bg-[#F7F8FA] dark:bg-[#1A1E28] text-[#555555] dark:text-[#B8BDCA] hover:bg-[#2C3480] hover:text-white dark:hover:bg-[#3D4CC4] transition border border-[#E5E5E5] dark:border-[#292E3A]">Year 1</button>
-                <button onClick={() => navigate("/year/2")} className="px-2.5 py-1 rounded-lg bg-[#F7F8FA] dark:bg-[#1A1E28] text-[#555555] dark:text-[#B8BDCA] hover:bg-[#2C3480] hover:text-white dark:hover:bg-[#3D4CC4] transition border border-[#E5E5E5] dark:border-[#292E3A]">Year 2</button>
-                <button onClick={() => navigate("/year/3")} className="px-2.5 py-1 rounded-lg bg-[#F7F8FA] dark:bg-[#1A1E28] text-[#555555] dark:text-[#B8BDCA] hover:bg-[#2C3480] hover:text-white dark:hover:bg-[#3D4CC4] transition border border-[#E5E5E5] dark:border-[#292E3A]">Year 3</button>
-                <button onClick={() => navigate("/year/4")} className="px-2.5 py-1 rounded-lg bg-[#F7F8FA] dark:bg-[#1A1E28] text-[#555555] dark:text-[#B8BDCA] hover:bg-[#2C3480] hover:text-white dark:hover:bg-[#3D4CC4] transition border border-[#E5E5E5] dark:border-[#292E3A]">Year 4</button>
+              <h3 className="font-semibold text-sm text-[#111111] dark:text-white mb-1.5">B.Tech Year Notes</h3>
+              <p className="text-xs text-[#666666] dark:text-[#B3B3B3] mb-3 leading-relaxed">Select your academic year to browse matching lecture files, question banks, and notes.</p>
+              <div className="flex flex-wrap gap-1.5 text-xs font-medium">
+                <button onClick={() => navigate("/year/1")} className="px-2.5 py-1 rounded-lg bg-[#F7F7F7] dark:bg-[#111111] text-[#111111] dark:text-[#FFFFFF] hover:bg-[#111111] hover:text-white dark:hover:bg-white dark:hover:text-[#111111] transition border border-[#EAEAEA] dark:border-[#222222]">Year 1</button>
+                <button onClick={() => navigate("/year/2")} className="px-2.5 py-1 rounded-lg bg-[#F7F7F7] dark:bg-[#111111] text-[#111111] dark:text-[#FFFFFF] hover:bg-[#111111] hover:text-white dark:hover:bg-white dark:hover:text-[#111111] transition border border-[#EAEAEA] dark:border-[#222222]">Year 2</button>
+                <button onClick={() => navigate("/year/3")} className="px-2.5 py-1 rounded-lg bg-[#F7F7F7] dark:bg-[#111111] text-[#111111] dark:text-[#FFFFFF] hover:bg-[#111111] hover:text-white dark:hover:bg-white dark:hover:text-[#111111] transition border border-[#EAEAEA] dark:border-[#222222]">Year 3</button>
+                <button onClick={() => navigate("/year/4")} className="px-2.5 py-1 rounded-lg bg-[#F7F7F7] dark:bg-[#111111] text-[#111111] dark:text-[#FFFFFF] hover:bg-[#111111] hover:text-white dark:hover:bg-white dark:hover:text-[#111111] transition border border-[#EAEAEA] dark:border-[#222222]">Year 4</button>
               </div>
             </div>
 
-            <div className="bg-white dark:bg-[#14171F] border border-[#E5E5E5] dark:border-[#292E3A] p-5 rounded-2xl shadow-sm">
-              <div className="w-9 h-9 rounded-xl bg-[#2C3480]/10 dark:bg-[#3D4CC4]/20 flex items-center justify-center mb-3 text-[#2C3480] dark:text-[#FFFFFF]">
+            <div className="bg-[#FFFFFF] dark:bg-[#0A0A0A] border border-[#EAEAEA] dark:border-[#222222] p-5 rounded-2xl shadow-subtle dark:shadow-subtle-dark">
+              <div className="w-9 h-9 rounded-xl bg-[#F7F7F7] dark:bg-[#111111] border border-[#EAEAEA] dark:border-[#222222] flex items-center justify-center mb-3 text-[#111111] dark:text-white">
                 <FaFolderOpen className="w-4 h-4" />
               </div>
-              <h3 className="font-bold text-sm text-[#000000] dark:text-[#FFFFFF] mb-1.5">Academic Notes Catalog</h3>
-              <p className="text-xs text-[#555555] dark:text-[#B8BDCA] mb-3 leading-relaxed">Access lecture notes, previous papers, and organized academic study materials.</p>
+              <h3 className="font-semibold text-sm text-[#111111] dark:text-white mb-1.5">Academic Notes Catalog</h3>
+              <p className="text-xs text-[#666666] dark:text-[#B3B3B3] mb-3 leading-relaxed">Access lecture notes, previous papers, and organized academic study materials.</p>
               <button 
                 onClick={() => navigate("/year/1")} 
-                className="text-xs font-semibold text-[#2C3480] dark:text-[#3D4CC4] hover:underline"
+                className="text-xs font-semibold text-[#111111] dark:text-white hover:underline"
               >
                 Browse Academic Notes →
               </button>
@@ -216,19 +216,19 @@ export default function SeoLandingPage() {
           </div>
 
           {/* FAQ Accordion Section */}
-          <div className="bg-white dark:bg-[#14171F] border border-[#E5E5E5] dark:border-[#292E3A] p-6 sm:p-7 rounded-2xl shadow-sm">
-            <h2 className="text-xl sm:text-2xl font-bold mb-4 text-[#000000] dark:text-[#FFFFFF]">
+          <div className="bg-white dark:bg-[#141517] border border-[#E4E7EB] dark:border-[#2B2F34] p-6 sm:p-7 rounded-2xl shadow-subtle dark:shadow-subtle-dark">
+            <h2 className="text-xl sm:text-2xl font-bold mb-4 text-[#141517] dark:text-white">
               Frequently Asked Questions (FAQ)
             </h2>
             <div className="space-y-3">
               {page.faqs.map((faq, index) => (
-                <div key={index} className="border-b border-[#E5E5E5] dark:border-[#292E3A] pb-3 last:border-b-0">
+                <div key={index} className="border-b border-[#E4E7EB] dark:border-[#2B2F34] pb-3 last:border-b-0">
                   <button
                     onClick={() => toggleFaq(index)}
-                    className="w-full flex items-center justify-between text-left font-semibold text-sm sm:text-base text-[#000000] dark:text-[#FFFFFF] py-2"
+                    className="w-full flex items-center justify-between text-left font-semibold text-sm sm:text-base text-[#141517] dark:text-white py-2"
                   >
                     <span>{faq.question}</span>
-                    {openFaqIndex === index ? <FaChevronUp className="w-4 h-4 text-[#858B99]" /> : <FaChevronDown className="w-4 h-4 text-[#858B99]" />}
+                    {openFaqIndex === index ? <FaChevronUp className="w-4 h-4 text-[#8A8F98]" /> : <FaChevronDown className="w-4 h-4 text-[#8A8F98]" />}
                   </button>
                   <AnimatePresence initial={false}>
                     {openFaqIndex === index && (
@@ -239,7 +239,7 @@ export default function SeoLandingPage() {
                         transition={{ duration: 0.15 }}
                         className="overflow-hidden"
                       >
-                        <p className="text-xs sm:text-sm text-[#555555] dark:text-[#B8BDCA] pt-1.5 leading-relaxed">
+                        <p className="text-xs sm:text-sm text-[#5F6368] dark:text-[#B8BDCA] pt-1.5 leading-relaxed">
                           {faq.answer}
                         </p>
                       </motion.div>
@@ -254,35 +254,35 @@ export default function SeoLandingPage() {
 
         {/* Right Sidebar */}
         <div className="space-y-6">
-          <div className="bg-[#2C3480] text-white p-6 sm:p-7 rounded-2xl shadow-sm">
-            <h3 className="font-bold text-lg mb-2">Academic Sections</h3>
-            <p className="text-xs text-white/80 leading-relaxed mb-5">
+          <div className="bg-[#0A0A0A] text-white p-6 sm:p-7 rounded-2xl shadow-subtle dark:shadow-subtle-dark border border-[#222222]">
+            <h3 className="font-semibold text-lg mb-2">Academic Sections</h3>
+            <p className="text-xs text-[#B3B3B3] leading-relaxed mb-5">
               Our materials are sorted carefully to ensure that JITS engineering students can locate previous papers and target subject notes immediately.
             </p>
-            <div className="space-y-2.5 text-xs font-semibold">
+            <div className="space-y-2.5 text-xs font-medium">
               <div className="flex items-center gap-2.5">
-                <FaGraduationCap className="w-4 h-4 text-white/80" />
+                <FaGraduationCap className="w-4 h-4 text-white" />
                 <span>JNTUH R22 Regulation compliant</span>
               </div>
               <div className="flex items-center gap-2.5">
-                <FaBookOpen className="w-4 h-4 text-white/80" />
+                <FaBookOpen className="w-4 h-4 text-white" />
                 <span>B.Tech CSE & AIML Resources</span>
               </div>
             </div>
           </div>
 
           {/* Internal Links Block */}
-          <div className="bg-white dark:bg-[#14171F] border border-[#E5E5E5] dark:border-[#292E3A] p-5 rounded-2xl shadow-sm text-left">
-            <h4 className="font-bold text-sm text-[#000000] dark:text-[#FFFFFF] mb-3">JITS Study Materials Links</h4>
-            <ul className="text-xs text-[#555555] dark:text-[#B8BDCA] space-y-2.5">
+          <div className="bg-[#FFFFFF] dark:bg-[#0A0A0A] border border-[#EAEAEA] dark:border-[#222222] p-5 rounded-2xl shadow-subtle dark:shadow-subtle-dark text-left">
+            <h4 className="font-semibold text-sm text-[#111111] dark:text-white mb-3">JITS Study Materials Links</h4>
+            <ul className="text-xs text-[#666666] dark:text-[#B3B3B3] space-y-2.5">
               {LANDING_PAGES_LIST.map((item) => (
                 <li key={item.path}>
                   <button
                     onClick={() => handlePageChange(item.path)}
                     className={`block text-left ${
                       activePath === item.path 
-                        ? "text-[#2C3480] dark:text-[#3D4CC4] font-bold" 
-                        : "text-[#555555] dark:text-[#B8BDCA] hover:text-[#000000] dark:hover:text-[#FFFFFF]"
+                        ? "text-[#111111] dark:text-white font-semibold underline" 
+                        : "text-[#666666] dark:text-[#B3B3B3] hover:text-[#111111] dark:hover:text-white"
                     }`}
                   >
                     • {item.label}

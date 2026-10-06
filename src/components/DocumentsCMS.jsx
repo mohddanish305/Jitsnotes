@@ -118,7 +118,6 @@ function CreateSubjectModal({ initialYear, onClose, onCreated }) {
           short_name: shortName.trim().toUpperCase(),
           year_id: Number(yearId),
           description: description.trim() || null,
-          drive_link: null,
           is_active: true,
           is_deleted: false,
         })
@@ -168,7 +167,7 @@ function CreateSubjectModal({ initialYear, onClose, onCreated }) {
             placeholder="e.g. Applied Physics"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2.5 text-sm text-gray-900 dark:text-[#FFFFFF] placeholder-gray-400 focus:border-[#2C3480] focus:outline-none"
+            className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2.5 text-sm text-gray-900 dark:text-[#FFFFFF] placeholder-gray-400 focus:border-[#111111] dark:focus:border-white focus:outline-none"
           />
         </div>
 
@@ -182,7 +181,7 @@ function CreateSubjectModal({ initialYear, onClose, onCreated }) {
             placeholder="e.g. AP"
             value={shortName}
             onChange={(e) => setShortName(e.target.value)}
-            className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2.5 text-sm uppercase text-gray-900 dark:text-[#FFFFFF] placeholder-gray-400 focus:border-[#2C3480] focus:outline-none"
+            className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2.5 text-sm uppercase text-gray-900 dark:text-[#FFFFFF] placeholder-gray-400 focus:border-[#111111] dark:focus:border-white focus:outline-none"
           />
         </div>
 
@@ -193,7 +192,7 @@ function CreateSubjectModal({ initialYear, onClose, onCreated }) {
           <select
             value={yearId}
             onChange={(e) => setYearId(Number(e.target.value))}
-            className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2.5 text-sm text-gray-900 dark:text-[#FFFFFF] focus:border-[#2C3480] focus:outline-none"
+            className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2.5 text-sm text-gray-900 dark:text-[#FFFFFF] focus:border-[#111111] dark:focus:border-white focus:outline-none"
           >
             {YEAR_TABS.map((y) => (
               <option key={y.id} value={y.id}>
@@ -212,7 +211,7 @@ function CreateSubjectModal({ initialYear, onClose, onCreated }) {
             placeholder="Optional subject description or course notes"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2 text-sm text-gray-900 dark:text-[#FFFFFF] placeholder-gray-400 focus:border-[#2C3480] focus:outline-none"
+            className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2 text-sm text-gray-900 dark:text-[#FFFFFF] placeholder-gray-400 focus:border-[#111111] dark:focus:border-white focus:outline-none"
           />
         </div>
 
@@ -228,7 +227,7 @@ function CreateSubjectModal({ initialYear, onClose, onCreated }) {
           <button
             type="submit"
             disabled={saving}
-            className="rounded-xl bg-[#2C3480] hover:bg-[#3D4CC4] disabled:opacity-50 px-4 py-2 text-xs font-bold text-white shadow-sm transition-colors"
+            className="rounded-xl bg-[#111111] hover:bg-[#222222] text-white dark:bg-white dark:hover:bg-[#EAEAEA] dark:text-[#111111] disabled:opacity-50 px-4 py-2 text-xs font-medium shadow-sm transition-colors"
           >
             {saving ? "Creating..." : "Create Subject"}
           </button>
@@ -315,7 +314,7 @@ function EditSubjectModal({ subject, onClose, onUpdated }) {
             required
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2.5 text-sm text-gray-900 dark:text-[#FFFFFF] focus:border-[#2C3480] focus:outline-none"
+            className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2.5 text-sm text-gray-900 dark:text-[#FFFFFF] focus:border-[#111111] dark:focus:border-white focus:outline-none"
           />
         </div>
 
@@ -328,7 +327,7 @@ function EditSubjectModal({ subject, onClose, onUpdated }) {
             required
             value={shortName}
             onChange={(e) => setShortName(e.target.value)}
-            className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2.5 text-sm uppercase text-gray-900 dark:text-[#FFFFFF] focus:border-[#2C3480] focus:outline-none"
+            className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2.5 text-sm uppercase text-gray-900 dark:text-[#FFFFFF] focus:border-[#111111] dark:focus:border-white focus:outline-none"
           />
         </div>
 
@@ -339,7 +338,7 @@ function EditSubjectModal({ subject, onClose, onUpdated }) {
           <select
             value={yearId}
             onChange={(e) => setYearId(Number(e.target.value))}
-            className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2.5 text-sm text-gray-900 dark:text-[#FFFFFF] focus:border-[#2C3480] focus:outline-none"
+            className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2.5 text-sm text-gray-900 dark:text-[#FFFFFF] focus:border-[#111111] dark:focus:border-white focus:outline-none"
           >
             {YEAR_TABS.map((y) => (
               <option key={y.id} value={y.id}>
@@ -357,7 +356,7 @@ function EditSubjectModal({ subject, onClose, onUpdated }) {
             rows={2}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2 text-sm text-gray-900 dark:text-[#FFFFFF] focus:border-[#2C3480] focus:outline-none"
+            className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2 text-sm text-gray-900 dark:text-[#FFFFFF] focus:border-[#111111] dark:focus:border-white focus:outline-none"
           />
         </div>
 
@@ -367,7 +366,7 @@ function EditSubjectModal({ subject, onClose, onUpdated }) {
             id="subject_active"
             checked={isActive}
             onChange={(e) => setIsActive(e.target.checked)}
-            className="h-4 w-4 rounded border-gray-300 text-[#2C3480] focus:ring-[#2C3480]"
+            className="h-4 w-4 rounded border-gray-300 text-[#111111] dark:text-white focus:ring-[#111111] dark:focus:ring-white"
           />
           <label htmlFor="subject_active" className="text-xs font-semibold text-gray-700 dark:text-[#B8BDCA]">
             Active
@@ -386,7 +385,7 @@ function EditSubjectModal({ subject, onClose, onUpdated }) {
           <button
             type="submit"
             disabled={saving}
-            className="rounded-xl bg-[#2C3480] hover:bg-[#3D4CC4] disabled:opacity-50 px-4 py-2 text-xs font-bold text-white shadow-sm transition-colors"
+            className="rounded-xl bg-[#111111] hover:bg-[#222222] text-white dark:bg-white dark:hover:bg-[#EAEAEA] dark:text-[#111111] disabled:opacity-50 px-4 py-2 text-xs font-medium shadow-sm transition-colors"
           >
             {saving ? "Saving..." : "Save Changes"}
           </button>
@@ -553,7 +552,7 @@ function CreateFolderModal({ subject, existingFolders, onClose, onCreated }) {
             placeholder="e.g. Unit 1, Important Questions, Previous Papers"
             value={folderName}
             onChange={(e) => setFolderName(e.target.value)}
-            className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2.5 text-sm text-gray-900 dark:text-[#FFFFFF] placeholder-gray-400 focus:border-[#2C3480] focus:outline-none"
+            className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2.5 text-sm text-gray-900 dark:text-[#FFFFFF] placeholder-gray-400 focus:border-[#111111] dark:focus:border-white focus:outline-none"
           />
         </div>
 
@@ -569,7 +568,7 @@ function CreateFolderModal({ subject, existingFolders, onClose, onCreated }) {
           <button
             type="submit"
             disabled={saving}
-            className="rounded-xl bg-[#2C3480] hover:bg-[#3D4CC4] disabled:opacity-50 px-4 py-2 text-xs font-bold text-white shadow-sm transition-colors"
+            className="rounded-xl bg-[#111111] hover:bg-[#222222] text-white dark:bg-white dark:hover:bg-[#EAEAEA] dark:text-[#111111] disabled:opacity-50 px-4 py-2 text-xs font-medium shadow-sm transition-colors"
           >
             {saving ? "Creating..." : "Create Folder"}
           </button>
@@ -580,181 +579,156 @@ function CreateFolderModal({ subject, existingFolders, onClose, onCreated }) {
 }
 
 // ==========================================
-// UPLOAD NOTES MODAL (MULTIPLE PDF SUPPORT)
+// SIMPLE ADD NOTE MODAL (REQUIREMENTS 9, 10, 11)
 // ==========================================
-function UploadNotesModal({
-  year,
-  subject,
-  initialFolderId,
-  folders,
-  categories,
+function SimpleAddNoteModal({
+  years = YEAR_TABS,
+  subjects = [],
+  folders = [],
+  categories = [],
+  initialYear = 1,
+  initialSubjectId = "",
+  initialFolderId = "",
   onClose,
   onUploaded,
 }) {
-  const [selectedFolderId, setSelectedFolderId] = useState(initialFolderId || "");
-  const [fileItems, setFileItems] = useState([]);
+  const [title, setTitle] = useState("");
+  const [yearId, setYearId] = useState(initialYear || 1);
+  const [subjectId, setSubjectId] = useState(initialSubjectId || "");
+  const [unitId, setUnitId] = useState(initialFolderId || "");
+  const [categoryId, setCategoryId] = useState("");
+  const [file, setFile] = useState(null);
+  const [isActive, setIsActive] = useState(true);
   const [isUploading, setIsUploading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(null); // { current, total, currentName }
-  const [globalError, setGlobalError] = useState(null);
+  const [statusMessage, setStatusMessage] = useState(null);
+  const [error, setError] = useState(null);
   const fileInputRef = useRef(null);
 
-  const defaultCategoryId = useMemo(() => {
-    const studyMaterial = categories.find((c) => /study material|notes/i.test(c.name));
-    return studyMaterial ? studyMaterial.id : categories[0]?.id || "";
-  }, [categories]);
+  // Filter subjects by chosen year
+  const availableSubjects = useMemo(() => {
+    return subjects.filter((s) => Number(s.year_id) === Number(yearId));
+  }, [subjects, yearId]);
 
-  const addFiles = (files) => {
-    const newItems = [];
-    for (const file of files) {
-      if (file.type !== "application/pdf" && !file.name.toLowerCase().endsWith(".pdf")) {
-        setGlobalError("Only PDF files are supported.");
-        continue;
+  // Set default subject if current subjectId does not belong to selected year
+  useEffect(() => {
+    if (availableSubjects.length > 0) {
+      const exists = availableSubjects.some((s) => s.id === subjectId);
+      if (!exists) {
+        setSubjectId(availableSubjects[0].id);
       }
-      if (file.size > 25 * 1024 * 1024) {
-        setGlobalError(`File "${file.name}" exceeds the 25 MB limit.`);
-        continue;
-      }
+    } else {
+      setSubjectId("");
+    }
+  }, [availableSubjects, subjectId]);
 
-      newItems.push({
-        id: crypto.randomUUID(),
-        file,
-        title: cleanTitleFromFilename(file.name),
-        categoryId: defaultCategoryId,
-        status: "idle", // 'idle' | 'uploading' | 'done' | 'error'
-        error: null,
-      });
+  // Filter units/folders for currently chosen subject
+  const availableFolders = useMemo(() => {
+    if (!subjectId) return [];
+    return folders.filter((f) => f.subject_id === subjectId);
+  }, [folders, subjectId]);
+
+  // Default category: 'study material' or 'notes'
+  useEffect(() => {
+    if (categories.length > 0 && !categoryId) {
+      const defaultCat = categories.find((c) => /study material|notes/i.test(c.name)) || categories[0];
+      if (defaultCat) setCategoryId(defaultCat.id);
+    }
+  }, [categories, categoryId]);
+
+  const handleFileSelect = (selectedFile) => {
+    if (!selectedFile) return;
+    if (selectedFile.type !== "application/pdf" && !selectedFile.name.toLowerCase().endsWith(".pdf")) {
+      setError("Only PDF files are supported.");
+      return;
+    }
+    if (selectedFile.size > 25 * 1024 * 1024) {
+      setError(`File "${selectedFile.name}" exceeds the 25 MB limit.`);
+      return;
+    }
+    if (selectedFile.size === 0) {
+      setError("Selected file is empty.");
+      return;
     }
 
-    if (newItems.length > 0) {
-      setFileItems((prev) => [...prev, ...newItems]);
-      setGlobalError(null);
+    setFile(selectedFile);
+    setError(null);
+    if (!title.trim()) {
+      setTitle(cleanTitleFromFilename(selectedFile.name));
     }
   };
 
   const handleDrop = (e) => {
     e.preventDefault();
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      addFiles(Array.from(e.dataTransfer.files));
+      handleFileSelect(e.dataTransfer.files[0]);
     }
   };
 
-  const handleFileChange = (e) => {
-    if (e.target.files && e.target.files.length > 0) {
-      addFiles(Array.from(e.target.files));
-      e.target.value = "";
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!file) {
+      setError("Please choose a PDF file to upload.");
+      return;
     }
-  };
-
-  const handleRemoveItem = (id) => {
-    setFileItems((prev) => prev.filter((item) => item.id !== id));
-  };
-
-  const handleTitleChange = (id, newTitle) => {
-    setFileItems((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, title: newTitle } : item))
-    );
-  };
-
-  const handleCategoryChange = (id, newCategoryId) => {
-    setFileItems((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, categoryId: newCategoryId } : item))
-    );
-  };
-
-  const handleUploadAll = async () => {
-    if (fileItems.length === 0) {
-      setGlobalError("Please select at least one PDF file.");
+    if (!title.trim()) {
+      setError("Note Title is required.");
+      return;
+    }
+    if (!subjectId) {
+      setError("Please select a valid subject.");
       return;
     }
 
-    // Validate titles
-    for (const item of fileItems) {
-      if (!item.title.trim()) {
-        setGlobalError("Every note must have a title.");
-        return;
-      }
-    }
-
     setIsUploading(true);
-    setGlobalError(null);
+    setStatusMessage("Uploading...");
+    setError(null);
 
-    const uploadedDocs = [];
-    const failedItems = [];
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("title", title.trim());
+      formData.append("year_id", String(yearId));
+      formData.append("subject_id", subjectId);
+      if (unitId) {
+        formData.append("folder_id", unitId);
+        formData.append("unit_id", unitId);
+      }
+      if (categoryId) {
+        formData.append("category_id", categoryId);
+      }
+      formData.append("is_active", isActive ? "true" : "false");
 
-    for (let i = 0; i < fileItems.length; i++) {
-      const item = fileItems[i];
-      setUploadProgress({
-        current: i + 1,
-        total: fileItems.length,
-        currentName: item.title,
+      const { data, error: uploadErr } = await supabase.functions.invoke("upload-document", {
+        body: formData,
       });
 
-      try {
-        const formData = new FormData();
-        formData.append("file", item.file);
-        formData.append("title", item.title.trim());
-        formData.append("year_id", String(year));
-        formData.append("subject_id", subject.id);
-        if (selectedFolderId) {
-          formData.append("folder_id", selectedFolderId);
-        }
-        formData.append("category_id", item.categoryId);
-
-        const { data, error } = await supabase.functions.invoke("upload-document", {
-          body: formData,
-        });
-
-        if (error || !data?.document) {
-          throw new Error(data?.error || error?.message || "Upload failed");
-        }
-
-        uploadedDocs.push(data.document);
-        setFileItems((prev) =>
-          prev.map((it) => (it.id === item.id ? { ...it, status: "done" } : it))
-        );
-      } catch (err) {
-        failedItems.push({ item, error: err?.message || "Failed" });
-        setFileItems((prev) =>
-          prev.map((it) =>
-            it.id === item.id ? { ...it, status: "error", error: err?.message || "Failed" } : it
-          )
-        );
+      if (uploadErr || !data?.document) {
+        throw new Error(data?.error || uploadErr?.message || "Upload failed");
       }
-    }
 
-    setIsUploading(false);
-    setUploadProgress(null);
-
-    if (uploadedDocs.length > 0) {
-      onUploaded(uploadedDocs);
-    }
-
-    if (failedItems.length === 0) {
-      onClose();
-    } else {
-      setGlobalError(
-        `${uploadedDocs.length} note(s) uploaded successfully. ${failedItems.length} file(s) failed.`
-      );
+      setStatusMessage("Upload successful");
+      if (onUploaded) {
+        onUploaded([data.document]);
+      }
+      setTimeout(() => {
+        onClose();
+      }, 700);
+    } catch (err) {
+      console.error("[SimpleAddNoteModal] Upload error:", err);
+      setError(friendlyError(err, "Upload failed. Please verify the file and try again."));
+      setStatusMessage("Upload failed");
+      setIsUploading(false);
     }
   };
 
-  const targetFolder = folders.find((f) => f.id === selectedFolderId);
-
   return (
-    <Modal onClose={onClose} maxWidth="max-w-2xl">
-      {/* Header */}
+    <Modal onClose={onClose} maxWidth="max-w-xl">
       <div className="flex items-center justify-between border-b border-gray-200 dark:border-[#292E3A] px-6 py-4">
         <div>
-          <h2 className="text-base font-bold text-gray-900 dark:text-[#FFFFFF]">Add Notes</h2>
-          <div className="flex items-center gap-1.5 mt-0.5 text-xs text-gray-500 dark:text-[#858B99]">
-            <span>{year}th Year</span>
-            <span>/</span>
-            <span className="font-semibold text-gray-700 dark:text-[#B8BDCA]">{subject.short_name || subject.name}</span>
-            <span>/</span>
-            <span className="text-[#2C3480] dark:text-[#AAB3FF] font-semibold">
-              {targetFolder ? targetFolder.name : "No Folder"}
-            </span>
-          </div>
+          <h2 className="text-base font-bold text-gray-900 dark:text-[#FFFFFF]">Add Note</h2>
+          <p className="text-xs text-gray-500 dark:text-[#858B99]">
+            Upload PDF note to private Backblaze B2 storage
+          </p>
         </div>
         <button
           type="button"
@@ -768,192 +742,221 @@ function UploadNotesModal({
         </button>
       </div>
 
-      <div className="p-6 overflow-y-auto space-y-5 flex-1">
-        {globalError && (
-          <div className="rounded-xl bg-red-50 dark:bg-red-950/40 p-3 text-xs text-red-700 dark:text-red-300 border border-red-200 dark:border-red-900/40 flex items-center justify-between">
-            <span>{globalError}</span>
-            <button
-              type="button"
-              onClick={() => setGlobalError(null)}
-              className="text-red-500 hover:text-red-700 ml-2 font-bold"
-            >
-              ✕
-            </button>
+      <form onSubmit={handleSubmit} className="p-6 space-y-4 overflow-y-auto max-h-[75vh]">
+        {error && (
+          <div className="rounded-xl bg-red-50 dark:bg-red-950/40 p-3 text-xs text-red-700 dark:text-red-300 border border-red-200 dark:border-red-900/40">
+            {error}
           </div>
         )}
 
-        {/* Folder Destination Selector */}
+        {statusMessage === "Upload successful" && (
+          <div className="rounded-xl bg-green-50 dark:bg-green-950/40 p-3 text-xs text-green-700 dark:text-green-300 border border-green-200 dark:border-green-900/40">
+            ✓ Upload successful! Adding note to catalog...
+          </div>
+        )}
+
+        {/* 1. Note Title */}
         <div>
           <label className="block text-xs font-semibold text-gray-700 dark:text-[#B8BDCA] mb-1">
-            Folder (Optional)
+            1. Note Title *
           </label>
-          <select
-            value={selectedFolderId}
-            onChange={(e) => setSelectedFolderId(e.target.value)}
-            disabled={isUploading}
-            className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2.5 text-sm text-gray-900 dark:text-[#FFFFFF] focus:border-[#2C3480] focus:outline-none"
-          >
-            <option value="">No Folder (Direct under Subject)</option>
-            {folders.map((f) => (
-              <option key={f.id} value={f.id}>
-                📁 {f.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Dropzone */}
-        <div
-          onDragOver={(e) => e.preventDefault()}
-          onDrop={handleDrop}
-          onClick={() => fileInputRef.current?.click()}
-          className="cursor-pointer rounded-2xl border-2 border-dashed border-gray-300 dark:border-[#292E3A] hover:border-[#2C3480] dark:hover:border-[#3D4CC4] bg-[#F7F8FA] dark:bg-[#10131A] p-6 text-center transition-colors"
-        >
           <input
-            ref={fileInputRef}
-            type="file"
-            multiple
-            accept="application/pdf"
-            onChange={handleFileChange}
-            className="hidden"
+            type="text"
+            required
+            disabled={isUploading}
+            placeholder="e.g. Unit 1 Data Structures Notes"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2.5 text-sm text-gray-900 dark:text-[#FFFFFF] focus:border-[#8F1D32] dark:focus:border-[#A21F3D] focus:outline-none"
           />
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-white dark:bg-[#14171F] border border-gray-200 dark:border-[#292E3A] text-[#2C3480] dark:text-[#3D4CC4] shadow-sm mb-3">
-            <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="1.8">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
-            </svg>
-          </div>
-          <p className="text-sm font-bold text-gray-900 dark:text-[#FFFFFF]">
-            Drop PDFs here or Browse
-          </p>
-          <p className="mt-1 text-xs text-gray-500 dark:text-[#858B99]">
-            Multiple PDF files supported • Maximum 25 MB per file
-          </p>
         </div>
 
-        {/* Selected Files List */}
-        {fileItems.length > 0 && (
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-[#858B99]">
-                Selected Notes ({fileItems.length})
-              </span>
-              <button
-                type="button"
-                onClick={() => fileInputRef.current?.click()}
-                disabled={isUploading}
-                className="text-xs font-semibold text-[#2C3480] dark:text-[#AAB3FF] hover:underline"
-              >
-                + Add More PDFs
-              </button>
-            </div>
-
-            <div className="space-y-2.5 max-h-[360px] overflow-y-auto pr-1">
-              {fileItems.map((item) => (
-                <div
-                  key={item.id}
-                  className={`rounded-xl border p-3.5 transition-all ${
-                    item.status === "error"
-                      ? "border-red-200 dark:border-red-900/40 bg-red-50/50 dark:bg-red-950/20"
-                      : item.status === "done"
-                      ? "border-green-200 dark:border-green-900/40 bg-green-50/50 dark:bg-green-950/20"
-                      : "border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#14171F]"
-                  }`}
-                >
-                  <div className="flex items-start justify-between gap-3 mb-2.5">
-                    <div className="flex items-center gap-2 min-w-0">
-                      <svg
-                        viewBox="0 0 24 24"
-                        className="h-5 w-5 shrink-0 text-[#2C3480] dark:text-[#3D4CC4]"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="1.8"
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-                      </svg>
-                      <div className="min-w-0">
-                        <p className="text-xs font-semibold text-gray-700 dark:text-[#B8BDCA] truncate">
-                          {item.file.name}
-                        </p>
-                        <p className="text-[10px] text-gray-400 dark:text-[#858B99]">
-                          {formatBytes(item.file.size)}
-                        </p>
-                      </div>
-                    </div>
-                    {item.status !== "done" && !isUploading && (
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveItem(item.id)}
-                        className="text-xs font-semibold text-gray-400 hover:text-red-500"
-                      >
-                        Remove
-                      </button>
-                    )}
-                    {item.status === "done" && (
-                      <span className="text-xs font-bold text-green-600 dark:text-green-400">
-                        ✓ Uploaded
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    <div>
-                      <label className="block text-[11px] font-medium text-gray-500 dark:text-[#858B99] mb-0.5">
-                        Title
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        disabled={isUploading || item.status === "done"}
-                        value={item.title}
-                        onChange={(e) => handleTitleChange(item.id, e.target.value)}
-                        className="w-full rounded-lg border border-gray-200 dark:border-[#292E3A] bg-gray-50 dark:bg-[#1A1E28] px-2.5 py-1.5 text-xs text-gray-900 dark:text-[#FFFFFF] focus:border-[#2C3480] focus:outline-none"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-[11px] font-medium text-gray-500 dark:text-[#858B99] mb-0.5">
-                        Category
-                      </label>
-                      <select
-                        value={item.categoryId}
-                        disabled={isUploading || item.status === "done"}
-                        onChange={(e) => handleCategoryChange(item.id, e.target.value)}
-                        className="w-full rounded-lg border border-gray-200 dark:border-[#292E3A] bg-gray-50 dark:bg-[#1A1E28] px-2.5 py-1.5 text-xs text-gray-900 dark:text-[#FFFFFF] focus:border-[#2C3480] focus:outline-none"
-                      >
-                        {categories.map((c) => (
-                          <option key={c.id} value={c.id}>
-                            {c.name}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-
-                  {item.error && (
-                    <p className="mt-1 text-[11px] text-red-600 dark:text-red-400">
-                      Error: {item.error}
-                    </p>
-                  )}
-                </div>
+        {/* 2. Year & 3. Subject */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label className="block text-xs font-semibold text-gray-700 dark:text-[#B8BDCA] mb-1">
+              2. Academic Year *
+            </label>
+            <select
+              value={yearId}
+              disabled={isUploading}
+              onChange={(e) => setYearId(Number(e.target.value))}
+              className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2.5 text-sm text-gray-900 dark:text-[#FFFFFF] focus:border-[#8F1D32] dark:focus:border-[#A21F3D] focus:outline-none"
+            >
+              {years.map((y) => (
+                <option key={y.id} value={y.id}>
+                  {y.label}
+                </option>
               ))}
-            </div>
+            </select>
           </div>
-        )}
-      </div>
 
-      {/* Footer */}
-      <div className="flex items-center justify-between border-t border-gray-200 dark:border-[#292E3A] px-6 py-4 bg-white dark:bg-[#14171F]">
-        <div>
-          {uploadProgress ? (
-            <span className="text-xs font-medium text-gray-600 dark:text-[#B8BDCA]">
-              Uploading {uploadProgress.current} of {uploadProgress.total}: {uploadProgress.currentName}...
-            </span>
-          ) : (
-            <span className="text-xs text-gray-500 dark:text-[#858B99]">
-              {fileItems.length} file{fileItems.length === 1 ? "" : "s"} selected
-            </span>
-          )}
+          <div>
+            <label className="block text-xs font-semibold text-gray-700 dark:text-[#B8BDCA] mb-1">
+              3. Subject *
+            </label>
+            <select
+              value={subjectId}
+              disabled={isUploading}
+              required
+              onChange={(e) => setSubjectId(e.target.value)}
+              className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2.5 text-sm text-gray-900 dark:text-[#FFFFFF] focus:border-[#8F1D32] dark:focus:border-[#A21F3D] focus:outline-none"
+            >
+              {availableSubjects.length === 0 ? (
+                <option value="">No subjects in this year</option>
+              ) : (
+                availableSubjects.map((sub) => (
+                  <option key={sub.id} value={sub.id}>
+                    {sub.short_name ? `[${sub.short_name}] ` : ""}{resolveSubjectName(sub.id, sub.name, sub.short_name)}
+                  </option>
+                ))
+              )}
+            </select>
+          </div>
         </div>
-        <div className="flex gap-2">
+
+        {/* 4. Unit / Group & 5. Category */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label className="block text-xs font-semibold text-gray-700 dark:text-[#B8BDCA] mb-1">
+              4. Unit / Group
+            </label>
+            <select
+              value={unitId}
+              disabled={isUploading}
+              onChange={(e) => setUnitId(e.target.value)}
+              className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2.5 text-sm text-gray-900 dark:text-[#FFFFFF] focus:border-[#8F1D32] dark:focus:border-[#A21F3D] focus:outline-none"
+            >
+              <option value="">No Unit / General Notes</option>
+              {availableFolders.map((f) => (
+                <option key={f.id} value={f.id}>
+                  📁 {f.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-gray-700 dark:text-[#B8BDCA] mb-1">
+              5. Category
+            </label>
+            <select
+              value={categoryId}
+              disabled={isUploading}
+              onChange={(e) => setCategoryId(e.target.value)}
+              className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2.5 text-sm text-gray-900 dark:text-[#FFFFFF] focus:border-[#8F1D32] dark:focus:border-[#A21F3D] focus:outline-none"
+            >
+              {categories.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/* 6. PDF File Dropzone */}
+        <div>
+          <label className="block text-xs font-semibold text-gray-700 dark:text-[#B8BDCA] mb-1">
+            6. PDF File *
+          </label>
+          <div
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={handleDrop}
+            onClick={() => fileInputRef.current?.click()}
+            className={`cursor-pointer rounded-2xl border-2 border-dashed p-5 text-center transition-colors ${
+              file
+                ? "border-[#8F1D32] dark:border-[#A21F3D] bg-[#FCF4F5]/60 dark:bg-[#1F1215]/40"
+                : "border-gray-300 dark:border-[#292E3A] hover:border-[#8F1D32] bg-[#F7F8FA] dark:bg-[#10131A]"
+            }`}
+          >
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="application/pdf,.pdf"
+              disabled={isUploading}
+              onChange={(e) => {
+                if (e.target.files && e.target.files[0]) {
+                  handleFileSelect(e.target.files[0]);
+                  e.target.value = "";
+                }
+              }}
+              className="hidden"
+            />
+            {file ? (
+              <div className="flex items-center justify-between gap-3 text-left">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="w-9 h-9 rounded-xl bg-[#FCF4F5] dark:bg-[#1F1215] text-[#8F1D32] dark:text-[#A21F3D] flex items-center justify-center shrink-0">
+                    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                    </svg>
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xs font-bold text-gray-900 dark:text-[#FFFFFF] truncate">
+                      {file.name}
+                    </p>
+                    <p className="text-[11px] text-gray-500 dark:text-[#858B99]">
+                      {formatBytes(file.size)} • PDF Ready
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setFile(null);
+                  }}
+                  disabled={isUploading}
+                  className="text-xs font-semibold text-gray-500 hover:text-red-600 px-2 py-1"
+                >
+                  Change
+                </button>
+              </div>
+            ) : (
+              <div>
+                <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl bg-white dark:bg-[#14171F] border border-gray-200 dark:border-[#292E3A] text-[#8F1D32] dark:text-[#A21F3D] shadow-sm mb-2">
+                  <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
+                  </svg>
+                </div>
+                <p className="text-xs font-bold text-gray-900 dark:text-[#FFFFFF]">
+                  [ Choose PDF ] or Drag & Drop here
+                </p>
+                <p className="mt-0.5 text-[11px] text-gray-500 dark:text-[#858B99]">
+                  PDF only • Max 25 MB
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* 7. Active Status */}
+        <div className="flex items-center justify-between p-3 rounded-xl border border-gray-200 dark:border-[#292E3A] bg-gray-50/50 dark:bg-[#1A1E28]/50">
+          <div>
+            <label htmlFor="note_active" className="text-xs font-semibold text-gray-900 dark:text-[#FFFFFF] block cursor-pointer">
+              7. Active Status
+            </label>
+            <p className="text-[11px] text-gray-500 dark:text-[#858B99]">
+              Active notes are immediately published and visible to students
+            </p>
+          </div>
+          <label className="relative inline-flex items-center cursor-pointer">
+            <input
+              type="checkbox"
+              id="note_active"
+              checked={isActive}
+              disabled={isUploading}
+              onChange={(e) => setIsActive(e.target.checked)}
+              className="sr-only peer"
+            />
+            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-[#292E3A] peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#8F1D32] dark:peer-checked:bg-[#A21F3D]"></div>
+            <span className="ml-2 text-xs font-bold text-gray-700 dark:text-[#B8BDCA]">
+              {isActive ? "ON" : "OFF"}
+            </span>
+          </label>
+        </div>
+
+        <div className="flex justify-end gap-2 pt-2 border-t border-gray-100 dark:border-[#1E2433]">
           <button
             type="button"
             onClick={onClose}
@@ -963,35 +966,59 @@ function UploadNotesModal({
             Cancel
           </button>
           <button
-            type="button"
-            onClick={handleUploadAll}
-            disabled={isUploading || fileItems.length === 0}
-            className="rounded-xl bg-[#2C3480] hover:bg-[#3D4CC4] disabled:opacity-50 px-5 py-2 text-xs font-bold text-white shadow-sm transition-colors"
+            type="submit"
+            disabled={isUploading || !file}
+            className="rounded-xl bg-[#8F1D32] hover:bg-[#74152A] text-white dark:bg-[#A21F3D] dark:hover:bg-[#8F1D32] disabled:opacity-50 px-5 py-2 text-xs font-bold shadow-sm transition-colors flex items-center gap-2"
           >
-            {isUploading
-              ? `Uploading (${uploadProgress?.current || 1}/${uploadProgress?.total || fileItems.length})...`
-              : `Upload ${fileItems.length} Note${fileItems.length === 1 ? "" : "s"}`}
+            {isUploading && (
+              <svg className="animate-spin h-3.5 w-3.5 text-white" viewBox="0 0 24 24" fill="none">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+            )}
+            <span>{isUploading ? "Uploading..." : "Upload Note"}</span>
           </button>
         </div>
-      </div>
+      </form>
     </Modal>
   );
 }
 
 // ==========================================
-// EDIT NOTE MODAL
+// EDIT NOTE MODAL (REQUIREMENT 13)
 // ==========================================
-function EditNoteModal({ note, folders, categories, onClose, onSaved }) {
+function EditNoteModal({ note, years = YEAR_TABS, subjects = [], folders = [], categories = [], onClose, onSaved }) {
   const [title, setTitle] = useState(note.title || "");
+  const [yearId, setYearId] = useState(() => {
+    const sub = subjects.find((s) => s.id === note.subject_id);
+    return sub?.year_id || 1;
+  });
+  const [subjectId, setSubjectId] = useState(note.subject_id || "");
   const [folderId, setFolderId] = useState(note.folder_id || note.unit_id || "");
   const [categoryId, setCategoryId] = useState(note.category_id || "");
+  const [isActive, setIsActive] = useState(note.is_active !== false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
+
+  // Available subjects for selected year
+  const availableSubjects = useMemo(() => {
+    return subjects.filter((s) => Number(s.year_id) === Number(yearId));
+  }, [subjects, yearId]);
+
+  // Available folders for chosen subject
+  const availableFolders = useMemo(() => {
+    if (!subjectId) return [];
+    return folders.filter((f) => f.subject_id === subjectId);
+  }, [folders, subjectId]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!title.trim()) {
       setError("Title is required.");
+      return;
+    }
+    if (!subjectId) {
+      setError("Subject is required.");
       return;
     }
 
@@ -1003,9 +1030,11 @@ function EditNoteModal({ note, folders, categories, onClose, onSaved }) {
         .from("documents")
         .update({
           title: title.trim(),
+          subject_id: subjectId,
           folder_id: folderId || null,
           unit_id: folderId || null,
           category_id: categoryId,
+          is_active: isActive,
           updated_at: new Date().toISOString(),
         })
         .eq("id", note.id)
@@ -1025,7 +1054,7 @@ function EditNoteModal({ note, folders, categories, onClose, onSaved }) {
       <div className="flex items-center justify-between border-b border-gray-200 dark:border-[#292E3A] px-6 py-4">
         <div>
           <h2 className="text-base font-bold text-gray-900 dark:text-[#FFFFFF]">Edit Note</h2>
-          <p className="text-xs text-gray-500 dark:text-[#858B99]">Update note details</p>
+          <p className="text-xs text-gray-500 dark:text-[#858B99]">Update note metadata and status</p>
         </div>
         <button
           type="button"
@@ -1047,28 +1076,69 @@ function EditNoteModal({ note, folders, categories, onClose, onSaved }) {
 
         <div>
           <label className="block text-xs font-semibold text-gray-700 dark:text-[#B8BDCA] mb-1">
-            Title
+            Note Title *
           </label>
           <input
             type="text"
             required
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2.5 text-sm text-gray-900 dark:text-[#FFFFFF] focus:border-[#2C3480] focus:outline-none"
+            className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2.5 text-sm text-gray-900 dark:text-[#FFFFFF] focus:border-[#8F1D32] dark:focus:border-[#A21F3D] focus:outline-none"
           />
+        </div>
+
+        <div className="grid grid-cols-2 gap-2">
+          <div>
+            <label className="block text-xs font-semibold text-gray-700 dark:text-[#B8BDCA] mb-1">
+              Year
+            </label>
+            <select
+              value={yearId}
+              onChange={(e) => {
+                const newY = Number(e.target.value);
+                setYearId(newY);
+                const nextSubs = subjects.filter((s) => Number(s.year_id) === newY);
+                if (nextSubs.length > 0) setSubjectId(nextSubs[0].id);
+              }}
+              className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2.5 text-sm text-gray-900 dark:text-[#FFFFFF] focus:border-[#8F1D32] dark:focus:border-[#A21F3D] focus:outline-none"
+            >
+              {years.map((y) => (
+                <option key={y.id} value={y.id}>
+                  {y.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-gray-700 dark:text-[#B8BDCA] mb-1">
+              Subject
+            </label>
+            <select
+              value={subjectId}
+              onChange={(e) => setSubjectId(e.target.value)}
+              className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2.5 text-sm text-gray-900 dark:text-[#FFFFFF] focus:border-[#8F1D32] dark:focus:border-[#A21F3D] focus:outline-none"
+            >
+              {availableSubjects.map((sub) => (
+                <option key={sub.id} value={sub.id}>
+                  {sub.short_name ? `[${sub.short_name}] ` : ""}{resolveSubjectName(sub.id, sub.name, sub.short_name)}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
         <div>
           <label className="block text-xs font-semibold text-gray-700 dark:text-[#B8BDCA] mb-1">
-            Folder (Optional)
+            Unit / Group
           </label>
           <select
             value={folderId}
             onChange={(e) => setFolderId(e.target.value)}
-            className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2.5 text-sm text-gray-900 dark:text-[#FFFFFF] focus:border-[#2C3480] focus:outline-none"
+            className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2.5 text-sm text-gray-900 dark:text-[#FFFFFF] focus:border-[#8F1D32] dark:focus:border-[#A21F3D] focus:outline-none"
           >
-            <option value="">No Folder (Direct under Subject)</option>
-            {folders.map((f) => (
+            <option value="">No Unit / General Notes</option>
+            {availableFolders.map((f) => (
               <option key={f.id} value={f.id}>
                 📁 {f.name}
               </option>
@@ -1083,7 +1153,7 @@ function EditNoteModal({ note, folders, categories, onClose, onSaved }) {
           <select
             value={categoryId}
             onChange={(e) => setCategoryId(e.target.value)}
-            className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2.5 text-sm text-gray-900 dark:text-[#FFFFFF] focus:border-[#2C3480] focus:outline-none"
+            className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2.5 text-sm text-gray-900 dark:text-[#FFFFFF] focus:border-[#8F1D32] dark:focus:border-[#A21F3D] focus:outline-none"
           >
             {categories.map((c) => (
               <option key={c.id} value={c.id}>
@@ -1091,6 +1161,19 @@ function EditNoteModal({ note, folders, categories, onClose, onSaved }) {
               </option>
             ))}
           </select>
+        </div>
+
+        <div className="flex items-center gap-2 pt-1">
+          <input
+            type="checkbox"
+            id="edit_note_active"
+            checked={isActive}
+            onChange={(e) => setIsActive(e.target.checked)}
+            className="h-4 w-4 rounded border-gray-300 text-[#8F1D32] focus:ring-[#8F1D32]"
+          />
+          <label htmlFor="edit_note_active" className="text-xs font-semibold text-gray-700 dark:text-[#B8BDCA]">
+            Active (visible to students)
+          </label>
         </div>
 
         <div className="flex justify-end gap-2 pt-2 border-t border-gray-100 dark:border-[#1E2433]">
@@ -1105,7 +1188,7 @@ function EditNoteModal({ note, folders, categories, onClose, onSaved }) {
           <button
             type="submit"
             disabled={saving}
-            className="rounded-xl bg-[#2C3480] hover:bg-[#3D4CC4] disabled:opacity-50 px-4 py-2 text-xs font-bold text-white shadow-sm transition-colors"
+            className="rounded-xl bg-[#8F1D32] hover:bg-[#74152A] text-white dark:bg-[#A21F3D] dark:hover:bg-[#8F1D32] disabled:opacity-50 px-4 py-2 text-xs font-medium shadow-sm transition-colors"
           >
             {saving ? "Saving..." : "Save Changes"}
           </button>
@@ -1269,10 +1352,23 @@ function DeleteFolderModal({ folder, noteCount, onClose, onDeleted }) {
 // ==========================================
 // MAIN COMPONENT: DocumentsCMS
 // ==========================================
+// ==========================================
+// MAIN COMPONENT: DocumentsCMS
+// ==========================================
 export default function DocumentsCMS({ initialSubjectId = null }) {
+  // Navigation / view state
+  const [cmsView, setCmsView] = useState("list"); // 'list' (All Notes Table) | 'browse' (Year -> Subject -> Folder)
   const [selectedYear, setSelectedYear] = useState(1);
   const [selectedSubjectId, setSelectedSubjectId] = useState(initialSubjectId);
-  const [selectedFolderId, setSelectedFolderId] = useState(null); // null = all notes or root
+  const [selectedFolderId, setSelectedFolderId] = useState(null);
+
+  // Filters for 'list' view (Requirement 12)
+  const [listFilterYear, setListFilterYear] = useState(0); // 0 = all
+  const [listFilterSubject, setListFilterSubject] = useState("");
+  const [listFilterUnit, setListFilterUnit] = useState("");
+  const [listFilterCategory, setListFilterCategory] = useState("");
+  const [listFilterStatus, setListFilterStatus] = useState("all"); // 'all' | 'active' | 'inactive'
+  const [listSearchQuery, setListSearchQuery] = useState("");
 
   const [subjects, setSubjects] = useState([]);
   const [folders, setFolders] = useState([]);
@@ -1389,6 +1485,7 @@ export default function DocumentsCMS({ initialSubjectId = null }) {
         if (found) {
           setSelectedYear(found.year_id || 1);
           setSelectedSubjectId(found.id);
+          setCmsView("browse");
         }
       }
     } catch (err) {
@@ -1416,13 +1513,19 @@ export default function DocumentsCMS({ initialSubjectId = null }) {
     return map;
   }, [folders]);
 
-  // Current selected subject
+  const subjectMap = useMemo(() => {
+    const map = new Map();
+    subjects.forEach((s) => map.set(s.id, s));
+    return map;
+  }, [subjects]);
+
+  // Current selected subject in browse mode
   const currentSubject = useMemo(() => {
     if (!selectedSubjectId) return null;
     return subjects.find((s) => s.id === selectedSubjectId) || null;
   }, [subjects, selectedSubjectId]);
 
-  // Subjects filtered by selected year & search query
+  // Filtered subjects in browse mode
   const filteredSubjects = useMemo(() => {
     const byYear = subjects.filter((s) => Number(s.year_id) === selectedYear);
     if (!subjectSearch.trim()) return byYear;
@@ -1434,19 +1537,19 @@ export default function DocumentsCMS({ initialSubjectId = null }) {
     );
   }, [subjects, selectedYear, subjectSearch]);
 
-  // Folders for current subject
+  // Folders for current subject in browse mode
   const currentSubjectFolders = useMemo(() => {
     if (!currentSubject) return [];
     return folders.filter((f) => f.subject_id === currentSubject.id);
   }, [folders, currentSubject]);
 
-  // Documents for current subject
+  // Documents for current subject in browse mode
   const currentSubjectDocuments = useMemo(() => {
     if (!currentSubject) return [];
     return documents.filter((d) => d.subject_id === currentSubject.id);
   }, [documents, currentSubject]);
 
-  // Document counts per folder
+  // Document counts per folder in browse mode
   const noteCountByFolder = useMemo(() => {
     const map = new Map();
     currentSubjectDocuments.forEach((doc) => {
@@ -1458,12 +1561,12 @@ export default function DocumentsCMS({ initialSubjectId = null }) {
     return map;
   }, [currentSubjectDocuments]);
 
-  // Direct notes (not in any folder)
+  // Direct notes (not in any folder) in browse mode
   const directDocuments = useMemo(() => {
     return currentSubjectDocuments.filter((d) => !d.folder_id && !d.unit_id);
   }, [currentSubjectDocuments]);
 
-  // Filtered documents currently displayed
+  // Displayed documents in browse mode
   const displayedDocuments = useMemo(() => {
     if (!selectedFolderId) {
       return currentSubjectDocuments;
@@ -1473,7 +1576,67 @@ export default function DocumentsCMS({ initialSubjectId = null }) {
     );
   }, [currentSubjectDocuments, selectedFolderId]);
 
-  // Action: Open PDF
+  // Filtered documents in LIST mode (Requirement 12: Grouped or filterable by Year, Subject, Unit, Category, Active/Inactive)
+  const filteredListDocuments = useMemo(() => {
+    return documents.filter((doc) => {
+      const sub = subjectMap.get(doc.subject_id);
+      if (listFilterYear > 0) {
+        if (!sub || Number(sub.year_id) !== Number(listFilterYear)) return false;
+      }
+      if (listFilterSubject && doc.subject_id !== listFilterSubject) {
+        return false;
+      }
+      if (listFilterUnit) {
+        const uId = doc.folder_id || doc.unit_id;
+        if (uId !== listFilterUnit) return false;
+      }
+      if (listFilterCategory && doc.category_id !== listFilterCategory) {
+        return false;
+      }
+      if (listFilterStatus === "active" && !doc.is_active) {
+        return false;
+      }
+      if (listFilterStatus === "inactive" && doc.is_active) {
+        return false;
+      }
+      if (listSearchQuery.trim()) {
+        const q = listSearchQuery.toLowerCase().trim();
+        const matchTitle = doc.title?.toLowerCase().includes(q);
+        const matchSub =
+          sub?.name?.toLowerCase().includes(q) ||
+          sub?.short_name?.toLowerCase().includes(q);
+        if (!matchTitle && !matchSub) return false;
+      }
+      return true;
+    });
+  }, [
+    documents,
+    subjectMap,
+    listFilterYear,
+    listFilterSubject,
+    listFilterUnit,
+    listFilterCategory,
+    listFilterStatus,
+    listSearchQuery,
+  ]);
+
+  // Available subjects for list filter dropdown
+  const listAvailableSubjects = useMemo(() => {
+    if (listFilterYear > 0) {
+      return subjects.filter((s) => Number(s.year_id) === Number(listFilterYear));
+    }
+    return subjects;
+  }, [subjects, listFilterYear]);
+
+  // Available units for list filter dropdown
+  const listAvailableUnits = useMemo(() => {
+    if (listFilterSubject) {
+      return folders.filter((f) => f.subject_id === listFilterSubject);
+    }
+    return folders;
+  }, [folders, listFilterSubject]);
+
+  // Action: Open PDF (secure flow via get-document-url)
   const handleOpenPdf = async (doc) => {
     setOpeningDocId(doc.id);
     try {
@@ -1557,7 +1720,7 @@ export default function DocumentsCMS({ initialSubjectId = null }) {
   const handleNoteDeleted = (deletedId) => {
     setDocuments((prev) => prev.filter((d) => d.id !== deletedId));
     setDeletingNote(null);
-    showToast("success", "Note permanently deleted.");
+    showToast("success", "Note permanently deleted from B2 and database.");
   };
 
   const handleFolderDeleted = (deletedFolderId) => {
@@ -1589,43 +1752,67 @@ export default function DocumentsCMS({ initialSubjectId = null }) {
         </div>
       )}
 
-      {/* Header & Year Tabs */}
+      {/* Header & Primary Action Bar */}
       <div className="flex flex-col gap-4 border-b border-gray-200 pb-5 dark:border-[#292E3A] sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-xs font-bold uppercase tracking-wider text-[#2C3480] dark:text-[#AAB3FF]">
-            Content Management
+          <p className="text-xs font-bold uppercase tracking-wider text-[#8F1D32] dark:text-[#A21F3D]">
+            Academic Content Management
           </p>
           <h1 className="mt-1 text-2xl font-bold tracking-tight text-gray-900 dark:text-[#FFFFFF]">
             Documents & Notes
           </h1>
           <p className="mt-1 text-xs text-gray-500 dark:text-[#858B99]">
-            Year → Subject → Folders → All Notes / PDFs
+            Manage study materials, upload PDFs to private B2, and organize curriculum
           </p>
         </div>
 
-        {/* Year Tabs */}
-        <div className="flex items-center gap-1 rounded-xl bg-gray-100 dark:bg-[#14171F] p-1 border border-gray-200 dark:border-[#292E3A]">
-          {YEAR_TABS.map((tab) => {
-            const isSelected = selectedYear === tab.id;
-            return (
-              <button
-                key={tab.id}
-                type="button"
-                onClick={() => {
-                  setSelectedYear(tab.id);
-                  setSelectedSubjectId(null);
-                  setSelectedFolderId(null);
-                }}
-                className={`rounded-lg px-3.5 py-1.5 text-xs font-bold transition-all ${
-                  isSelected
-                    ? "bg-[#2C3480] text-white shadow-sm"
-                    : "text-gray-600 hover:text-gray-900 dark:text-[#858B99] dark:hover:text-[#FFFFFF]"
-                }`}
-              >
-                {tab.label}
-              </button>
-            );
-          })}
+        {/* Global Action Buttons */}
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Primary + Add Note Button (Requirement 9: Simple note upload flow) */}
+          <button
+            type="button"
+            onClick={() => setUploadOpen(true)}
+            className="inline-flex items-center gap-1.5 rounded-xl bg-[#8F1D32] hover:bg-[#74152A] text-white dark:bg-[#A21F3D] dark:hover:bg-[#8F1D32] px-4 py-2 text-xs font-bold shadow-sm transition-colors"
+          >
+            <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+            <span>+ Add Note</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setCreateSubjectOpen(true)}
+            className="inline-flex items-center gap-1.5 rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] text-gray-700 dark:text-[#B8BDCA] hover:bg-gray-50 dark:hover:bg-[#252B3A] px-3.5 py-2 text-xs font-semibold shadow-sm transition-colors"
+          >
+            <span>+ New Subject</span>
+          </button>
+
+          {/* View Switcher: All Notes vs Browse By Subject */}
+          <div className="flex items-center rounded-xl bg-gray-100 dark:bg-[#14171F] p-1 border border-gray-200 dark:border-[#292E3A]">
+            <button
+              type="button"
+              onClick={() => setCmsView("list")}
+              className={`rounded-lg px-3 py-1.5 text-xs font-bold transition-all ${
+                cmsView === "list"
+                  ? "bg-[#111111] dark:bg-white text-white dark:text-[#111111] shadow-sm"
+                  : "text-gray-600 hover:text-gray-900 dark:text-[#858B99] dark:hover:text-[#FFFFFF]"
+              }`}
+            >
+              All Notes ({documents.length})
+            </button>
+            <button
+              type="button"
+              onClick={() => setCmsView("browse")}
+              className={`rounded-lg px-3 py-1.5 text-xs font-bold transition-all ${
+                cmsView === "browse"
+                  ? "bg-[#111111] dark:bg-white text-white dark:text-[#111111] shadow-sm"
+                  : "text-gray-600 hover:text-gray-900 dark:text-[#858B99] dark:hover:text-[#FFFFFF]"
+              }`}
+            >
+              By Subject
+            </button>
+          </div>
         </div>
       </div>
 
@@ -1644,370 +1831,168 @@ export default function DocumentsCMS({ initialSubjectId = null }) {
           <button
             type="button"
             onClick={loadData}
-            className="mt-3 rounded-xl bg-[#2C3480] px-4 py-2 text-xs font-bold text-white shadow-sm"
+            className="mt-3 rounded-xl bg-[#8F1D32] text-white px-4 py-2 text-xs font-medium shadow-sm"
           >
             Retry
           </button>
         </div>
-      ) : !currentSubject ? (
+      ) : cmsView === "list" ? (
         // ==========================================
-        // VIEW 1: SUBJECT SELECTION
+        // VIEW: ALL NOTES LIST WITH FILTERS (REQUIREMENT 12)
         // ==========================================
         <div className="space-y-5">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div className="relative flex-1 max-w-md">
-              <input
-                type="text"
-                placeholder="Search subjects..."
-                value={subjectSearch}
-                onChange={(e) => setSubjectSearch(e.target.value)}
-                className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#14171F] pl-9 pr-4 py-2 text-xs text-gray-900 dark:text-[#FFFFFF] placeholder-gray-400 focus:border-[#2C3480] focus:outline-none"
-              />
-              <svg
-                viewBox="0 0 24 24"
-                className="absolute left-3 top-2.5 h-4 w-4 text-gray-400"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <circle cx="11" cy="11" r="8" />
-                <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-4.35-4.35" />
-              </svg>
-            </div>
+          {/* Filters Bar: Year, Subject, Unit, Category, Active/Inactive, and Search */}
+          <div className="p-4 rounded-2xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#14171F] space-y-3 shadow-sm">
+            <div className="flex flex-col md:flex-row items-stretch md:items-center gap-3">
+              {/* Search query */}
+              <div className="relative flex-1">
+                <input
+                  type="text"
+                  placeholder="Search notes by title or subject..."
+                  value={listSearchQuery}
+                  onChange={(e) => setListSearchQuery(e.target.value)}
+                  className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-gray-50 dark:bg-[#1A1E28] pl-9 pr-4 py-2 text-xs text-gray-900 dark:text-[#FFFFFF] placeholder-gray-400 focus:border-[#8F1D32] dark:focus:border-[#A21F3D] focus:outline-none"
+                />
+                <svg
+                  viewBox="0 0 24 24"
+                  className="absolute left-3 top-2.5 h-4 w-4 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <circle cx="11" cy="11" r="8" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-4.35-4.35" />
+                </svg>
+              </div>
 
-            <button
-              type="button"
-              onClick={() => setCreateSubjectOpen(true)}
-              className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#2C3480] hover:bg-[#3D4CC4] px-4 py-2 text-xs font-bold text-white shadow-sm transition-colors"
-            >
-              <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-              </svg>
-              <span>+ Create Subject</span>
-            </button>
-          </div>
-
-          {filteredSubjects.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-gray-300 dark:border-[#292E3A] bg-white dark:bg-[#14171F] p-12 text-center">
-              <h3 className="text-sm font-bold text-gray-900 dark:text-[#FFFFFF] mb-1">
-                No subjects found
-              </h3>
-              <p className="text-xs text-gray-500 dark:text-[#858B99] mb-4">
-                {subjectSearch ? "No subjects match your search." : `No subjects created for Year ${selectedYear} yet.`}
-              </p>
-              <button
-                type="button"
-                onClick={() => setCreateSubjectOpen(true)}
-                className="rounded-xl bg-[#2C3480] px-4 py-2 text-xs font-bold text-white hover:bg-[#3D4CC4]"
-              >
-                + Create Subject
-              </button>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {filteredSubjects.map((sub) => {
-                const displayName = resolveSubjectName(sub.id, sub.name, sub.short_name);
-                const subFolders = folders.filter((f) => f.subject_id === sub.id);
-                const subDocs = documents.filter((d) => d.subject_id === sub.id);
-
-                return (
-                  <div
-                    key={sub.id}
-                    className="rounded-2xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#14171F] p-5 shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
-                  >
-                    <div>
-                      <div className="flex items-center justify-between gap-2 mb-2">
-                        <span className="rounded-md bg-blue-50 dark:bg-[#1A1E28] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#2C3480] dark:text-[#B8BDCA] border border-blue-100 dark:border-[#292E3A]">
-                          {sub.short_name || "SUB"}
-                        </span>
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-[10px] text-gray-400 dark:text-[#858B99]">
-                            Year {selectedYear}
-                          </span>
-                          <StatusBadge active={sub.is_active !== false} />
-                        </div>
-                      </div>
-                      <h3 className="text-sm font-bold text-gray-900 dark:text-[#FFFFFF] line-clamp-2">
-                        {displayName}
-                      </h3>
-                      {sub.description && (
-                        <p className="mt-1 text-xs text-gray-500 dark:text-[#858B99] line-clamp-2">
-                          {sub.description}
-                        </p>
-                      )}
-                    </div>
-
-                    <div className="border-t border-gray-100 dark:border-[#1E2433] pt-3 mt-4 space-y-3">
-                      <div className="flex items-center justify-between text-[11px] text-gray-500 dark:text-[#858B99]">
-                        <span className="flex items-center gap-1.5">
-                          <svg viewBox="0 0 24 24" className="h-4 w-4 text-[#2C3480] dark:text-[#3D4CC4]" fill="none" stroke="currentColor" strokeWidth="1.8">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h4.879a1.5 1.5 0 001.06-.44l1.122-1.12A1.5 1.5 0 0112.62 7.5H19.5A2.25 2.25 0 0121.75 9.75v3m-19.5 0A2.25 2.25 0 004.5 15h15a2.25 2.25 0 002.25-2.25m-19.5 0v5.25A2.25 2.25 0 004.5 20.25h15a2.25 2.25 0 002.25-2.25V12.75" />
-                          </svg>
-                          <span>{subFolders.length} {subFolders.length === 1 ? "folder" : "folders"}</span>
-                        </span>
-                        <span className="flex items-center gap-1.5">
-                          <svg viewBox="0 0 24 24" className="h-4 w-4 text-[#2C3480] dark:text-[#3D4CC4]" fill="none" stroke="currentColor" strokeWidth="1.8">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-                          </svg>
-                          <span>{subDocs.length} {subDocs.length === 1 ? "note" : "notes"}</span>
-                        </span>
-                      </div>
-
-                      <div className="flex items-center gap-2 pt-1">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setSelectedSubjectId(sub.id);
-                            setSelectedFolderId(null);
-                          }}
-                          className="flex-1 rounded-xl bg-[#2C3480] hover:bg-[#3D4CC4] text-white py-1.5 text-xs font-bold transition shadow-sm text-center"
-                        >
-                          Open
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setEditingSubject(sub)}
-                          className="rounded-xl border border-gray-200 dark:border-[#292E3A] px-3 py-1.5 text-xs font-semibold text-gray-700 dark:text-[#B8BDCA] hover:bg-gray-50 dark:hover:bg-[#1A1E28] transition"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setDeletingSubject({ subject: sub, noteCount: subDocs.length, folderCount: subFolders.length })}
-                          className="rounded-xl border border-red-200 dark:border-red-900/40 p-1.5 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 transition"
-                          aria-label="Delete subject"
-                        >
-                          <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                          </svg>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
-      ) : (
-        // ==========================================
-        // VIEW 2: SUBJECT CONTENT (FOLDERS & NOTES)
-        // ==========================================
-        <div className="space-y-6">
-          {/* Breadcrumb & Navigation */}
-          <div className="flex flex-wrap items-center justify-between gap-3 bg-white dark:bg-[#14171F] p-4 rounded-2xl border border-gray-200 dark:border-[#292E3A]">
-            <div className="flex flex-wrap items-center gap-2 text-xs">
-              <button
-                type="button"
-                onClick={() => {
-                  setSelectedSubjectId(null);
-                  setSelectedFolderId(null);
+              {/* Year Filter */}
+              <select
+                value={listFilterYear}
+                onChange={(e) => {
+                  setListFilterYear(Number(e.target.value));
+                  setListFilterSubject("");
+                  setListFilterUnit("");
                 }}
-                className="font-semibold text-gray-500 hover:text-gray-900 dark:text-[#858B99] dark:hover:text-[#FFFFFF]"
+                className="rounded-xl border border-gray-200 dark:border-[#292E3A] bg-gray-50 dark:bg-[#1A1E28] px-3 py-2 text-xs text-gray-900 dark:text-[#FFFFFF] focus:border-[#8F1D32] focus:outline-none"
               >
-                {selectedYear}th Year Subjects
-              </button>
-              <span className="text-gray-400">/</span>
-              <button
-                type="button"
-                onClick={() => setSelectedFolderId(null)}
-                className={`font-bold ${
-                  !selectedFolderId
-                    ? "text-[#2C3480] dark:text-[#AAB3FF]"
-                    : "text-gray-600 hover:text-gray-900 dark:text-[#B8BDCA] dark:hover:text-[#FFFFFF]"
-                }`}
+                <option value={0}>All Years</option>
+                {YEAR_TABS.map((y) => (
+                  <option key={y.id} value={y.id}>
+                    {y.label}
+                  </option>
+                ))}
+              </select>
+
+              {/* Subject Filter */}
+              <select
+                value={listFilterSubject}
+                onChange={(e) => {
+                  setListFilterSubject(e.target.value);
+                  setListFilterUnit("");
+                }}
+                className="rounded-xl border border-gray-200 dark:border-[#292E3A] bg-gray-50 dark:bg-[#1A1E28] px-3 py-2 text-xs text-gray-900 dark:text-[#FFFFFF] focus:border-[#8F1D32] focus:outline-none max-w-xs"
               >
-                {resolveSubjectName(currentSubject.id, currentSubject.name, currentSubject.short_name)}
-              </button>
-              {selectedFolderName && (
-                <>
-                  <span className="text-gray-400">/</span>
-                  <span className="font-bold text-[#2C3480] dark:text-[#AAB3FF]">
-                    {selectedFolderName}
-                  </span>
-                </>
+                <option value="">All Subjects</option>
+                {listAvailableSubjects.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.short_name ? `[${s.short_name}] ` : ""}{resolveSubjectName(s.id, s.name, s.short_name)}
+                  </option>
+                ))}
+              </select>
+
+              {/* Unit Filter */}
+              <select
+                value={listFilterUnit}
+                onChange={(e) => setListFilterUnit(e.target.value)}
+                className="rounded-xl border border-gray-200 dark:border-[#292E3A] bg-gray-50 dark:bg-[#1A1E28] px-3 py-2 text-xs text-gray-900 dark:text-[#FFFFFF] focus:border-[#8F1D32] focus:outline-none"
+              >
+                <option value="">All Units</option>
+                {listAvailableUnits.map((u) => (
+                  <option key={u.id} value={u.id}>
+                    {u.name}
+                  </option>
+                ))}
+              </select>
+
+              {/* Category Filter */}
+              <select
+                value={listFilterCategory}
+                onChange={(e) => setListFilterCategory(e.target.value)}
+                className="rounded-xl border border-gray-200 dark:border-[#292E3A] bg-gray-50 dark:bg-[#1A1E28] px-3 py-2 text-xs text-gray-900 dark:text-[#FFFFFF] focus:border-[#8F1D32] focus:outline-none"
+              >
+                <option value="">All Categories</option>
+                {categories.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+
+              {/* Status Filter */}
+              <select
+                value={listFilterStatus}
+                onChange={(e) => setListFilterStatus(e.target.value)}
+                className="rounded-xl border border-gray-200 dark:border-[#292E3A] bg-gray-50 dark:bg-[#1A1E28] px-3 py-2 text-xs text-gray-900 dark:text-[#FFFFFF] focus:border-[#8F1D32] focus:outline-none"
+              >
+                <option value="all">All Status</option>
+                <option value="active">Active Only</option>
+                <option value="inactive">Disabled Only</option>
+              </select>
+
+              {/* Reset button if filters active */}
+              {(listFilterYear > 0 || listFilterSubject || listFilterUnit || listFilterCategory || listFilterStatus !== "all" || listSearchQuery) && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setListFilterYear(0);
+                    setListFilterSubject("");
+                    setListFilterUnit("");
+                    setListFilterCategory("");
+                    setListFilterStatus("all");
+                    setListSearchQuery("");
+                  }}
+                  className="text-xs font-semibold text-gray-500 hover:text-[#8F1D32] px-2 py-1"
+                >
+                  Reset
+                </button>
               )}
-            </div>
-
-            <div className="flex flex-wrap items-center gap-2">
-              <button
-                type="button"
-                onClick={() => setCreateFolderOpen(true)}
-                className="inline-flex items-center gap-1.5 rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2 text-xs font-semibold text-gray-700 dark:text-[#B8BDCA] hover:bg-gray-50 dark:hover:bg-[#242A38] shadow-sm transition-colors"
-              >
-                <svg viewBox="0 0 24 24" className="h-4 w-4 text-[#2C3480] dark:text-[#3D4CC4]" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                </svg>
-                <span>+ Create Folder</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setUploadOpen(true)}
-                className="inline-flex items-center gap-1.5 rounded-xl bg-[#2C3480] hover:bg-[#3D4CC4] px-4 py-2 text-xs font-bold text-white shadow-sm transition-colors"
-              >
-                <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                </svg>
-                <span>+ Add Note</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setEditingSubject(currentSubject)}
-                className="rounded-xl border border-gray-200 dark:border-[#292E3A] px-3 py-2 text-xs font-semibold text-gray-700 dark:text-[#B8BDCA] hover:bg-gray-50 dark:hover:bg-[#1A1E28] transition"
-              >
-                Edit Subject
-              </button>
-
-              <button
-                type="button"
-                onClick={() =>
-                  setDeletingSubject({
-                    subject: currentSubject,
-                    noteCount: currentSubjectDocuments.length,
-                    folderCount: currentSubjectFolders.length,
-                  })
-                }
-                className="rounded-xl border border-red-200 dark:border-red-900/40 p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 transition"
-                aria-label="Delete subject"
-                title="Delete Subject"
-              >
-                <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                </svg>
-              </button>
             </div>
           </div>
 
-          {/* FOLDERS SECTION */}
-          {!selectedFolderId && (
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <h2 className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-[#858B99]">
-                  Folders ({currentSubjectFolders.length})
-                </h2>
-                <button
-                  type="button"
-                  onClick={() => setCreateFolderOpen(true)}
-                  className="text-xs font-semibold text-[#2C3480] dark:text-[#AAB3FF] hover:underline"
-                >
-                  + New Folder
-                </button>
-              </div>
-
-              {currentSubjectFolders.length === 0 ? (
-                <div className="rounded-2xl border border-dashed border-gray-200 dark:border-[#292E3A] bg-gray-50/50 dark:bg-[#14171F]/40 p-6 text-center">
-                  <p className="text-xs text-gray-500 dark:text-[#858B99]">
-                    No folders created for this subject yet. Folders are optional.
-                  </p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                  {currentSubjectFolders.map((folder) => {
-                    const count = noteCountByFolder.get(folder.id) || 0;
-                    return (
-                      <div
-                        key={folder.id}
-                        className="group flex items-center justify-between p-3.5 rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#14171F] hover:border-[#2C3480] dark:hover:border-[#3D4CC4] shadow-sm transition-all"
-                      >
-                        <div
-                          onClick={() => setSelectedFolderId(folder.id)}
-                          className="flex items-center gap-2.5 min-w-0 flex-1 cursor-pointer"
-                        >
-                          <svg
-                            viewBox="0 0 24 24"
-                            className="h-5 w-5 shrink-0 text-[#2C3480] dark:text-[#3D4CC4]"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="1.8"
-                          >
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h4.879a1.5 1.5 0 001.06-.44l1.122-1.12A1.5 1.5 0 0112.62 7.5H19.5A2.25 2.25 0 0121.75 9.75v3m-19.5 0A2.25 2.25 0 004.5 15h15a2.25 2.25 0 002.25-2.25m-19.5 0v5.25A2.25 2.25 0 004.5 20.25h15a2.25 2.25 0 002.25-2.25V12.75" />
-                          </svg>
-                          <div className="min-w-0">
-                            <h4 className="text-xs font-bold text-gray-900 dark:text-[#FFFFFF] truncate group-hover:text-[#2C3480] dark:group-hover:text-[#AAB3FF]">
-                              {folder.name}
-                            </h4>
-                            <span className="text-[10px] text-gray-400 dark:text-[#858B99]">
-                              {count} {count === 1 ? "note" : "notes"}
-                            </span>
-                          </div>
-                        </div>
-
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setDeletingFolder({ folder, count });
-                          }}
-                          aria-label={`Delete folder ${folder.name}`}
-                          className="opacity-0 group-hover:opacity-100 p-1 rounded-lg text-gray-400 hover:text-red-600 transition-opacity"
-                        >
-                          <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                          </svg>
-                        </button>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* ALL NOTES / PDFS SECTION */}
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-[#858B99]">
-                  {selectedFolderId
-                    ? `Notes in "${selectedFolderName}" (${displayedDocuments.length})`
-                    : `All Notes / PDFs (${currentSubjectDocuments.length})`}
-                </h2>
-                {!selectedFolderId && directDocuments.length > 0 && (
-                  <p className="text-[11px] text-gray-400 dark:text-[#858B99]">
-                    Includes {directDocuments.length} direct note{directDocuments.length === 1 ? "" : "s"} not in any folder
-                  </p>
-                )}
-              </div>
-
-              {selectedFolderId && (
-                <button
-                  type="button"
-                  onClick={() => setSelectedFolderId(null)}
-                  className="text-xs font-semibold text-[#2C3480] dark:text-[#AAB3FF] hover:underline"
-                >
-                  ← Show All Notes
-                </button>
-              )}
+          {/* Filtered Notes List */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between px-1">
+              <span className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-[#858B99]">
+                Showing {filteredListDocuments.length} Note{filteredListDocuments.length === 1 ? "" : "s"}
+              </span>
             </div>
 
-            {displayedDocuments.length === 0 ? (
-              <div className="rounded-2xl border border-dashed border-gray-300 dark:border-[#292E3A] bg-white dark:bg-[#14171F] p-10 text-center">
-                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 dark:bg-[#1A1E28] text-[#2C3480] dark:text-[#3D4CC4] mb-3">
+            {filteredListDocuments.length === 0 ? (
+              <div className="rounded-2xl border border-dashed border-gray-300 dark:border-[#292E3A] bg-white dark:bg-[#14171F] p-12 text-center">
+                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-[#FCF4F5] dark:bg-[#1F1215] text-[#8F1D32] dark:text-[#A21F3D] mb-3">
                   <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="1.8">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
                   </svg>
                 </div>
                 <h3 className="text-sm font-bold text-gray-900 dark:text-[#FFFFFF] mb-1">
-                  No notes uploaded yet
+                  No notes match your filter criteria
                 </h3>
                 <p className="text-xs text-gray-500 dark:text-[#858B99] mb-4">
-                  {selectedFolderId
-                    ? `No notes in "${selectedFolderName}" yet.`
-                    : "No study materials or question papers uploaded for this subject yet."}
+                  Try adjusting your filters or upload a new note.
                 </p>
                 <button
                   type="button"
                   onClick={() => setUploadOpen(true)}
-                  className="rounded-xl bg-[#2C3480] px-4 py-2 text-xs font-bold text-white hover:bg-[#3D4CC4]"
+                  className="rounded-xl bg-[#8F1D32] hover:bg-[#74152A] text-white px-4 py-2 text-xs font-bold"
                 >
-                  + Add Note
+                  + Add Note Now
                 </button>
               </div>
             ) : (
               <div className="rounded-2xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#14171F] overflow-hidden shadow-sm divide-y divide-gray-100 dark:divide-[#1E2433]">
-                {displayedDocuments.map((doc) => {
+                {filteredListDocuments.map((doc) => {
+                  const sub = subjectMap.get(doc.subject_id);
+                  const subName = sub ? resolveSubjectName(sub.id, sub.name, sub.short_name) : "Subject";
                   const categoryName = categoryMap.get(doc.category_id) || "Study Material";
                   const folderName = doc.folder_id || doc.unit_id ? folderMap.get(doc.folder_id || doc.unit_id) : null;
                   const isOpening = openingDocId === doc.id;
@@ -2015,57 +2000,64 @@ export default function DocumentsCMS({ initialSubjectId = null }) {
                   return (
                     <div
                       key={doc.id}
-                      className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-gray-50/60 dark:hover:bg-[#1A1E28]/40 transition-colors"
+                      className="p-4 flex flex-col md:flex-row md:items-center justify-between gap-3 hover:bg-gray-50/60 dark:hover:bg-[#1A1E28]/40 transition-colors"
                     >
                       <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-2 mb-1">
+                        <div className="flex items-center gap-2 mb-1.5">
                           <svg
                             viewBox="0 0 24 24"
-                            className="h-4 w-4 shrink-0 text-[#2C3480] dark:text-[#3D4CC4]"
+                            className="h-4 w-4 shrink-0 text-[#8F1D32] dark:text-[#A21F3D]"
                             fill="none"
                             stroke="currentColor"
                             strokeWidth="1.8"
                           >
                             <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
                           </svg>
-                          <span className="text-sm font-semibold text-gray-900 dark:text-[#FFFFFF] truncate">
+                          <span className="text-sm font-bold text-gray-900 dark:text-[#FFFFFF] truncate">
                             {doc.title}
                           </span>
                         </div>
 
                         <div className="flex flex-wrap items-center gap-2 pl-6">
+                          {sub && (
+                            <span className="rounded-md bg-[#F7F7F7] dark:bg-[#111111] px-2 py-0.5 text-[10px] font-bold text-[#151515] dark:text-white border border-[#EAEAEA] dark:border-[#222222]">
+                              {sub.year_id ? `Y${sub.year_id} • ` : ""}{sub.short_name || subName}
+                            </span>
+                          )}
+
                           <span className="rounded-md bg-gray-100 dark:bg-[#1E2433] px-2 py-0.5 text-[10px] font-medium text-gray-600 dark:text-[#B8BDCA]">
                             {categoryName}
                           </span>
+
                           {folderName ? (
-                            <span className="inline-flex items-center gap-1 rounded-md bg-blue-50 dark:bg-[#1E2433] px-2 py-0.5 text-[10px] font-medium text-[#2C3480] dark:text-[#AAB3FF] border border-blue-100 dark:border-[#292E3A]">
-                              <svg viewBox="0 0 24 24" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth="2">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h4.879a1.5 1.5 0 001.06-.44l1.122-1.12A1.5 1.5 0 0112.62 7.5H19.5A2.25 2.25 0 0121.75 9.75v3m-19.5 0A2.25 2.25 0 004.5 15h15a2.25 2.25 0 002.25-2.25m-19.5 0v5.25A2.25 2.25 0 004.5 20.25h15a2.25 2.25 0 002.25-2.25V12.75" />
-                              </svg>
-                              <span>{folderName}</span>
+                            <span className="inline-flex items-center gap-1 rounded-md bg-[#FCF4F5] dark:bg-[#1F1215] text-[#8F1D32] dark:text-[#A21F3D] px-2 py-0.5 text-[10px] font-semibold border border-[#F8E9EC] dark:border-[#2E1A1F]">
+                              <span>📁 {folderName}</span>
                             </span>
                           ) : (
                             <span className="rounded-md bg-gray-50 dark:bg-[#1E2433] px-2 py-0.5 text-[10px] font-medium text-gray-400 dark:text-[#858B99]">
-                              Direct Note
+                              General Note
                             </span>
                           )}
+
                           <span className="text-[10px] text-gray-400 dark:text-[#858B99]">
                             {formatBytes(doc.file_size)}
                           </span>
+
                           <span className="text-[10px] text-gray-400 dark:text-[#858B99]">
                             • Added {formatDate(doc.created_at)}
                           </span>
+
                           <StatusBadge active={doc.is_active} />
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-2 pl-6 sm:pl-0 shrink-0">
+                      <div className="flex items-center gap-2 pl-6 md:pl-0 shrink-0">
                         {/* Open PDF */}
                         <button
                           type="button"
                           onClick={() => handleOpenPdf(doc)}
                           disabled={isOpening}
-                          className="rounded-lg bg-[#2C3480] hover:bg-[#3D4CC4] disabled:opacity-50 text-white px-3 py-1.5 text-xs font-bold shadow-sm transition-colors flex items-center gap-1.5"
+                          className="rounded-lg bg-[#151515] hover:bg-[#8F1D32] text-white dark:bg-white dark:hover:bg-[#FCF4F5] dark:hover:text-[#8F1D32] dark:text-[#111111] disabled:opacity-50 px-3 py-1.5 text-xs font-bold shadow-sm transition-colors flex items-center gap-1.5"
                         >
                           {isOpening ? (
                             <span>Opening...</span>
@@ -2079,7 +2071,7 @@ export default function DocumentsCMS({ initialSubjectId = null }) {
                           )}
                         </button>
 
-                        {/* Edit */}
+                        {/* Edit Note */}
                         <button
                           type="button"
                           onClick={() => setEditingNote(doc)}
@@ -2097,7 +2089,7 @@ export default function DocumentsCMS({ initialSubjectId = null }) {
                           {doc.is_active ? "Disable" : "Enable"}
                         </button>
 
-                        {/* Delete */}
+                        {/* Delete Note */}
                         <button
                           type="button"
                           onClick={() => setDeletingNote(doc)}
@@ -2115,6 +2107,480 @@ export default function DocumentsCMS({ initialSubjectId = null }) {
               </div>
             )}
           </div>
+        </div>
+      ) : (
+        // ==========================================
+        // VIEW: BROWSE BY SUBJECT
+        // ==========================================
+        <div className="space-y-6">
+          {/* Year Tabs for Browse Mode */}
+          <div className="flex items-center gap-1 rounded-xl bg-gray-100 dark:bg-[#14171F] p-1 border border-gray-200 dark:border-[#292E3A] max-w-fit">
+            {YEAR_TABS.map((tab) => {
+              const isSelected = selectedYear === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => {
+                    setSelectedYear(tab.id);
+                    setSelectedSubjectId(null);
+                    setSelectedFolderId(null);
+                  }}
+                  className={`rounded-lg px-3.5 py-1.5 text-xs font-bold transition-all ${
+                    isSelected
+                      ? "bg-[#111111] dark:bg-white text-white dark:text-[#111111] shadow-sm"
+                      : "text-gray-600 hover:text-gray-900 dark:text-[#858B99] dark:hover:text-[#FFFFFF]"
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              );
+            })}
+          </div>
+
+          {!currentSubject ? (
+            /* Sub-view: Subjects Grid for Selected Year */
+            <div className="space-y-5">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="relative flex-1 max-w-md">
+                  <input
+                    type="text"
+                    placeholder="Search subjects..."
+                    value={subjectSearch}
+                    onChange={(e) => setSubjectSearch(e.target.value)}
+                    className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#14171F] pl-9 pr-4 py-2 text-xs text-gray-900 dark:text-[#FFFFFF] placeholder-gray-400 focus:border-[#8F1D32] dark:focus:border-[#A21F3D] focus:outline-none"
+                  />
+                  <svg
+                    viewBox="0 0 24 24"
+                    className="absolute left-3 top-2.5 h-4 w-4 text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <circle cx="11" cy="11" r="8" />
+                    <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-4.35-4.35" />
+                  </svg>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setCreateSubjectOpen(true)}
+                  className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#111111] hover:bg-[#222222] text-white dark:bg-white dark:hover:bg-[#EAEAEA] dark:text-[#111111] px-4 py-2 text-xs font-medium shadow-sm transition-colors"
+                >
+                  <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                  </svg>
+                  <span>+ Create Subject</span>
+                </button>
+              </div>
+
+              {filteredSubjects.length === 0 ? (
+                <div className="rounded-2xl border border-dashed border-gray-300 dark:border-[#292E3A] bg-white dark:bg-[#14171F] p-12 text-center">
+                  <h3 className="text-sm font-bold text-gray-900 dark:text-[#FFFFFF] mb-1">
+                    No subjects found
+                  </h3>
+                  <p className="text-xs text-gray-500 dark:text-[#858B99] mb-4">
+                    {subjectSearch ? "No subjects match your search." : `No subjects created for Year ${selectedYear} yet.`}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setCreateSubjectOpen(true)}
+                    className="rounded-xl bg-[#111111] hover:bg-[#222222] text-white dark:bg-white dark:hover:bg-[#EAEAEA] dark:text-[#111111] px-4 py-2 text-xs font-medium"
+                  >
+                    + Create Subject
+                  </button>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                  {filteredSubjects.map((sub) => {
+                    const displayName = resolveSubjectName(sub.id, sub.name, sub.short_name);
+                    const subFolders = folders.filter((f) => f.subject_id === sub.id);
+                    const subDocs = documents.filter((d) => d.subject_id === sub.id);
+
+                    return (
+                      <div
+                        key={sub.id}
+                        className="rounded-2xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#14171F] p-5 shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
+                      >
+                        <div>
+                          <div className="flex items-center justify-between gap-2 mb-2">
+                            <span className="rounded-md bg-[#F7F7F7] dark:bg-[#111111] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#111111] dark:text-white border border-[#EAEAEA] dark:border-[#222222]">
+                              {sub.short_name || "SUB"}
+                            </span>
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-[10px] text-gray-400 dark:text-[#858B99]">
+                                Year {selectedYear}
+                              </span>
+                              <StatusBadge active={sub.is_active !== false} />
+                            </div>
+                          </div>
+                          <h3 className="text-sm font-bold text-gray-900 dark:text-[#FFFFFF] line-clamp-2">
+                            {displayName}
+                          </h3>
+                          {sub.description && (
+                            <p className="mt-1 text-xs text-gray-500 dark:text-[#858B99] line-clamp-2">
+                              {sub.description}
+                            </p>
+                          )}
+                        </div>
+
+                        <div className="border-t border-gray-100 dark:border-[#1E2433] pt-3 mt-4 space-y-3">
+                          <div className="flex items-center justify-between text-[11px] text-gray-500 dark:text-[#858B99]">
+                            <span className="flex items-center gap-1.5">
+                              <svg viewBox="0 0 24 24" className="h-4 w-4 text-[#8F1D32] dark:text-[#A21F3D]" fill="none" stroke="currentColor" strokeWidth="1.8">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h4.879a1.5 1.5 0 001.06-.44l1.122-1.12A1.5 1.5 0 0112.62 7.5H19.5A2.25 2.25 0 0121.75 9.75v3m-19.5 0A2.25 2.25 0 004.5 15h15a2.25 2.25 0 002.25-2.25m-19.5 0v5.25A2.25 2.25 0 004.5 20.25h15a2.25 2.25 0 002.25-2.25V12.75" />
+                              </svg>
+                              <span>{subFolders.length} {subFolders.length === 1 ? "folder" : "folders"}</span>
+                            </span>
+                            <span className="flex items-center gap-1.5">
+                              <svg viewBox="0 0 24 24" className="h-4 w-4 text-[#8F1D32] dark:text-[#A21F3D]" fill="none" stroke="currentColor" strokeWidth="1.8">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                              </svg>
+                              <span>{subDocs.length} {subDocs.length === 1 ? "note" : "notes"}</span>
+                            </span>
+                          </div>
+
+                          <div className="flex items-center gap-2 pt-1">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setSelectedSubjectId(sub.id);
+                                setSelectedFolderId(null);
+                              }}
+                              className="flex-1 rounded-xl bg-[#111111] hover:bg-[#222222] text-white dark:bg-white dark:hover:bg-[#EAEAEA] dark:text-[#111111] py-1.5 text-xs font-bold transition shadow-sm text-center"
+                            >
+                              Open
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setEditingSubject(sub)}
+                              className="rounded-xl border border-gray-200 dark:border-[#292E3A] px-3 py-1.5 text-xs font-semibold text-gray-700 dark:text-[#B8BDCA] hover:bg-gray-50 dark:hover:bg-[#1A1E28] transition"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setDeletingSubject({ subject: sub, noteCount: subDocs.length, folderCount: subFolders.length })}
+                              className="rounded-xl border border-red-200 dark:border-red-900/40 p-1.5 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 transition"
+                              aria-label="Delete subject"
+                            >
+                              <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                              </svg>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          ) : (
+            /* Sub-view: Subject Content (Folders & Notes) */
+            <div className="space-y-6">
+              {/* Breadcrumb Navigation inside Subject */}
+              <div className="flex flex-wrap items-center justify-between gap-3 bg-white dark:bg-[#14171F] p-4 rounded-2xl border border-gray-200 dark:border-[#292E3A]">
+                <div className="flex flex-wrap items-center gap-2 text-xs">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedSubjectId(null);
+                      setSelectedFolderId(null);
+                    }}
+                    className="font-semibold text-gray-500 hover:text-gray-900 dark:text-[#858B99] dark:hover:text-[#FFFFFF]"
+                  >
+                    {selectedYear}th Year Subjects
+                  </button>
+                  <span className="text-gray-400">/</span>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedFolderId(null)}
+                    className={`font-bold ${
+                      !selectedFolderId
+                        ? "text-[#111111] dark:text-white"
+                        : "text-gray-600 hover:text-gray-900 dark:text-[#B8BDCA] dark:hover:text-[#FFFFFF]"
+                    }`}
+                  >
+                    {resolveSubjectName(currentSubject.id, currentSubject.name, currentSubject.short_name)}
+                  </button>
+                  {selectedFolderName && (
+                    <>
+                      <span className="text-gray-400">/</span>
+                      <span className="font-bold text-[#8F1D32] dark:text-[#A21F3D]">
+                        {selectedFolderName}
+                      </span>
+                    </>
+                  )}
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setCreateFolderOpen(true)}
+                    className="inline-flex items-center gap-1.5 rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2 text-xs font-semibold text-gray-700 dark:text-[#B8BDCA] hover:bg-gray-50 dark:hover:bg-[#242A38] shadow-sm transition-colors"
+                  >
+                    <svg viewBox="0 0 24 24" className="h-4 w-4 text-[#8F1D32] dark:text-[#A21F3D]" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                    </svg>
+                    <span>+ Create Folder</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setUploadOpen(true)}
+                    className="inline-flex items-center gap-1.5 rounded-xl bg-[#8F1D32] hover:bg-[#74152A] text-white px-4 py-2 text-xs font-bold shadow-sm transition-colors"
+                  >
+                    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                    </svg>
+                    <span>+ Add Note</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setEditingSubject(currentSubject)}
+                    className="rounded-xl border border-gray-200 dark:border-[#292E3A] px-3 py-2 text-xs font-semibold text-gray-700 dark:text-[#B8BDCA] hover:bg-gray-50 dark:hover:bg-[#1A1E28] transition"
+                  >
+                    Edit Subject
+                  </button>
+                </div>
+              </div>
+
+              {/* Folders List */}
+              {!selectedFolderId && (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h2 className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-[#858B99]">
+                      Folders ({currentSubjectFolders.length})
+                    </h2>
+                    <button
+                      type="button"
+                      onClick={() => setCreateFolderOpen(true)}
+                      className="text-xs font-semibold text-[#8F1D32] dark:text-[#A21F3D] hover:underline"
+                    >
+                      + New Folder
+                    </button>
+                  </div>
+
+                  {currentSubjectFolders.length === 0 ? (
+                    <div className="rounded-2xl border border-dashed border-gray-200 dark:border-[#292E3A] bg-gray-50/50 dark:bg-[#14171F]/40 p-6 text-center">
+                      <p className="text-xs text-gray-500 dark:text-[#858B99]">
+                        No folders created for this subject yet. Folders are optional.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                      {currentSubjectFolders.map((folder) => {
+                        const count = noteCountByFolder.get(folder.id) || 0;
+                        return (
+                          <div
+                            key={folder.id}
+                            className="group flex items-center justify-between p-3.5 rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#14171F] hover:border-[#8F1D32] dark:hover:border-[#A21F3D] shadow-sm transition-all"
+                          >
+                            <div
+                              onClick={() => setSelectedFolderId(folder.id)}
+                              className="flex items-center gap-2.5 min-w-0 flex-1 cursor-pointer"
+                            >
+                              <svg
+                                viewBox="0 0 24 24"
+                                className="h-5 w-5 shrink-0 text-[#8F1D32] dark:text-[#A21F3D]"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="1.8"
+                              >
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h4.879a1.5 1.5 0 001.06-.44l1.122-1.12A1.5 1.5 0 0112.62 7.5H19.5A2.25 2.25 0 0121.75 9.75v3m-19.5 0A2.25 2.25 0 004.5 15h15a2.25 2.25 0 002.25-2.25m-19.5 0v5.25A2.25 2.25 0 004.5 20.25h15a2.25 2.25 0 002.25-2.25V12.75" />
+                              </svg>
+                              <div className="min-w-0">
+                                <h4 className="text-xs font-bold text-gray-900 dark:text-[#FFFFFF] truncate group-hover:text-[#8F1D32] dark:group-hover:text-[#A21F3D]">
+                                  {folder.name}
+                                </h4>
+                                <span className="text-[10px] text-gray-400 dark:text-[#858B99]">
+                                  {count} {count === 1 ? "note" : "notes"}
+                                </span>
+                              </div>
+                            </div>
+
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setDeletingFolder({ folder, count });
+                              }}
+                              aria-label={`Delete folder ${folder.name}`}
+                              className="opacity-0 group-hover:opacity-100 p-1 rounded-lg text-gray-400 hover:text-red-600 transition-opacity"
+                            >
+                              <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                              </svg>
+                            </button>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Subject Notes */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h2 className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-[#858B99]">
+                      {selectedFolderId
+                        ? `Notes in "${selectedFolderName}" (${displayedDocuments.length})`
+                        : `All Notes / PDFs (${currentSubjectDocuments.length})`}
+                    </h2>
+                    {!selectedFolderId && directDocuments.length > 0 && (
+                      <p className="text-[11px] text-gray-400 dark:text-[#858B99]">
+                        Includes {directDocuments.length} direct note{directDocuments.length === 1 ? "" : "s"} not in any folder
+                      </p>
+                    )}
+                  </div>
+
+                  {selectedFolderId && (
+                    <button
+                      type="button"
+                      onClick={() => setSelectedFolderId(null)}
+                      className="text-xs font-semibold text-[#8F1D32] dark:text-[#A21F3D] hover:underline"
+                    >
+                      ← Show All Notes
+                    </button>
+                  )}
+                </div>
+
+                {displayedDocuments.length === 0 ? (
+                  <div className="rounded-2xl border border-dashed border-gray-300 dark:border-[#292E3A] bg-white dark:bg-[#14171F] p-10 text-center">
+                    <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-[#FCF4F5] dark:bg-[#1F1215] text-[#8F1D32] dark:text-[#A21F3D] mb-3">
+                      <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="1.8">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                      </svg>
+                    </div>
+                    <h3 className="text-sm font-bold text-gray-900 dark:text-[#FFFFFF] mb-1">
+                      No notes uploaded yet
+                    </h3>
+                    <p className="text-xs text-gray-500 dark:text-[#858B99] mb-4">
+                      {selectedFolderId
+                        ? `No notes in "${selectedFolderName}" yet.`
+                        : "No study materials or question papers uploaded for this subject yet."}
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => setUploadOpen(true)}
+                      className="rounded-xl bg-[#8F1D32] hover:bg-[#74152A] text-white px-4 py-2 text-xs font-bold"
+                    >
+                      + Add Note
+                    </button>
+                  </div>
+                ) : (
+                  <div className="rounded-2xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#14171F] overflow-hidden shadow-sm divide-y divide-gray-100 dark:divide-[#1E2433]">
+                    {displayedDocuments.map((doc) => {
+                      const categoryName = categoryMap.get(doc.category_id) || "Study Material";
+                      const folderName = doc.folder_id || doc.unit_id ? folderMap.get(doc.folder_id || doc.unit_id) : null;
+                      const isOpening = openingDocId === doc.id;
+
+                      return (
+                        <div
+                          key={doc.id}
+                          className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-gray-50/60 dark:hover:bg-[#1A1E28]/40 transition-colors"
+                        >
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <svg
+                                viewBox="0 0 24 24"
+                                className="h-4 w-4 shrink-0 text-[#8F1D32] dark:text-[#A21F3D]"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="1.8"
+                              >
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                              </svg>
+                              <span className="text-sm font-semibold text-gray-900 dark:text-[#FFFFFF] truncate">
+                                {doc.title}
+                              </span>
+                            </div>
+
+                            <div className="flex flex-wrap items-center gap-2 pl-6">
+                              <span className="rounded-md bg-gray-100 dark:bg-[#1E2433] px-2 py-0.5 text-[10px] font-medium text-gray-600 dark:text-[#B8BDCA]">
+                                {categoryName}
+                              </span>
+                              {folderName ? (
+                                <span className="inline-flex items-center gap-1 rounded-md bg-[#FCF4F5] dark:bg-[#1F1215] text-[#8F1D32] dark:text-[#A21F3D] px-2 py-0.5 text-[10px] font-semibold border border-[#F8E9EC] dark:border-[#2E1A1F]">
+                                  <span>📁 {folderName}</span>
+                                </span>
+                              ) : (
+                                <span className="rounded-md bg-gray-50 dark:bg-[#1E2433] px-2 py-0.5 text-[10px] font-medium text-gray-400 dark:text-[#858B99]">
+                                  Direct Note
+                                </span>
+                              )}
+                              <span className="text-[10px] text-gray-400 dark:text-[#858B99]">
+                                {formatBytes(doc.file_size)}
+                              </span>
+                              <span className="text-[10px] text-gray-400 dark:text-[#858B99]">
+                                • Added {formatDate(doc.created_at)}
+                              </span>
+                              <StatusBadge active={doc.is_active} />
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-2 pl-6 sm:pl-0 shrink-0">
+                            {/* Open PDF */}
+                            <button
+                              type="button"
+                              onClick={() => handleOpenPdf(doc)}
+                              disabled={isOpening}
+                              className="rounded-lg bg-[#151515] hover:bg-[#8F1D32] text-white dark:bg-white dark:hover:bg-[#FCF4F5] dark:hover:text-[#8F1D32] dark:text-[#111111] disabled:opacity-50 px-3 py-1.5 text-xs font-bold shadow-sm transition-colors flex items-center gap-1.5"
+                            >
+                              {isOpening ? (
+                                <span>Opening...</span>
+                              ) : (
+                                <>
+                                  <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                                  </svg>
+                                  <span>Open PDF</span>
+                                </>
+                              )}
+                            </button>
+
+                            {/* Edit */}
+                            <button
+                              type="button"
+                              onClick={() => setEditingNote(doc)}
+                              className="rounded-lg border border-gray-200 dark:border-[#292E3A] px-2.5 py-1.5 text-xs font-semibold text-gray-700 dark:text-[#B8BDCA] hover:bg-gray-50 dark:hover:bg-[#1A1E28] transition-colors"
+                            >
+                              Edit
+                            </button>
+
+                            {/* Toggle Active */}
+                            <button
+                              type="button"
+                              onClick={() => handleToggleActive(doc)}
+                              className="rounded-lg border border-gray-200 dark:border-[#292E3A] px-2.5 py-1.5 text-xs font-semibold text-gray-600 dark:text-[#858B99] hover:bg-gray-50 dark:hover:bg-[#1A1E28] transition-colors"
+                            >
+                              {doc.is_active ? "Disable" : "Enable"}
+                            </button>
+
+                            {/* Delete */}
+                            <button
+                              type="button"
+                              onClick={() => setDeletingNote(doc)}
+                              className="rounded-lg border border-red-200 dark:border-red-900/40 p-1.5 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors"
+                              aria-label="Delete note"
+                            >
+                              <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                              </svg>
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       )}
 
@@ -2154,13 +2620,15 @@ export default function DocumentsCMS({ initialSubjectId = null }) {
         />
       )}
 
-      {uploadOpen && currentSubject && (
-        <UploadNotesModal
-          year={selectedYear}
-          subject={currentSubject}
-          initialFolderId={selectedFolderId}
-          folders={currentSubjectFolders}
+      {uploadOpen && (
+        <SimpleAddNoteModal
+          years={YEAR_TABS}
+          subjects={subjects}
+          folders={folders}
           categories={categories}
+          initialYear={selectedYear}
+          initialSubjectId={currentSubject?.id || ""}
+          initialFolderId={selectedFolderId || ""}
           onClose={() => setUploadOpen(false)}
           onUploaded={handleNotesUploaded}
         />
@@ -2169,7 +2637,9 @@ export default function DocumentsCMS({ initialSubjectId = null }) {
       {editingNote && (
         <EditNoteModal
           note={editingNote}
-          folders={currentSubjectFolders}
+          years={YEAR_TABS}
+          subjects={subjects}
+          folders={folders}
           categories={categories}
           onClose={() => setEditingNote(null)}
           onSaved={handleNoteSaved}

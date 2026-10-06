@@ -45,6 +45,21 @@ const normalizeSupabaseError = (error, fallbackMessage) => {
   return error instanceof Error ? error : new Error(message);
 };
 
+const withTimeout = (promise, ms, label = 'operation') => {
+  let timer;
+  const timeoutPromise = new Promise((_, reject) => {
+    timer = setTimeout(() => {
+      const err = new Error(`[auth] role fetch timeout (${label} timed out after ${ms}ms)`);
+      err.isTimeout = true;
+      reject(err);
+    }, ms);
+  });
+  return Promise.race([
+    promise.finally(() => clearTimeout(timer)),
+    timeoutPromise,
+  ]);
+};
+
 const activeRoleRequests = new Map();
 
 const getUserRole = async (user) => {
@@ -53,50 +68,134 @@ const getUserRole = async (user) => {
   }
 
   if (activeRoleRequests.has(user.id)) {
+    console.log('[auth] deduplicating role fetch for user:', user.id);
     return activeRoleRequests.get(user.id);
   }
 
   const promise = (async () => {
-    const readRole = async () => {
-      const { data, error } = await supabase
-        .from('users')
-        .select('role')
-        .eq('id', user.id)
-        .single();
-
-      if (error) {
-        throw error;
-      }
-
-      return data?.role || 'user';
-    };
-
+    console.log('[auth] role fetch request started');
     try {
-      const role = await readRole();
-      return { role, profile: { id: user.id, role } };
-    } catch (error) {
-      const missingRow = error?.code === 'PGRST116' || /no rows|single result/i.test(error?.message || '');
+      const fetchUsers = async () => {
+        try {
+          const { data, error } = await supabase
+            .from('users')
+            .select('role')
+            .eq('id', user.id)
+            .maybeSingle();
+          if (error) throw error;
+          return { data, error: null };
+        } catch (err) {
+          const msg = err?.message || String(err);
+          if (/row-level security|permission denied|violates row-level security/i.test(msg)) {
+            console.warn('[auth] role fetch RLS error on users:', msg);
+          } else {
+            console.warn('[auth] role fetch database error on users:', msg);
+          }
+          return { data: null, error: err };
+        }
+      };
 
-      if (!missingRow) {
-        throw error;
+      const fetchProfiles = async () => {
+        try {
+          const { data, error } = await supabase
+            .from('admin_profiles')
+            .select('is_super_admin, is_active')
+            .eq('id', user.id)
+            .maybeSingle();
+          if (error) throw error;
+          return { data, error: null };
+        } catch (err) {
+          const msg = err?.message || String(err);
+          if (/row-level security|permission denied|violates row-level security/i.test(msg)) {
+            console.warn('[auth] role fetch RLS error on admin_profiles:', msg);
+          } else {
+            console.warn('[auth] role fetch database error on admin_profiles:', msg);
+          }
+          return { data: null, error: err };
+        }
+      };
+
+      const queryPromise = Promise.all([fetchUsers(), fetchProfiles()]);
+
+      const [userRes, profileRes] = await withTimeout(queryPromise, 8000, 'database role query');
+      console.log('[auth] role fetch request completed');
+
+      const userRow = userRes?.data;
+      const profileRow = profileRes?.data;
+
+      if (userRes?.error) {
+        const msg = userRes.error?.message || String(userRes.error);
+        if (/row-level security|permission denied/i.test(msg)) {
+          console.warn('[auth] role fetch RLS error:', msg);
+        } else {
+          console.warn('[auth] role fetch database error:', msg);
+        }
+      }
+      if (profileRes?.error) {
+        const msg = profileRes.error?.message || String(profileRes.error);
+        if (/row-level security|permission denied/i.test(msg)) {
+          console.warn('[auth] role fetch RLS error:', msg);
+        } else {
+          console.warn('[auth] role fetch database error:', msg);
+        }
       }
 
-      const role = normalizeEmail(user.email) === ADMIN_EMAIL ? 'admin' : 'user';
-      const { error: upsertError } = await supabase.from('users').upsert(
-        {
+      // Check admin status from database records (Section 14: authenticated user ID -> admin_profiles -> role)
+      const hasActiveAdminProfile = Boolean(profileRow && profileRow.is_active !== false);
+      const isSuperProfile = Boolean(profileRow?.is_super_admin && profileRow?.is_active !== false);
+      const isUserAdminRole = userRow?.role === 'admin';
+
+      let determinedRole = 'user';
+      if (profileRow && profileRow.is_active === false) {
+        determinedRole = 'user';
+      } else if (isSuperProfile || hasActiveAdminProfile || isUserAdminRole) {
+        determinedRole = 'admin';
+      }
+
+      const roleResult = {
+        role: determinedRole,
+        profile: {
           id: user.id,
-          email: user.email || '',
-          role,
+          role: determinedRole,
+          is_super_admin: isSuperProfile,
+          is_active: profileRow?.is_active ?? (determinedRole === 'admin'),
         },
-        { onConflict: 'id' },
-      );
+      };
 
-      if (upsertError) {
-        throw upsertError;
+      console.log('[auth] role fetch result:', roleResult.role, {
+        isSuper: isSuperProfile,
+        isActive: profileRow?.is_active,
+        userRole: userRow?.role,
+      });
+
+      // Background sync: ensure users table matches without blocking
+      if (!userRow && determinedRole === 'admin') {
+        (async () => {
+          try {
+            await supabase
+              .from('users')
+              .upsert(
+                {
+                  id: user.id,
+                  email: user.email || '',
+                  role: determinedRole,
+                },
+                { onConflict: 'id' }
+              );
+          } catch {
+            // ignore
+          }
+        })();
       }
 
-      const syncedRole = await readRole();
-      return { role: syncedRole, profile: { id: user.id, role: syncedRole } };
+      return roleResult;
+    } catch (err) {
+      if (err?.isTimeout) {
+        console.warn('[auth] role fetch timeout');
+      } else {
+        console.warn('[auth] role fetch database error:', err?.message || err);
+      }
+      throw err;
     }
   })();
 
@@ -277,6 +376,11 @@ export const authApi = {
       console.error('Role sync failed:', syncError);
       return { user: resolvedUser, role: 'user' };
     }
+  },
+
+  async getUserRoleDirect(user) {
+    if (!user) return { role: 'user', profile: null };
+    return getUserRole(user);
   },
 };
 

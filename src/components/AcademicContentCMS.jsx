@@ -101,7 +101,6 @@ function AddSubjectModal({ years, initialYearId, onClose, onSuccess }) {
           year_id: Number(yearId),
           description: description.trim() || null,
           is_active: true,
-          drive_link: null,
           is_deleted: false,
         })
         .select()
@@ -151,7 +150,7 @@ function AddSubjectModal({ years, initialYearId, onClose, onSuccess }) {
             placeholder="e.g. Database Management Systems"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2.5 text-sm text-gray-900 dark:text-[#FFFFFF] placeholder-gray-400 focus:border-[#2C3480] focus:outline-none"
+            className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2.5 text-sm text-gray-900 dark:text-[#FFFFFF] placeholder-gray-400 focus:border-[#111111] dark:focus:border-white focus:outline-none"
           />
         </div>
 
@@ -165,7 +164,7 @@ function AddSubjectModal({ years, initialYearId, onClose, onSuccess }) {
             placeholder="e.g. DBMS"
             value={shortName}
             onChange={(e) => setShortName(e.target.value)}
-            className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2.5 text-sm uppercase text-gray-900 dark:text-[#FFFFFF] placeholder-gray-400 focus:border-[#2C3480] focus:outline-none"
+            className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2.5 text-sm uppercase text-gray-900 dark:text-[#FFFFFF] placeholder-gray-400 focus:border-[#111111] dark:focus:border-white focus:outline-none"
           />
         </div>
 
@@ -176,7 +175,7 @@ function AddSubjectModal({ years, initialYearId, onClose, onSuccess }) {
           <select
             value={yearId}
             onChange={(e) => setYearId(Number(e.target.value))}
-            className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2.5 text-sm text-gray-900 dark:text-[#FFFFFF] focus:border-[#2C3480] focus:outline-none"
+            className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2.5 text-sm text-gray-900 dark:text-[#FFFFFF] focus:border-[#111111] dark:focus:border-white focus:outline-none"
           >
             {years.map((y) => (
               <option key={y.id} value={y.id}>
@@ -195,7 +194,7 @@ function AddSubjectModal({ years, initialYearId, onClose, onSuccess }) {
             placeholder="Optional subject description or course notes"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2 text-sm text-gray-900 dark:text-[#FFFFFF] placeholder-gray-400 focus:border-[#2C3480] focus:outline-none"
+            className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2 text-sm text-gray-900 dark:text-[#FFFFFF] placeholder-gray-400 focus:border-[#111111] dark:focus:border-white focus:outline-none"
           />
         </div>
 
@@ -211,7 +210,7 @@ function AddSubjectModal({ years, initialYearId, onClose, onSuccess }) {
           <button
             type="submit"
             disabled={saving || !name.trim() || !shortName.trim()}
-            className="rounded-xl bg-[#2C3480] px-4 py-2 text-xs font-bold text-white transition hover:bg-[#3D4CC4] disabled:opacity-50"
+            className="rounded-xl bg-[#111111] hover:bg-[#222222] text-white dark:bg-white dark:hover:bg-[#EAEAEA] dark:text-[#111111] disabled:opacity-50 px-4 py-2 text-xs font-medium transition"
           >
             {saving ? "Creating..." : "Create Subject"}
           </button>
@@ -298,7 +297,7 @@ function EditSubjectModal({ subject, years, onClose, onUpdated }) {
             required
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2.5 text-sm text-gray-900 dark:text-[#FFFFFF] focus:border-[#2C3480] focus:outline-none"
+            className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2.5 text-sm text-gray-900 dark:text-[#FFFFFF] focus:border-[#111111] dark:focus:border-white focus:outline-none"
           />
         </div>
 
@@ -311,7 +310,7 @@ function EditSubjectModal({ subject, years, onClose, onUpdated }) {
             required
             value={shortName}
             onChange={(e) => setShortName(e.target.value)}
-            className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2.5 text-sm uppercase text-gray-900 dark:text-[#FFFFFF] focus:border-[#2C3480] focus:outline-none"
+            className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2.5 text-sm uppercase text-gray-900 dark:text-[#FFFFFF] focus:border-[#111111] dark:focus:border-white focus:outline-none"
           />
         </div>
 
@@ -322,7 +321,7 @@ function EditSubjectModal({ subject, years, onClose, onUpdated }) {
           <select
             value={yearId}
             onChange={(e) => setYearId(Number(e.target.value))}
-            className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2.5 text-sm text-gray-900 dark:text-[#FFFFFF] focus:border-[#2C3480] focus:outline-none"
+            className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2.5 text-sm text-gray-900 dark:text-[#FFFFFF] focus:border-[#111111] dark:focus:border-white focus:outline-none"
           >
             {years.map((y) => (
               <option key={y.id} value={y.id}>
@@ -340,7 +339,7 @@ function EditSubjectModal({ subject, years, onClose, onUpdated }) {
             rows={2}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2 text-sm text-gray-900 dark:text-[#FFFFFF] focus:border-[#2C3480] focus:outline-none"
+            className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2 text-sm text-gray-900 dark:text-[#FFFFFF] focus:border-[#111111] dark:focus:border-white focus:outline-none"
           />
         </div>
 
@@ -350,7 +349,7 @@ function EditSubjectModal({ subject, years, onClose, onUpdated }) {
             id="academic_subject_active"
             checked={isActive}
             onChange={(e) => setIsActive(e.target.checked)}
-            className="h-4 w-4 rounded border-gray-300 text-[#2C3480] focus:ring-[#2C3480]"
+            className="h-4 w-4 rounded border-gray-300 text-[#111111] dark:text-white focus:ring-[#111111] dark:focus:ring-white"
           />
           <label htmlFor="academic_subject_active" className="text-xs font-semibold text-gray-700 dark:text-[#B8BDCA]">
             Active
@@ -369,7 +368,7 @@ function EditSubjectModal({ subject, years, onClose, onUpdated }) {
           <button
             type="submit"
             disabled={saving}
-            className="rounded-xl bg-[#2C3480] hover:bg-[#3D4CC4] disabled:opacity-50 px-4 py-2 text-xs font-bold text-white shadow-sm transition-colors"
+            className="rounded-xl bg-[#111111] hover:bg-[#222222] text-white dark:bg-white dark:hover:bg-[#EAEAEA] dark:text-[#111111] disabled:opacity-50 px-4 py-2 text-xs font-medium shadow-sm transition-colors"
           >
             {saving ? "Saving..." : "Save Changes"}
           </button>
@@ -528,7 +527,7 @@ function CreateFolderModal({ subjects, initialSubjectId, onClose, onCreated }) {
           <select
             value={subjectId}
             onChange={(e) => setSubjectId(e.target.value)}
-            className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2.5 text-sm text-gray-900 dark:text-[#FFFFFF] focus:border-[#2C3480] focus:outline-none"
+            className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2.5 text-sm text-gray-900 dark:text-[#FFFFFF] focus:border-[#111111] dark:focus:border-white focus:outline-none"
           >
             {subjects.map((sub) => (
               <option key={sub.id} value={sub.id}>
@@ -548,7 +547,7 @@ function CreateFolderModal({ subjects, initialSubjectId, onClose, onCreated }) {
             placeholder="e.g. Unit 1 or Mid Exam Materials"
             value={folderName}
             onChange={(e) => setFolderName(e.target.value)}
-            className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2.5 text-sm text-gray-900 dark:text-[#FFFFFF] placeholder-gray-400 focus:border-[#2C3480] focus:outline-none"
+            className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2.5 text-sm text-gray-900 dark:text-[#FFFFFF] placeholder-gray-400 focus:border-[#111111] dark:focus:border-white focus:outline-none"
           />
         </div>
 
@@ -564,7 +563,7 @@ function CreateFolderModal({ subjects, initialSubjectId, onClose, onCreated }) {
           <button
             type="submit"
             disabled={saving}
-            className="rounded-xl bg-[#2C3480] hover:bg-[#3D4CC4] disabled:opacity-50 px-4 py-2 text-xs font-bold text-white shadow-sm transition-colors"
+            className="rounded-xl bg-[#111111] hover:bg-[#222222] text-white dark:bg-white dark:hover:bg-[#EAEAEA] dark:text-[#111111] disabled:opacity-50 px-4 py-2 text-xs font-medium shadow-sm transition-colors"
           >
             {saving ? "Creating..." : "Create Folder"}
           </button>
@@ -749,7 +748,7 @@ export default function AcademicContentCMS() {
               setAddSubjectYearId(1);
               setShowAddSubjectModal(true);
             }}
-            className="inline-flex items-center gap-1.5 rounded-xl bg-[#2C3480] hover:bg-[#3D4CC4] px-4 py-2 text-xs font-bold text-white shadow-sm transition-colors"
+            className="inline-flex items-center gap-1.5 rounded-xl bg-[#111111] hover:bg-[#222222] text-white dark:bg-white dark:hover:bg-[#EAEAEA] dark:text-[#111111] px-4 py-2 text-xs font-medium shadow-sm transition-colors"
           >
             <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.5">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -768,7 +767,7 @@ export default function AcademicContentCMS() {
             >
               <div className="flex items-center justify-between border-b border-gray-100 dark:border-[#1E2433] pb-3">
                 <div className="flex items-center gap-2.5">
-                  <span className="rounded-lg bg-blue-50 dark:bg-[#1A1E28] px-2.5 py-1 text-xs font-bold text-[#2C3480] dark:text-[#AAB3FF] border border-blue-100 dark:border-[#292E3A]">
+                  <span className="rounded-lg bg-[#F7F7F7] dark:bg-[#111111] px-2.5 py-1 text-xs font-bold text-[#111111] dark:text-white border border-[#EAEAEA] dark:border-[#222222]">
                     Year {year.id}
                   </span>
                   <h3 className="text-sm font-bold text-gray-900 dark:text-[#FFFFFF]">{year.name}</h3>
@@ -782,7 +781,7 @@ export default function AcademicContentCMS() {
                     setAddSubjectYearId(year.id);
                     setShowAddSubjectModal(true);
                   }}
-                  className="text-xs font-semibold text-[#2C3480] dark:text-[#AAB3FF] hover:underline"
+                  className="text-xs font-semibold text-[#111111] dark:text-white hover:underline"
                 >
                   + Add Subject
                 </button>
@@ -797,7 +796,7 @@ export default function AcademicContentCMS() {
                       setAddSubjectYearId(year.id);
                       setShowAddSubjectModal(true);
                     }}
-                    className="mt-2 text-xs font-bold text-[#2C3480] dark:text-[#AAB3FF] hover:underline"
+                    className="mt-2 text-xs font-bold text-[#111111] dark:text-white hover:underline"
                   >
                     + Create Subject
                   </button>
@@ -814,7 +813,7 @@ export default function AcademicContentCMS() {
                       >
                         <div>
                           <div className="flex items-center justify-between gap-2 mb-1.5">
-                            <span className="rounded-md bg-blue-50 dark:bg-[#1A1E28] px-2 py-0.5 text-[10px] font-bold uppercase text-[#2C3480] dark:text-[#B8BDCA] border border-blue-100 dark:border-[#292E3A]">
+                            <span className="rounded-md bg-[#F7F7F7] dark:bg-[#111111] px-2 py-0.5 text-[10px] font-bold uppercase text-[#111111] dark:text-[#B3B3B3] border border-[#EAEAEA] dark:border-[#222222]">
                               {sub.short_name || "SUB"}
                             </span>
                             <StatusBadge active={sub.is_active !== false} />
@@ -832,13 +831,13 @@ export default function AcademicContentCMS() {
                         <div className="border-t border-gray-100 dark:border-[#202533] pt-3 mt-3 space-y-2.5">
                           <div className="flex items-center justify-between text-[11px] text-gray-500 dark:text-[#858B99]">
                             <span className="flex items-center gap-1.5">
-                              <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 text-[#2C3480] dark:text-[#3D4CC4]" fill="none" stroke="currentColor" strokeWidth="2">
+                              <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 text-[#111111] dark:text-white" fill="none" stroke="currentColor" strokeWidth="2">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h4.879a1.5 1.5 0 001.06-.44l1.122-1.12A1.5 1.5 0 0112.62 7.5H19.5A2.25 2.25 0 0121.75 9.75v3m-19.5 0A2.25 2.25 0 004.5 15h15a2.25 2.25 0 002.25-2.25m-19.5 0v5.25A2.25 2.25 0 004.5 20.25h15a2.25 2.25 0 002.25-2.25V12.75" />
                               </svg>
                               <span>{sub.folder_count} {sub.folder_count === 1 ? "folder" : "folders"}</span>
                             </span>
                             <span className="flex items-center gap-1.5">
-                              <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 text-[#2C3480] dark:text-[#3D4CC4]" fill="none" stroke="currentColor" strokeWidth="2">
+                              <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 text-[#111111] dark:text-white" fill="none" stroke="currentColor" strokeWidth="2">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
                               </svg>
                               <span>{sub.document_count} {sub.document_count === 1 ? "note" : "notes"}</span>
@@ -849,7 +848,7 @@ export default function AcademicContentCMS() {
                             <button
                               type="button"
                               onClick={() => handleOpenSubjectDocuments(sub)}
-                              className="flex-1 rounded-lg bg-[#2C3480] hover:bg-[#3D4CC4] text-white py-1.5 text-xs font-bold transition shadow-sm text-center"
+                              className="flex-1 rounded-lg bg-[#111111] hover:bg-[#222222] text-white dark:bg-white dark:hover:bg-[#EAEAEA] dark:text-[#111111] py-1.5 text-xs font-bold transition shadow-sm text-center"
                             >
                               Open
                             </button>
@@ -913,7 +912,7 @@ export default function AcademicContentCMS() {
             type="button"
             disabled={subjects.length === 0}
             onClick={() => setShowCreateFolderModal(true)}
-            className="inline-flex items-center gap-1.5 rounded-xl bg-[#2C3480] hover:bg-[#3D4CC4] disabled:opacity-50 px-4 py-2 text-xs font-bold text-white shadow-sm transition-colors"
+            className="inline-flex items-center gap-1.5 rounded-xl bg-[#111111] hover:bg-[#222222] text-white dark:bg-white dark:hover:bg-[#EAEAEA] dark:text-[#111111] disabled:opacity-50 px-4 py-2 text-xs font-medium shadow-sm transition-colors"
           >
             <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.5">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -951,7 +950,7 @@ export default function AcademicContentCMS() {
               <button
                 type="button"
                 onClick={() => setShowCreateFolderModal(true)}
-                className="mt-4 rounded-xl bg-[#2C3480] px-4 py-2 text-xs font-bold text-white hover:bg-[#3D4CC4]"
+                className="mt-4 rounded-xl bg-[#111111] hover:bg-[#222222] text-white dark:bg-white dark:hover:bg-[#EAEAEA] dark:text-[#111111] px-4 py-2 text-xs font-medium"
               >
                 + Create Folder
               </button>
@@ -970,7 +969,7 @@ export default function AcademicContentCMS() {
                   <div className="flex items-center gap-2.5 min-w-0">
                     <svg
                       viewBox="0 0 24 24"
-                      className="h-5 w-5 shrink-0 text-[#2C3480] dark:text-[#3D4CC4]"
+                      className="h-5 w-5 shrink-0 text-[#111111] dark:text-white"
                       fill="none"
                       stroke="currentColor"
                       strokeWidth="1.8"
@@ -1026,7 +1025,7 @@ export default function AcademicContentCMS() {
             <div key={year.id} className="p-4 flex items-center justify-between">
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="rounded-md bg-blue-50 dark:bg-[#1A1E28] px-2 py-0.5 text-xs font-bold text-[#2C3480] dark:text-[#AAB3FF] border border-blue-100 dark:border-[#292E3A]">
+                  <span className="rounded-md bg-[#F7F7F7] dark:bg-[#111111] px-2 py-0.5 text-xs font-bold text-[#111111] dark:text-white border border-[#EAEAEA] dark:border-[#222222]">
                     Year {year.id}
                   </span>
                   <h4 className="text-sm font-bold text-gray-900 dark:text-[#FFFFFF]">{year.name}</h4>
@@ -1103,7 +1102,7 @@ export default function AcademicContentCMS() {
       {/* Header & Tabs */}
       <div className="flex flex-col gap-4 border-b border-gray-200 pb-5 dark:border-[#292E3A] sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-xs font-bold uppercase tracking-wider text-[#2C3480] dark:text-[#AAB3FF]">
+          <p className="text-xs font-bold uppercase tracking-wider text-[#111111] dark:text-white">
             Academic Content
           </p>
           <h1 className="mt-1 text-2xl font-bold tracking-tight text-gray-900 dark:text-[#FFFFFF]">
@@ -1138,7 +1137,7 @@ export default function AcademicContentCMS() {
             }}
             className={`shrink-0 border-b-2 px-4 py-2.5 text-xs font-bold transition-all ${
               section === item.id
-                ? "border-[#2C3480] text-[#2C3480] dark:border-[#AAB3FF] dark:text-[#AAB3FF]"
+                ? "border-[#111111] dark:border-white text-[#111111] dark:text-white dark:border-[#AAB3FF] dark:text-white"
                 : "border-transparent text-gray-500 hover:text-gray-900 dark:text-[#858B99] dark:hover:text-[#FFFFFF]"
             }`}
           >
@@ -1153,7 +1152,7 @@ export default function AcademicContentCMS() {
           <button
             type="button"
             onClick={loadData}
-            className="mt-3 rounded-xl bg-[#2C3480] px-4 py-2 text-xs font-bold text-white shadow-sm"
+            className="mt-3 rounded-xl bg-[#111111] text-white dark:bg-white dark:text-[#111111] px-4 py-2 text-xs font-medium shadow-sm"
           >
             Retry
           </button>

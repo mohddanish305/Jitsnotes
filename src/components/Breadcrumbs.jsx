@@ -1,7 +1,12 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { FaChevronRight, FaHome } from "./icons";
+import { Home, ChevronRight } from "lucide-react";
 
-export default function Breadcrumbs({ yearNumber, onYearClick }) {
+export default function Breadcrumbs({
+  yearNumber,
+  onYearClick,
+  subject,
+  _onSubjectClick,
+}) {
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -16,43 +21,67 @@ export default function Breadcrumbs({ yearNumber, onYearClick }) {
 
   const handleYearClick = (e, year) => {
     e.preventDefault();
-    if (location.pathname !== "/") {
-      navigate("/", { state: { scrollTo: "notes-section" } });
-      setTimeout(() => {
-        if (onYearClick) onYearClick(year);
-      }, 100);
-    } else if (onYearClick) {
+    if (onYearClick) {
       onYearClick(year);
+    } else {
+      navigate(`/years/${year}/subjects`);
     }
   };
 
+  const yearLabels = {
+    1: "1st Year",
+    2: "2nd Year",
+    3: "3rd Year",
+    4: "4th Year",
+  };
+
+  const yearLabel = yearLabels[yearNumber] || `Year ${yearNumber}`;
+
   return (
-    <nav 
-      aria-label="Breadcrumb" 
-      className="flex flex-wrap items-center space-x-1.5 sm:space-x-2 py-2 px-3 text-xs font-medium text-[#555555] dark:text-[#B8BDCA] border border-[#E5E5E5] dark:border-[#292E3A] bg-white dark:bg-[#14171F] rounded-xl max-w-fit shadow-sm"
+    <nav
+      aria-label="Breadcrumb"
+      className="inline-flex items-center flex-wrap gap-1.5 py-1.5 px-3 text-xs font-medium text-[#666666] dark:text-[#999999] border border-[#EDEDED] dark:border-[#222222] bg-[#FFFFFF] dark:bg-[#0B0B0B] rounded-xl max-w-full shadow-subtle dark:shadow-subtle-dark"
     >
-      <ol className="inline-flex flex-wrap items-center space-x-1 sm:space-x-2">
+      <ol className="inline-flex flex-wrap items-center gap-1 sm:gap-1.5">
         <li className="inline-flex items-center">
           <a
             href="/"
             onClick={handleHomeClick}
-            className="inline-flex items-center gap-1.5 hover:text-[#000000] dark:hover:text-[#FFFFFF] transition-colors"
+            className="inline-flex items-center gap-1.5 text-[#666666] dark:text-[#999999] hover:text-[#151515] dark:hover:text-white transition-colors"
           >
-            <FaHome className="w-3.5 h-3.5" />
+            <Home className="w-3.5 h-3.5 text-[#999999]" />
             <span>Home</span>
           </a>
         </li>
 
         {yearNumber && (
-          <li className="flex items-center">
-            <FaChevronRight className="w-2.5 h-2.5 mx-1 text-[#858B99]" />
-            <a
-              href={`/?year=${yearNumber}`}
-              onClick={(e) => handleYearClick(e, yearNumber)}
-              className="hover:text-[#000000] dark:hover:text-[#FFFFFF] font-semibold transition-colors"
+          <li className="inline-flex items-center">
+            <ChevronRight className="w-3 h-3 text-[#999999] mx-0.5 shrink-0" />
+            {subject ? (
+              <button
+                type="button"
+                onClick={(e) => handleYearClick(e, yearNumber)}
+                className="text-[#666666] dark:text-[#999999] hover:text-[#8F1D32] dark:hover:text-[#A21F3D] transition-colors font-medium cursor-pointer"
+              >
+                {yearLabel}
+              </button>
+            ) : (
+              <span className="font-semibold text-[#151515] dark:text-white">
+                {yearLabel}
+              </span>
+            )}
+          </li>
+        )}
+
+        {subject && (
+          <li className="inline-flex items-center">
+            <ChevronRight className="w-3 h-3 text-[#999999] mx-0.5 shrink-0" />
+            <span
+              className="font-semibold text-[#8F1D32] dark:text-[#A21F3D] truncate max-w-[180px] sm:max-w-[280px]"
+              title={subject.name || subject.short_name}
             >
-              Year {yearNumber}
-            </a>
+              {subject.short_name || subject.name}
+            </span>
           </li>
         )}
       </ol>

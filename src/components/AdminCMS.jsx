@@ -86,10 +86,10 @@ const formatDate = (value) =>
 
 function Metric({ label, value, detail }) {
   return (
-    <div className="rounded-2xl border border-[#E5E5E5] bg-white p-5 shadow-sm dark:border-[#292E3A] dark:bg-[#14171F]">
-      <p className="text-xs font-bold uppercase tracking-wider text-[#555555] dark:text-[#858B99]">{label}</p>
-      <p className="mt-2 text-3xl font-extrabold tracking-tight text-[#000000] dark:text-white">{value}</p>
-      <p className="mt-1 text-xs text-[#555555] dark:text-[#B8BDCA]">{detail}</p>
+    <div className="rounded-2xl border border-[#EAEAEA] bg-[#FFFFFF] p-5 shadow-subtle dark:border-[#222222] dark:bg-[#0A0A0A]">
+      <p className="text-xs font-semibold uppercase tracking-wider text-[#666666] dark:text-[#B3B3B3]">{label}</p>
+      <p className="mt-2 text-3xl font-bold tracking-tight text-[#111111] dark:text-white">{value}</p>
+      <p className="mt-1 text-xs text-[#666666] dark:text-[#8A8A8A]">{detail}</p>
     </div>
   );
 }
@@ -178,13 +178,13 @@ function Overview({ onNavigate }) {
       <section className="space-y-6">
         <div className="flex items-center justify-between border-b border-[#E5E5E5] pb-5 dark:border-[#292E3A]">
           <div>
-            <p className="text-xs font-bold uppercase tracking-wider text-[#2C3480] dark:text-[#3D4CC4]">JITS Notes Admin</p>
-            <h1 className="mt-1 text-2xl font-bold tracking-tight text-[#000000] dark:text-white">Overview</h1>
+            <p className="text-xs font-bold uppercase tracking-wider text-[#111111] dark:text-white">JITS Notes Admin</p>
+            <h1 className="mt-1 text-2xl font-bold tracking-tight text-[#141517] dark:text-white">Overview</h1>
           </div>
           <button
             type="button"
             onClick={loadOverview}
-            className="rounded-xl border border-[#E5E5E5] px-4 py-2 text-sm font-semibold text-[#555555] dark:border-[#292E3A] dark:text-gray-200"
+            className="rounded-xl border border-[#E4E7EB] px-4 py-2 text-sm font-semibold text-[#5F6368] dark:border-[#2B2F34] dark:text-[#B8BDCA]"
           >
             Retry
           </button>
@@ -198,17 +198,17 @@ function Overview({ onNavigate }) {
 
   return (
     <section className="space-y-6">
-      <div className="flex flex-col gap-4 border-b border-[#E5E5E5] pb-5 dark:border-[#292E3A] sm:flex-row sm:items-end sm:justify-between">
+      <div className="flex flex-col gap-4 border-b border-[#E4E7EB] pb-5 dark:border-[#2B2F34] sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-xs font-bold uppercase tracking-wider text-[#2C3480] dark:text-[#3D4CC4]">JITS Notes Admin</p>
-          <h1 className="mt-1 text-2xl font-bold tracking-tight text-[#000000] dark:text-white">Overview</h1>
-          <p className="mt-1 text-sm text-[#555555] dark:text-[#B8BDCA]">Live operational data from the shared academic catalog.</p>
+          <p className="text-xs font-bold uppercase tracking-wider text-[#111111] dark:text-white">JITS Notes Admin</p>
+          <h1 className="mt-1 text-2xl font-bold tracking-tight text-[#141517] dark:text-white">Overview</h1>
+          <p className="mt-1 text-sm text-[#5F6368] dark:text-[#B8BDCA]">Live operational data from the shared academic catalog.</p>
         </div>
         <button
           type="button"
           onClick={loadOverview}
           disabled={loading}
-          className="rounded-xl border border-[#E5E5E5] px-4 py-2 text-sm font-semibold text-[#555555] hover:bg-[#F7F8FA] disabled:opacity-50 dark:border-[#292E3A] dark:text-gray-200 dark:hover:bg-[#171B24]"
+          className="rounded-xl border border-[#E4E7EB] px-4 py-2 text-sm font-semibold text-[#5F6368] hover:bg-[#F2F4F7] disabled:opacity-50 dark:border-[#2B2F34] dark:text-[#B8BDCA] dark:hover:bg-[#1B1D20]"
         >
           {loading ? "Refreshing..." : "Refresh"}
         </button>
@@ -217,7 +217,7 @@ function Overview({ onNavigate }) {
       {loading ? (
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {[1, 2, 3, 4, 5, 6].map((item) => (
-            <div key={item} className="h-28 animate-pulse rounded-2xl bg-[#E5E5E5] dark:bg-[#14171F]" />
+            <div key={item} className="h-28 animate-pulse rounded-2xl bg-[#E4E7EB] dark:bg-[#1B1D20]" />
           ))}
         </div>
       ) : (
@@ -232,18 +232,18 @@ function Overview({ onNavigate }) {
       )}
 
       {/* Recent documents */}
-      <div className="rounded-2xl border border-[#E5E5E5] bg-white shadow-sm dark:border-[#292E3A] dark:bg-[#14171F]">
-        <div className="flex items-center justify-between gap-4 border-b border-[#E5E5E5] px-5 py-4 dark:border-[#292E3A]">
+      <div className="rounded-2xl border border-[#E4E7EB] bg-white shadow-subtle dark:border-[#2B2F34] dark:bg-[#141517]">
+        <div className="flex items-center justify-between gap-4 border-b border-[#E4E7EB] px-5 py-4 dark:border-[#2B2F34]">
           <div>
-            <h2 className="font-bold text-[#000000] dark:text-white">Recent Documents</h2>
-            <p className="mt-0.5 text-xs text-[#555555] dark:text-[#858B99]">
+            <h2 className="font-bold text-[#141517] dark:text-white">Recent Documents</h2>
+            <p className="mt-0.5 text-xs text-[#5F6368] dark:text-[#8A8F98]">
               Latest notes uploaded to the academic repository.
             </p>
           </div>
           <button
             type="button"
             onClick={() => onNavigate("/admin/documents")}
-            className="text-xs font-bold text-[#2C3480] hover:underline dark:text-[#3D4CC4]"
+            className="text-xs font-bold text-[#111111] dark:text-white hover:underline"
           >
             Manage all notes →
           </button>
@@ -262,7 +262,7 @@ function Overview({ onNavigate }) {
                 <div className="min-w-0">
                   <p className="truncate text-sm font-semibold text-[#000000] dark:text-white">{document.title}</p>
                   <p className="mt-0.5 text-xs text-[#555555] dark:text-[#858B99]">
-                    {document.storage_provider === "b2" ? "Cloud PDF" : document.storage_provider} • {formatDate(document.created_at)}
+                    Cloud PDF • {formatDate(document.created_at)}
                   </p>
                 </div>
                 <span
@@ -309,9 +309,9 @@ function Activity() {
   return (
     <section className="space-y-4">
       <div>
-        <p className="text-xs font-bold uppercase tracking-wider text-[#2C3480] dark:text-[#3D4CC4]">Administration</p>
-        <h1 className="mt-1 text-2xl font-bold tracking-tight text-[#000000] dark:text-white">Activity</h1>
-        <p className="mt-1 text-sm text-[#555555] dark:text-[#B8BDCA]">Real administrative events recorded by the CMS.</p>
+        <p className="text-xs font-semibold uppercase tracking-wider text-[#666666] dark:text-[#B3B3B3]">Administration</p>
+        <h1 className="mt-1 text-2xl font-bold tracking-tight text-[#111111] dark:text-white">Activity</h1>
+        <p className="mt-1 text-sm text-[#666666] dark:text-[#B3B3B3]">Real administrative events recorded by the CMS.</p>
       </div>
 
       {error ? (
@@ -319,14 +319,14 @@ function Activity() {
           {error}
         </div>
       ) : loading ? (
-        <div className="h-48 animate-pulse rounded-2xl bg-[#E5E5E5] dark:bg-[#14171F]" />
+        <div className="h-48 animate-pulse rounded-2xl bg-[#F7F7F7] dark:bg-[#161616]" />
       ) : events.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-[#E5E5E5] p-12 text-center text-sm text-[#555555] dark:border-[#292E3A] dark:text-[#B8BDCA]">
+        <div className="rounded-2xl border border-dashed border-[#EAEAEA] p-12 text-center text-sm text-[#666666] dark:border-[#222222] dark:text-[#B3B3B3]">
           No activity recorded yet.
         </div>
       ) : (
-        <div className="overflow-hidden rounded-2xl border border-[#E5E5E5] bg-white shadow-sm dark:border-[#292E3A] dark:bg-[#14171F]">
-          <div className="divide-y divide-[#E5E5E5] dark:divide-[#292E3A]">
+        <div className="overflow-hidden rounded-2xl border border-[#EAEAEA] bg-[#FFFFFF] shadow-subtle dark:border-[#222222] dark:bg-[#0A0A0A]">
+          <div className="divide-y divide-[#EAEAEA] dark:divide-[#222222]">
             {events.map((event) => (
               <div key={event.id} className="flex flex-col gap-1 px-5 py-3.5 sm:flex-row sm:items-center sm:justify-between">
                 <div>
@@ -354,25 +354,12 @@ export default function AdminCMS() {
   const navigate = useNavigate();
   const view = getView(location.pathname);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [isSuperAdmin, setIsSuperAdmin] = useState(false);
+  const { isSuperAdmin: contextSuperAdmin } = useAuth();
+  const [isSuperAdmin, setIsSuperAdmin] = useState(() => contextSuperAdmin ?? false);
 
   useEffect(() => {
-    let active = true;
-    supabase.auth.getUser().then(({ data }) => {
-      if (!active || !data.user) return;
-      supabase
-        .from("admin_profiles")
-        .select("is_super_admin,is_active")
-        .eq("id", data.user.id)
-        .maybeSingle()
-        .then(({ data: profile }) => {
-          if (active) setIsSuperAdmin(profile?.is_super_admin === true && profile?.is_active !== false);
-        });
-    });
-    return () => {
-      active = false;
-    };
-  }, []);
+    setIsSuperAdmin(Boolean(contextSuperAdmin));
+  }, [contextSuperAdmin]);
 
   const go = (path) => {
     setMobileOpen(false);
@@ -421,20 +408,20 @@ export default function AdminCMS() {
     );
 
   return (
-    <div className="min-h-screen bg-[#F7F8FA] text-[#000000] antialiased dark:bg-[#0B0D12] dark:text-[#FFFFFF]">
+    <div className="min-h-screen bg-[#FFFFFF] text-[#111111] antialiased dark:bg-[#000000] dark:text-[#FFFFFF]">
       <div className="flex min-h-screen">
         {/* Sidebar (Requirement 24) */}
         <aside
           className={`${
             mobileOpen ? "fixed inset-y-0 left-0 z-40 flex" : "hidden"
-          } w-64 shrink-0 flex-col border-r border-[#E5E5E5] bg-white px-4 py-5 shadow-sm dark:border-[#292E3A] dark:bg-[#10131A] lg:relative lg:flex`}
+          } w-64 shrink-0 flex-col border-r border-[#EAEAEA] bg-[#FFFFFF] px-4 py-5 shadow-subtle dark:border-[#222222] dark:bg-[#0A0A0A] lg:relative lg:flex`}
         >
           {/* Logo & Brand Header */}
-          <div className="flex items-center gap-3 border-b border-[#E5E5E5] px-2 pb-5 dark:border-[#292E3A]">
-            <img src="/icons.webp" alt="JITS Notes" width="36" height="36" className="rounded-xl shadow-xs" />
+          <div className="flex items-center gap-3 border-b border-[#EAEAEA] px-2 pb-5 dark:border-[#222222]">
+            <img src="/icons.png" alt="JITS Notes" width="36" height="36" className="rounded-xl shadow-xs" />
             <div>
-              <p className="font-extrabold tracking-tight text-[#000000] dark:text-white">JITS Notes</p>
-              <p className="text-[11px] font-bold uppercase tracking-wider text-[#2C3480] dark:text-[#3D4CC4]">
+              <p className="font-semibold tracking-tight text-[#111111] dark:text-white">JITS Notes</p>
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-[#666666] dark:text-[#B3B3B3]">
                 Admin CMS
               </p>
             </div>
@@ -447,10 +434,10 @@ export default function AdminCMS() {
                 key={item.id}
                 type="button"
                 onClick={() => go(item.path)}
-                className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-semibold transition ${
+                className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-medium transition ${
                   view === item.id
-                    ? "bg-[#2C3480] text-white shadow-sm"
-                    : "text-[#555555] hover:bg-[#F7F8FA] hover:text-[#000000] dark:text-[#B8BDCA] dark:hover:bg-[#171B24] dark:hover:text-white"
+                    ? "bg-[#111111] text-white dark:bg-white dark:text-[#111111] shadow-xs"
+                    : "text-[#666666] hover:bg-[#F7F7F7] hover:text-[#111111] dark:text-[#B3B3B3] dark:hover:bg-[#111111] dark:hover:text-white"
                 }`}
               >
                 {item.icon}
@@ -476,11 +463,11 @@ export default function AdminCMS() {
           </nav>
 
           {/* Sign Out Action */}
-          <div className="mt-auto border-t border-[#E5E5E5] pt-4 dark:border-[#292E3A]">
+          <div className="mt-auto border-t border-[#EAEAEA] pt-4 dark:border-[#222222]">
             <button
               type="button"
               onClick={() => signOut()}
-              className="flex w-full items-center gap-2.5 rounded-xl border border-[#E5E5E5] px-3 py-2 text-sm font-semibold text-[#555555] hover:bg-[#F7F8FA] hover:text-[#000000] dark:border-[#292E3A] dark:text-[#B8BDCA] dark:hover:bg-[#171B24] dark:hover:text-white"
+              className="flex w-full items-center gap-2.5 rounded-xl border border-[#EAEAEA] px-3 py-2 text-sm font-medium text-[#666666] hover:bg-[#F7F7F7] hover:text-[#111111] dark:border-[#222222] dark:text-[#B3B3B3] dark:hover:bg-[#111111] dark:hover:text-white"
             >
               <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
@@ -504,11 +491,11 @@ export default function AdminCMS() {
 
         {/* Main Content Area */}
         <main className="min-w-0 flex-1">
-          <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-[#E5E5E5] bg-white/95 px-4 backdrop-blur dark:border-[#292E3A] dark:bg-[#0B0D12]/95 sm:px-6">
+          <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-[#EAEAEA] bg-[#FFFFFF]/95 px-4 backdrop-blur dark:border-[#222222] dark:bg-[#0A0A0A]/95 sm:px-6">
             <button
               type="button"
               onClick={() => setMobileOpen(true)}
-              className="flex items-center gap-2 rounded-lg border border-[#E5E5E5] px-3 py-1.5 text-xs font-semibold text-[#555555] dark:border-[#292E3A] dark:text-gray-200 lg:hidden"
+              className="flex items-center gap-2 rounded-lg border border-[#EAEAEA] px-3 py-1.5 text-xs font-medium text-[#666666] dark:border-[#222222] dark:text-[#B3B3B3] lg:hidden"
             >
               <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <line x1="3" y1="12" x2="21" y2="12" />
@@ -518,15 +505,15 @@ export default function AdminCMS() {
               Menu
             </button>
 
-            <div className="hidden text-sm font-bold text-[#000000] dark:text-[#FFFFFF] sm:block">
+            <div className="hidden text-sm font-semibold text-[#111111] dark:text-white sm:block">
               {currentTitle}
             </div>
 
             <div className="ml-auto flex items-center gap-3">
-              <span className="hidden text-xs text-[#555555] dark:text-[#858B99] sm:inline">
+              <span className="hidden text-xs text-[#666666] dark:text-[#8A8A8A] sm:inline">
                 Live Supabase + B2
               </span>
-              <span className="h-2 w-2 rounded-full bg-green-500" title="Connected to production storage" />
+              <span className="h-2 w-2 rounded-full bg-[#16A34A]" title="Connected to production storage" />
             </div>
           </header>
 

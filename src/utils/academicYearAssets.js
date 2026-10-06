@@ -22,32 +22,32 @@ export const LOCAL_YEAR_ILLUSTRATIONS = {
 
 export const YEAR_ACCENT_METADATA = {
   1: {
-    color: "blue",
+    color: "monochrome",
     name: "Year 1",
-    tagBg: "bg-blue-50 dark:bg-[#151936]",
-    tagText: "text-[#2C3480] dark:text-[#AAB3FF]",
-    border: "border-blue-200 dark:border-[#2C3480]/40",
+    tagBg: "bg-[#F7F7F7] dark:bg-[#111111]",
+    tagText: "text-[#111111] dark:text-[#FFFFFF]",
+    border: "border-[#EAEAEA] dark:border-[#222222]",
   },
   2: {
-    color: "teal",
+    color: "monochrome",
     name: "Year 2",
-    tagBg: "bg-emerald-50 dark:bg-[#062419]",
-    tagText: "text-emerald-700 dark:text-emerald-300",
-    border: "border-emerald-200 dark:border-emerald-800/40",
+    tagBg: "bg-[#F7F7F7] dark:bg-[#111111]",
+    tagText: "text-[#111111] dark:text-[#FFFFFF]",
+    border: "border-[#EAEAEA] dark:border-[#222222]",
   },
   3: {
-    color: "orange",
+    color: "monochrome",
     name: "Year 3",
-    tagBg: "bg-amber-50 dark:bg-[#2A1805]",
-    tagText: "text-amber-700 dark:text-amber-300",
-    border: "border-amber-200 dark:border-amber-800/40",
+    tagBg: "bg-[#F7F7F7] dark:bg-[#111111]",
+    tagText: "text-[#111111] dark:text-[#FFFFFF]",
+    border: "border-[#EAEAEA] dark:border-[#222222]",
   },
   4: {
-    color: "purple",
+    color: "monochrome",
     name: "Year 4",
-    tagBg: "bg-purple-50 dark:bg-[#201035]",
-    tagText: "text-purple-700 dark:text-purple-300",
-    border: "border-purple-200 dark:border-purple-800/40",
+    tagBg: "bg-[#F7F7F7] dark:bg-[#111111]",
+    tagText: "text-[#111111] dark:text-[#FFFFFF]",
+    border: "border-[#EAEAEA] dark:border-[#222222]",
   },
 };
 

@@ -112,7 +112,12 @@ Deno.serve(async (request: Request) => {
     const year = yearRes.data;
     const subject = subjectRes.data;
     const category = categoryRes.data;
-    const folder = folderRes.data;
+    let folder = folderRes.data;
+
+    if (folderId && !folder) {
+      const unitRes = await admin.from("units").select("id,subject_id").eq("id", folderId).maybeSingle();
+      folder = unitRes.data;
+    }
 
     if (!year || !subject || subject.is_deleted || String(subject.year_id) !== yearId || !category) {
       return json(request, { error: "The selected year, subject, or category relationship is invalid." }, 400);
@@ -186,6 +191,9 @@ Deno.serve(async (request: Request) => {
         ? Number(pageCountValue)
         : undefined;
 
+    const isActiveRaw = form.get("is_active");
+    const isActive = isActiveRaw === null ? true : (isActiveRaw === "true" || isActiveRaw === "1" || String(isActiveRaw).toLowerCase() === "true");
+
     const documentPayload = {
       title,
       description: description || null,
@@ -198,7 +206,7 @@ Deno.serve(async (request: Request) => {
       mime_type: "application/pdf",
       file_size: fileValue.size,
       ...(pageCount ? { page_count: pageCount } : {}),
-      is_active: true,
+      is_active: isActive,
       created_by: user.id,
     };
     const { data: document, error: documentError } = await admin

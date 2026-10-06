@@ -1,12 +1,31 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 import { supabase } from "../lib/supabase";
+import { useAuth } from "../context/AuthContext";
 
 const friendlyError = (error, fallback) => {
-  const message = String(error?.message || "");
-  if (/permission|unauthorized|forbidden|403/i.test(message)) {
-    return "You do not have permission to perform this action.";
+  const message = String(error?.message || "").trim();
+  if (/rate.*limit|429/i.test(message)) {
+    return "Too many requests. Please wait and try again.";
   }
-  return fallback || message;
+  if (/session.*expired|sign in again|unauthorized|401/i.test(message)) {
+    return "Your session has expired. Please sign in again.";
+  }
+  if (/permission|forbidden|403/i.test(message)) {
+    return "You do not have permission to remove this Teacher Admin.";
+  }
+  if (/not found|no longer exists|404/i.test(message)) {
+    return "Teacher Admin not found.";
+  }
+  if (/conflict|conflicting|409/i.test(message)) {
+    return "Teacher Admin could not be removed because of a conflicting record.";
+  }
+  if (/unable to remove|500/i.test(message)) {
+    return "Unable to remove Teacher Admin. Please try again.";
+  }
+  if (message && message !== "Operation failed." && !message.includes("non-2xx status code")) {
+    return message;
+  }
+  return fallback || message || "Unable to remove Teacher Admin. Please try again.";
 };
 
 const formatDate = (value) => {
@@ -15,13 +34,19 @@ const formatDate = (value) => {
 };
 
 export default function AdminTeachers() {
+  const { user } = useAuth();
   const [profiles, setProfiles] = useState([]);
   const [invitations, setInvitations] = useState([]);
-  const [currentUserId, setCurrentUserId] = useState(null);
+  const [currentUserId, setCurrentUserId] = useState(user?.id || null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [actionLoadingId, setActionLoadingId] = useState(null);
   const [error, setError] = useState("");
   const [toast, setToast] = useState(null);
+
+  // Synchronous deduplication refs to prevent double clicks / double submits
+  const isSubmittingRef = useRef(false);
+  const activeActionsRef = useRef(new Set());
 
   // Modals
   const [inviteOpen, setInviteOpen] = useState(false);
@@ -35,12 +60,35 @@ export default function AdminTeachers() {
 
   const notify = (type, message) => {
     setToast({ type, message });
-    setTimeout(() => setToast(null), 4000);
+    setTimeout(() => setToast(null), 5000);
   };
 
   const callApi = async (body) => {
     const { data, error: functionError } = await supabase.functions.invoke("admin-teachers", { body });
-    if (functionError) throw new Error(functionError.message || "Operation failed.");
+    if (functionError) {
+      let message = functionError.message || "Operation failed.";
+      if (functionError.context) {
+        try {
+          if (typeof functionError.context.json === "function") {
+            const bodyData = await functionError.context.json();
+            if (bodyData?.error) message = bodyData.error;
+            else if (bodyData?.message) message = bodyData.message;
+          } else if (typeof functionError.context.text === "function") {
+            const textData = await functionError.context.text();
+            try {
+              const parsed = JSON.parse(textData);
+              if (parsed?.error) message = parsed.error;
+              else if (parsed?.message) message = parsed.message;
+            } catch {
+              if (textData) message = textData;
+            }
+          }
+        } catch {
+          // keep functionError.message
+        }
+      }
+      throw new Error(message);
+    }
     if (data?.error) throw new Error(data.error);
     return data;
   };
@@ -49,9 +97,7 @@ export default function AdminTeachers() {
     setLoading(true);
     setError("");
     try {
-      const { data: authData } = await supabase.auth.getUser();
-      setCurrentUserId(authData?.user?.id || null);
-
+      setCurrentUserId(user?.id || null);
       const data = await callApi({ action: "list" });
       setProfiles(data.profiles || []);
       setInvitations(data.invitations || []);
@@ -61,7 +107,7 @@ export default function AdminTeachers() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     loadData();
@@ -69,7 +115,7 @@ export default function AdminTeachers() {
 
   const handleInvite = async (e) => {
     e.preventDefault();
-    if (saving) return;
+    if (saving || isSubmittingRef.current) return;
 
     const email = inviteForm.email.trim().toLowerCase();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -77,21 +123,29 @@ export default function AdminTeachers() {
       return;
     }
 
+    isSubmittingRef.current = true;
     setSaving(true);
+    console.log("[AdminTeachers] send started");
+    console.log("[AdminTeachers] send request for", email);
+
     try {
       await callApi({
         action: "invite",
         email,
         teacher_name: inviteForm.teacher_name.trim(),
-        is_super_admin: Boolean(inviteForm.is_super_admin),
+        role: "teacher_admin",
+        is_super_admin: false,
       });
+      console.log("[AdminTeachers] send success");
       setInviteOpen(false);
       setInviteForm({ email: "", teacher_name: "", is_super_admin: false });
       await loadData();
       notify("success", "Invitation sent successfully.");
     } catch (err) {
+      console.error("[AdminTeachers] send failed:", err);
       notify("error", friendlyError(err, "Failed to send invitation."));
     } finally {
+      isSubmittingRef.current = false;
       setSaving(false);
     }
   };
@@ -113,14 +167,23 @@ export default function AdminTeachers() {
       confirmText: nextActive ? "Enable Account" : "Disable Account",
       danger: !nextActive,
       onConfirm: async () => {
+        if (saving || activeActionsRef.current.has(profile.id)) return;
+        activeActionsRef.current.add(profile.id);
+        setActionLoadingId(profile.id);
         setSaving(true);
         try {
-          await callApi({ action: actionName, target_user_id: profile.id });
+          await callApi({
+            action: actionName,
+            user_id: profile.id,
+            target_user_id: profile.id,
+          });
           await loadData();
           notify("success", nextActive ? "Administrator enabled." : "Administrator disabled.");
         } catch (err) {
           notify("error", friendlyError(err, "Action failed."));
         } finally {
+          activeActionsRef.current.delete(profile.id);
+          setActionLoadingId(null);
           setSaving(false);
           setConfirmModal(null);
         }
@@ -143,10 +206,14 @@ export default function AdminTeachers() {
       confirmText: nextSuper ? "Promote to Super Admin" : "Demote to Teacher Admin",
       danger: false,
       onConfirm: async () => {
+        if (saving || activeActionsRef.current.has(profile.id)) return;
+        activeActionsRef.current.add(profile.id);
+        setActionLoadingId(profile.id);
         setSaving(true);
         try {
           await callApi({
             action: "change_role",
+            user_id: profile.id,
             target_user_id: profile.id,
             is_super_admin: nextSuper,
           });
@@ -155,6 +222,8 @@ export default function AdminTeachers() {
         } catch (err) {
           notify("error", friendlyError(err, "Failed to update role."));
         } finally {
+          activeActionsRef.current.delete(profile.id);
+          setActionLoadingId(null);
           setSaving(false);
           setConfirmModal(null);
         }
@@ -173,19 +242,37 @@ export default function AdminTeachers() {
     }
 
     setConfirmModal({
-      title: "Remove Administrator",
+      title: "Remove Teacher Admin",
       message: `Permanently remove administrator privileges for ${profile.email}? This action cannot be undone.`,
       confirmText: "Remove Account",
       danger: true,
       onConfirm: async () => {
+        if (saving || activeActionsRef.current.has(profile.id)) return;
+        activeActionsRef.current.add(profile.id);
+        setActionLoadingId(profile.id);
         setSaving(true);
+
+        // Safe debug logging only (no secrets/passwords/tokens/keys)
+        console.log("[AdminTeachers] remove request:", {
+          action: "remove",
+          user_id: profile.id,
+          role: "teacher_admin",
+        });
+
         try {
-          await callApi({ action: "remove", target_user_id: profile.id });
+          const res = await callApi({
+            action: "remove",
+            user_id: profile.id,
+            target_user_id: profile.id,
+          });
           await loadData();
-          notify("success", "Administrator account removed.");
+          notify("success", res?.message || "Teacher Admin removed successfully.");
         } catch (err) {
-          notify("error", friendlyError(err, "Failed to remove administrator."));
+          console.error("[AdminTeachers] remove failed:", err);
+          notify("error", friendlyError(err, "Unable to remove Teacher Admin. Please try again."));
         } finally {
+          activeActionsRef.current.delete(profile.id);
+          setActionLoadingId(null);
           setSaving(false);
           setConfirmModal(null);
         }
@@ -194,21 +281,32 @@ export default function AdminTeachers() {
   };
 
   const handleCancelInvite = (invitation) => {
+    if (saving || actionLoadingId || activeActionsRef.current.has(invitation.id)) return;
+
     setConfirmModal({
       title: "Cancel Invitation",
-      message: `Cancel pending invitation for ${invitation.email}?`,
+      message: `Cancel pending invitation for ${invitation.email}? This will revoke the pending invitation and allow this email to be re-invited at any time.`,
       confirmText: "Cancel Invitation",
       danger: true,
       onConfirm: async () => {
+        if (activeActionsRef.current.has(invitation.id)) return;
+        activeActionsRef.current.add(invitation.id);
         setSaving(true);
+        setActionLoadingId(invitation.id);
+        console.log("[AdminTeachers] cancel started for", invitation.email);
+
         try {
           await callApi({ action: "cancel", invitation_id: invitation.id });
+          console.log("[AdminTeachers] cancel success");
           await loadData();
-          notify("success", "Invitation cancelled.");
+          notify("success", "Invitation cancelled successfully. This email can now be re-invited.");
         } catch (err) {
+          console.error("[AdminTeachers] cancel failed:", err);
           notify("error", friendlyError(err, "Failed to cancel invitation."));
         } finally {
+          activeActionsRef.current.delete(invitation.id);
           setSaving(false);
+          setActionLoadingId(null);
           setConfirmModal(null);
         }
       },
@@ -216,15 +314,25 @@ export default function AdminTeachers() {
   };
 
   const handleResendInvite = async (invitation) => {
+    if (saving || actionLoadingId || activeActionsRef.current.has(invitation.id)) return;
+
+    activeActionsRef.current.add(invitation.id);
     setSaving(true);
+    setActionLoadingId(invitation.id);
+    console.log("[AdminTeachers] resend started for", invitation.email);
+
     try {
       await callApi({ action: "resend", email: invitation.email });
+      console.log("[AdminTeachers] resend success");
       await loadData();
-      notify("success", "Invitation resent.");
+      notify("success", "Invitation resent successfully.");
     } catch (err) {
+      console.error("[AdminTeachers] resend failed:", err);
       notify("error", friendlyError(err, "Failed to resend invitation."));
     } finally {
+      activeActionsRef.current.delete(invitation.id);
       setSaving(false);
+      setActionLoadingId(null);
     }
   };
 
@@ -252,7 +360,7 @@ export default function AdminTeachers() {
       {/* Header */}
       <div className="flex flex-col gap-4 border-b border-gray-200 pb-5 dark:border-[#292E3A] sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-xs font-bold uppercase tracking-wider text-[#2C3480] dark:text-[#B8BDCA]">
+          <p className="text-xs font-bold uppercase tracking-wider text-[#111111] dark:text-[#B3B3B3]">
             Administration
           </p>
           <h1 className="mt-1 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
@@ -265,7 +373,7 @@ export default function AdminTeachers() {
         <button
           type="button"
           onClick={() => setInviteOpen(true)}
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#2C3480] px-4 py-2.5 text-xs font-bold text-white transition hover:bg-[#232a69]"
+          className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#111111] hover:bg-[#222222] text-white dark:bg-white dark:hover:bg-[#EAEAEA] dark:text-[#111111] px-4 py-2.5 text-xs font-medium transition"
         >
           <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
             <line x1="12" y1="5" x2="12" y2="19" />
@@ -373,15 +481,15 @@ export default function AdminTeachers() {
                             <>
                               <button
                                 type="button"
-                                disabled={saving}
+                                disabled={saving || Boolean(actionLoadingId)}
                                 onClick={() => handleToggleActive(profile)}
                                 className="rounded-lg border border-gray-200 px-2.5 py-1 text-[11px] font-semibold text-gray-700 transition hover:bg-gray-50 disabled:opacity-50 dark:border-[#292E3A] dark:text-[#B8BDCA] dark:hover:bg-[#1A1E28]"
                               >
-                                {isActive ? "Disable" : "Enable"}
+                                {actionLoadingId === profile.id && saving ? "Updating..." : isActive ? "Disable" : "Enable"}
                               </button>
                               <button
                                 type="button"
-                                disabled={saving}
+                                disabled={saving || Boolean(actionLoadingId)}
                                 onClick={() => handleChangeRole(profile)}
                                 className="rounded-lg border border-gray-200 px-2.5 py-1 text-[11px] font-semibold text-gray-700 transition hover:bg-gray-50 disabled:opacity-50 dark:border-[#292E3A] dark:text-[#B8BDCA] dark:hover:bg-[#1A1E28]"
                               >
@@ -389,11 +497,11 @@ export default function AdminTeachers() {
                               </button>
                               <button
                                 type="button"
-                                disabled={saving}
+                                disabled={saving || Boolean(actionLoadingId)}
                                 onClick={() => handleRemove(profile)}
                                 className="rounded-lg border border-red-200 px-2.5 py-1 text-[11px] font-semibold text-red-600 transition hover:bg-red-50 disabled:opacity-50 dark:border-red-900/60 dark:text-red-400 dark:hover:bg-red-950/20"
                               >
-                                Remove
+                                {actionLoadingId === profile.id && saving ? "Removing..." : "Remove"}
                               </button>
                             </>
                           )}
@@ -435,19 +543,19 @@ export default function AdminTeachers() {
                       <div className="flex items-center justify-end gap-1.5">
                         <button
                           type="button"
-                          disabled={saving}
+                          disabled={saving || Boolean(actionLoadingId)}
                           onClick={() => handleResendInvite(invitation)}
                           className="rounded-lg border border-gray-200 px-2.5 py-1 text-[11px] font-semibold text-gray-700 transition hover:bg-gray-50 disabled:opacity-50 dark:border-[#292E3A] dark:text-[#B8BDCA] dark:hover:bg-[#1A1E28]"
                         >
-                          Resend
+                          {actionLoadingId === invitation.id && saving ? "Resending..." : "Resend"}
                         </button>
                         <button
                           type="button"
-                          disabled={saving}
+                          disabled={saving || Boolean(actionLoadingId)}
                           onClick={() => handleCancelInvite(invitation)}
                           className="rounded-lg border border-red-200 px-2.5 py-1 text-[11px] font-semibold text-red-600 transition hover:bg-red-50 disabled:opacity-50 dark:border-red-900/60 dark:text-red-400 dark:hover:bg-red-950/20"
                         >
-                          Cancel
+                          {actionLoadingId === invitation.id && saving ? "Cancelling..." : "Cancel"}
                         </button>
                       </div>
                     </td>
@@ -498,7 +606,7 @@ export default function AdminTeachers() {
                   onChange={(e) =>
                     setInviteForm((prev) => ({ ...prev, email: e.target.value }))
                   }
-                  className="mt-1.5 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-xs text-gray-900 focus:border-[#2C3480] focus:outline-hidden dark:border-[#292E3A] dark:bg-[#171B24] dark:text-white"
+                  className="mt-1.5 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-xs text-gray-900 focus:border-[#111111] dark:focus:border-white focus:outline-hidden dark:border-[#292E3A] dark:bg-[#171B24] dark:text-white"
                 />
               </div>
 
@@ -513,7 +621,7 @@ export default function AdminTeachers() {
                   onChange={(e) =>
                     setInviteForm((prev) => ({ ...prev, teacher_name: e.target.value }))
                   }
-                  className="mt-1.5 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-xs text-gray-900 focus:border-[#2C3480] focus:outline-hidden dark:border-[#292E3A] dark:bg-[#171B24] dark:text-white"
+                  className="mt-1.5 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-xs text-gray-900 focus:border-[#111111] dark:focus:border-white focus:outline-hidden dark:border-[#292E3A] dark:bg-[#171B24] dark:text-white"
                 />
               </div>
 
@@ -522,18 +630,15 @@ export default function AdminTeachers() {
                   Role Assignment
                 </label>
                 <select
-                  value={inviteForm.is_super_admin ? "super" : "teacher"}
-                  onChange={(e) =>
-                    setInviteForm((prev) => ({
-                      ...prev,
-                      is_super_admin: e.target.value === "super",
-                    }))
-                  }
-                  className="mt-1.5 w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-xs text-gray-900 focus:border-[#2C3480] focus:outline-hidden dark:border-[#292E3A] dark:bg-[#171B24] dark:text-white"
+                  disabled
+                  value="teacher"
+                  className="mt-1.5 w-full rounded-xl border border-gray-200 bg-gray-50 px-3.5 py-2.5 text-xs text-gray-800 cursor-not-allowed dark:border-[#292E3A] dark:bg-[#1A1E28] dark:text-[#E4E7EB]"
                 >
                   <option value="teacher">Teacher Admin (Academic Content Only)</option>
-                  <option value="super">Super Admin (Full Access)</option>
                 </select>
+                <p className="mt-1 text-[11px] text-gray-500 dark:text-[#858B99]">
+                  New invitations grant Teacher Admin rights for academic content management.
+                </p>
               </div>
 
               <div className="rounded-xl border border-blue-100 bg-blue-50/50 p-3 text-xs text-blue-700 dark:border-blue-900/40 dark:bg-blue-950/20 dark:text-blue-300">
@@ -552,7 +657,7 @@ export default function AdminTeachers() {
                 <button
                   type="submit"
                   disabled={saving}
-                  className="rounded-xl bg-[#2C3480] px-5 py-2.5 font-bold text-white hover:bg-[#232a69] disabled:opacity-50"
+                  className="rounded-xl bg-[#111111] hover:bg-[#222222] text-white dark:bg-white dark:hover:bg-[#EAEAEA] dark:text-[#111111] disabled:opacity-50 px-5 py-2.5 font-medium"
                 >
                   {saving ? "Sending..." : "Send Invitation"}
                 </button>
@@ -592,7 +697,7 @@ export default function AdminTeachers() {
                 className={`rounded-xl px-4 py-2.5 font-bold text-white disabled:opacity-50 ${
                   confirmModal.danger
                     ? "bg-red-600 hover:bg-red-700"
-                    : "bg-[#2C3480] hover:bg-[#232a69]"
+                    : "bg-[#111111] hover:bg-[#222222] text-white dark:bg-white dark:hover:bg-[#EAEAEA] dark:text-[#111111]"
                 }`}
               >
                 {saving ? "Processing..." : confirmModal.confirmText}
