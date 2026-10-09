@@ -1,13 +1,12 @@
-import { useCallback, useEffect, useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { supabase } from "../lib/supabase";
-import AcademicContentCMS from "./AcademicContentCMS";
-import DocumentsCMS from "./DocumentsCMS";
+import OverviewCMS from "./admin/OverviewCMS";
+import ContentLibrary from "./admin/ContentLibrary";
+import CategoriesCMS from "./admin/CategoriesCMS";
 import AdminTeachers from "./AdminTeachers";
-
-const safeDocumentFields =
-  "id,title,subject_id,unit_id,category_id,storage_provider,file_size,page_count,is_active,created_at,updated_at";
+import AddNoteModal from "./admin/AddNoteModal";
 
 const navItems = [
   {
@@ -16,43 +15,40 @@ const navItems = [
     path: "/admin",
     icon: (
       <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <rect x="3" y="3" width="7" height="7" rx="1" />
-        <rect x="14" y="3" width="7" height="7" rx="1" />
-        <rect x="14" y="14" width="7" height="7" rx="1" />
-        <rect x="3" y="14" width="7" height="7" rx="1" />
+        <rect x="3" y="3" width="7" height="7" rx="1.5" />
+        <rect x="14" y="3" width="7" height="7" rx="1.5" />
+        <rect x="14" y="14" width="7" height="7" rx="1.5" />
+        <rect x="3" y="14" width="7" height="7" rx="1.5" />
       </svg>
     ),
   },
   {
-    id: "academic",
-    label: "Academic Content",
-    path: "/admin/academic",
+    id: "content",
+    label: "Content Library",
+    path: "/admin/content",
     icon: (
       <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
-        <path d="M6 12v5c3 3 9 3 12 0v-5" />
+        <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z" />
+        <path d="M6 6h10" />
+        <path d="M6 10h10" />
       </svg>
     ),
   },
   {
-    id: "documents",
-    label: "Documents",
-    path: "/admin/documents",
+    id: "categories",
+    label: "Categories",
+    path: "/admin/categories",
     icon: (
       <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-        <polyline points="14 2 14 8 20 8" />
-        <line x1="16" y1="13" x2="8" y2="13" />
-        <line x1="16" y1="17" x2="8" y2="17" />
-        <polyline points="10 9 9 9 8 9" />
+        <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
+        <line x1="7" y1="7" x2="7.01" y2="7" />
       </svg>
     ),
   },
   {
-    id: "admins",
-    label: "Teachers / Admins",
-    path: "/admin/admins",
-    superAdminOnly: true,
+    id: "access",
+    label: "Access Management",
+    path: "/admin/access",
     icon: (
       <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
@@ -65,461 +61,338 @@ const navItems = [
 ];
 
 const getView = (pathname) => {
-  if (pathname.startsWith("/admin/documents")) return "documents";
-  if (pathname.startsWith("/admin/academic")) return "academic";
-  if (pathname.startsWith("/admin/activity")) return "activity";
-  if (pathname.startsWith("/admin/admins")) return "admins";
+  if (
+    pathname.startsWith("/admin/content") ||
+    pathname.startsWith("/admin/documents") ||
+    pathname.startsWith("/admin/academic")
+  ) {
+    return "content";
+  }
+  if (pathname.startsWith("/admin/categories")) return "categories";
+  if (pathname.startsWith("/admin/access") || pathname.startsWith("/admin/admins")) return "access";
   return "overview";
 };
 
-const friendlyError = (error, fallback) => {
-  if (/permission|row-level security|not authorized/i.test(String(error?.message || ""))) {
-    return "You do not have permission to view this area.";
-  }
-  return fallback;
-};
+export default function AdminCMS() {
+  const { user, signOut, isSuperAdmin } = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const currentView = getView(location.pathname);
 
-const formatDate = (value) =>
-  value
-    ? new Intl.DateTimeFormat(undefined, { dateStyle: "medium", timeStyle: "short" }).format(new Date(value))
-    : "—";
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [toast, setToast] = useState(null);
 
-function Metric({ label, value, detail }) {
-  return (
-    <div className="rounded-2xl border border-[#EAEAEA] bg-[#FFFFFF] p-5 shadow-subtle dark:border-[#222222] dark:bg-[#0A0A0A]">
-      <p className="text-xs font-semibold uppercase tracking-wider text-[#666666] dark:text-[#B3B3B3]">{label}</p>
-      <p className="mt-2 text-3xl font-bold tracking-tight text-[#111111] dark:text-white">{value}</p>
-      <p className="mt-1 text-xs text-[#666666] dark:text-[#8A8A8A]">{detail}</p>
-    </div>
-  );
-}
+  // Global Add Note Modal State
+  const [addNoteModalOpen, setAddNoteModalOpen] = useState(false);
+  const [addNoteInitialProps, setAddNoteInitialProps] = useState({});
 
-function Overview({ onNavigate }) {
-  const [stats, setStats] = useState(null);
-  const [recentDocuments, setRecentDocuments] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  // Shared catalog lists for Add Note Modal
+  const [catalogYears, setCatalogYears] = useState([]);
+  const [catalogSubjects, setCatalogSubjects] = useState([]);
+  const [catalogFolders, setCatalogFolders] = useState([]);
+  const [catalogCategories, setCatalogCategories] = useState([]);
 
-  const loadOverview = useCallback(async () => {
-    setLoading(true);
-    setError("");
+  const showToast = useCallback((type, message) => {
+    setToast({ type, message });
+    setTimeout(() => setToast(null), 3500);
+  }, []);
 
-    const count = async (table, filters = []) => {
-      try {
-        let query = supabase.from(table).select("id", { count: "exact", head: true });
-        filters.forEach(([column, value]) => {
-          query = query.eq(column, value);
-        });
-        const res = await query;
-        if (res.error) throw res.error;
-        return res.count || 0;
-      } catch (err) {
-        if (!import.meta.env.PROD) {
-          console.warn(`[Overview] Non-critical count error for ${table}:`, err);
-        }
-        return 0;
-      }
-    };
-
-    const fetchRecent = async () => {
-      try {
-        const res = await supabase
-          .from("documents")
-          .select(safeDocumentFields)
-          .order("created_at", { ascending: false })
-          .limit(5);
-        if (res.error) throw res.error;
-        return res.data || [];
-      } catch (err) {
-        if (!import.meta.env.PROD) {
-          console.warn("[Overview] Non-critical recent documents query error:", err);
-        }
-        return [];
-      }
-    };
-
+  const loadSharedCatalog = useCallback(async () => {
     try {
-      const [yearsCount, subjectsCount, unitsCount, categoriesCount, documentsCount, activeDocumentsCount, recentDocs] =
-        await Promise.all([
-          count("years"),
-          count("subjects", [["is_deleted", false]]),
-          count("units"),
-          count("document_categories"),
-          count("documents"),
-          count("documents", [["is_active", true]]),
-          fetchRecent(),
-        ]);
+      const [yearsRes, subjectsRes, unitsRes, foldersRes, categoriesRes] = await Promise.all([
+        supabase.from("years").select("id, name").order("id", { ascending: true }),
+        supabase
+          .from("subjects")
+          .select("id, name, short_name, year_id, description, is_active")
+          .eq("is_deleted", false)
+          .order("name"),
+        supabase.from("units").select("id, subject_id, unit_number, title").order("unit_number"),
+        supabase.from("folders").select("id, subject_id, name").order("name"),
+        supabase.from("document_categories").select("id, name, slug").order("name"),
+      ]);
 
-      setStats({
-        years: yearsCount,
-        subjects: subjectsCount,
-        units: unitsCount,
-        categories: categoriesCount,
-        documents: documentsCount,
-        activeDocuments: activeDocumentsCount,
+      setCatalogYears(yearsRes.data || []);
+      setCatalogSubjects(subjectsRes.data || []);
+      setCatalogCategories(categoriesRes.data || []);
+
+      const combined = [];
+      const seen = new Set();
+      (foldersRes.data || []).forEach((f) => {
+        seen.add(f.id);
+        combined.push({ id: f.id, subject_id: f.subject_id, name: f.name });
       });
-      setRecentDocuments(recentDocs);
+      (unitsRes.data || []).forEach((u) => {
+        if (!seen.has(u.id)) {
+          seen.add(u.id);
+          combined.push({
+            id: u.id,
+            subject_id: u.subject_id,
+            name: u.title || `Unit ${u.unit_number}`,
+          });
+        }
+      });
+      setCatalogFolders(combined);
     } catch (err) {
-      if (!import.meta.env.PROD) {
-        console.error("[Overview] Unexpected failure in overview loader:", err);
-      }
-      setError(friendlyError(err, "Unable to load the admin overview."));
-    } finally {
-      setLoading(false);
+      console.warn("[AdminCMS] Shared catalog preload error:", err);
     }
   }, []);
 
   useEffect(() => {
-    loadOverview();
-  }, [loadOverview]);
+    loadSharedCatalog();
+  }, [loadSharedCatalog]);
 
-  if (error) {
-    return (
-      <section className="space-y-6">
-        <div className="flex items-center justify-between border-b border-[#E5E5E5] pb-5 dark:border-[#292E3A]">
-          <div>
-            <p className="text-xs font-bold uppercase tracking-wider text-[#111111] dark:text-white">JITS Notes Admin</p>
-            <h1 className="mt-1 text-2xl font-bold tracking-tight text-[#141517] dark:text-white">Overview</h1>
-          </div>
-          <button
-            type="button"
-            onClick={loadOverview}
-            className="rounded-xl border border-[#E4E7EB] px-4 py-2 text-sm font-semibold text-[#5F6368] dark:border-[#2B2F34] dark:text-[#B8BDCA]"
-          >
-            Retry
-          </button>
-        </div>
-        <div className="rounded-2xl border border-red-200 bg-red-50 p-5 text-sm text-red-700 dark:border-red-900/70 dark:bg-red-950/20 dark:text-red-300">
-          Unable to load academic data. {error}
-        </div>
-      </section>
-    );
-  }
+  const handleOpenAddNote = (initialData = {}) => {
+    setAddNoteInitialProps(initialData);
+    setAddNoteModalOpen(true);
+  };
 
-  return (
-    <section className="space-y-6">
-      <div className="flex flex-col gap-4 border-b border-[#E4E7EB] pb-5 dark:border-[#2B2F34] sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <p className="text-xs font-bold uppercase tracking-wider text-[#111111] dark:text-white">JITS Notes Admin</p>
-          <h1 className="mt-1 text-2xl font-bold tracking-tight text-[#141517] dark:text-white">Overview</h1>
-          <p className="mt-1 text-sm text-[#5F6368] dark:text-[#B8BDCA]">Live operational data from the shared academic catalog.</p>
-        </div>
-        <button
-          type="button"
-          onClick={loadOverview}
-          disabled={loading}
-          className="rounded-xl border border-[#E4E7EB] px-4 py-2 text-sm font-semibold text-[#5F6368] hover:bg-[#F2F4F7] disabled:opacity-50 dark:border-[#2B2F34] dark:text-[#B8BDCA] dark:hover:bg-[#1B1D20]"
-        >
-          {loading ? "Refreshing..." : "Refresh"}
-        </button>
-      </div>
+  const handleNoteUploaded = () => {
+    showToast("success", "Note saved and published to catalog.");
+    loadSharedCatalog();
+  };
 
-      {loading ? (
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-          {[1, 2, 3, 4, 5, 6].map((item) => (
-            <div key={item} className="h-28 animate-pulse rounded-2xl bg-[#E4E7EB] dark:bg-[#1B1D20]" />
-          ))}
-        </div>
-      ) : (
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-          <Metric label="Years" value={stats.years} detail="Academic levels" />
-          <Metric label="Subjects" value={stats.subjects} detail="Active catalog courses" />
-          <Metric label="Units" value={stats.units} detail="Syllabus units" />
-          <Metric label="Categories" value={stats.categories} detail="Document types" />
-          <Metric label="Documents" value={stats.documents} detail={`${stats.activeDocuments} active`} />
-          <Metric label="Published Active" value={stats.activeDocuments} detail="Visible in app & website" />
-        </div>
-      )}
-
-      {/* Recent documents */}
-      <div className="rounded-2xl border border-[#E4E7EB] bg-white shadow-subtle dark:border-[#2B2F34] dark:bg-[#141517]">
-        <div className="flex items-center justify-between gap-4 border-b border-[#E4E7EB] px-5 py-4 dark:border-[#2B2F34]">
-          <div>
-            <h2 className="font-bold text-[#141517] dark:text-white">Recent Documents</h2>
-            <p className="mt-0.5 text-xs text-[#5F6368] dark:text-[#8A8F98]">
-              Latest notes uploaded to the academic repository.
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={() => onNavigate("/admin/documents")}
-            className="text-xs font-bold text-[#111111] dark:text-white hover:underline"
-          >
-            Manage all notes →
-          </button>
-        </div>
-
-        {loading ? (
-          <div className="p-5">
-            <div className="h-10 animate-pulse rounded-lg bg-gray-100 dark:bg-gray-800" />
-          </div>
-        ) : recentDocuments.length === 0 ? (
-          <p className="px-5 py-8 text-center text-sm text-[#555555] dark:text-[#B8BDCA]">No documents found.</p>
-        ) : (
-          <div className="divide-y divide-[#E5E5E5] dark:divide-[#292E3A]">
-            {recentDocuments.map((document) => (
-              <div key={document.id} className="flex items-center justify-between gap-4 px-5 py-3.5">
-                <div className="min-w-0">
-                  <p className="truncate text-sm font-semibold text-[#000000] dark:text-white">{document.title}</p>
-                  <p className="mt-0.5 text-xs text-[#555555] dark:text-[#858B99]">
-                    Cloud PDF • {formatDate(document.created_at)}
-                  </p>
-                </div>
-                <span
-                  className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-semibold ${
-                    document.is_active === false
-                      ? "bg-orange-50 text-orange-700 dark:bg-orange-950/30 dark:text-orange-300"
-                      : "bg-green-50 text-green-700 dark:bg-green-950/30 dark:text-green-300"
-                  }`}
-                >
-                  {document.is_active === false ? "Inactive" : "Active"}
-                </span>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    </section>
-  );
-}
-
-function Activity() {
-  const [events, setEvents] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-
-  useEffect(() => {
-    let active = true;
-    supabase
-      .from("admin_activity")
-      .select("id,action,resource_type,resource_id,metadata,created_at")
-      .order("created_at", { ascending: false })
-      .limit(50)
-      .then(({ data, error: queryError }) => {
-        if (!active) return;
-        if (queryError) setError(friendlyError(queryError, "Unable to load activity."));
-        setEvents(data || []);
-        setLoading(false);
-      });
-    return () => {
-      active = false;
-    };
-  }, []);
-
-  return (
-    <section className="space-y-4">
-      <div>
-        <p className="text-xs font-semibold uppercase tracking-wider text-[#666666] dark:text-[#B3B3B3]">Administration</p>
-        <h1 className="mt-1 text-2xl font-bold tracking-tight text-[#111111] dark:text-white">Activity</h1>
-        <p className="mt-1 text-sm text-[#666666] dark:text-[#B3B3B3]">Real administrative events recorded by the CMS.</p>
-      </div>
-
-      {error ? (
-        <div className="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 dark:border-red-900/70 dark:bg-red-950/20 dark:text-red-300">
-          {error}
-        </div>
-      ) : loading ? (
-        <div className="h-48 animate-pulse rounded-2xl bg-[#F7F7F7] dark:bg-[#161616]" />
-      ) : events.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-[#EAEAEA] p-12 text-center text-sm text-[#666666] dark:border-[#222222] dark:text-[#B3B3B3]">
-          No activity recorded yet.
-        </div>
-      ) : (
-        <div className="overflow-hidden rounded-2xl border border-[#EAEAEA] bg-[#FFFFFF] shadow-subtle dark:border-[#222222] dark:bg-[#0A0A0A]">
-          <div className="divide-y divide-[#EAEAEA] dark:divide-[#222222]">
-            {events.map((event) => (
-              <div key={event.id} className="flex flex-col gap-1 px-5 py-3.5 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                  <p className="text-sm font-semibold capitalize text-[#000000] dark:text-white">
-                    {event.action.replace(/_/g, " ")}
-                  </p>
-                  <p className="text-xs text-[#555555] dark:text-[#858B99]">
-                    Resource: <span className="font-medium text-[#000000] dark:text-white">{event.resource_type}</span>
-                    {event.metadata?.title ? ` — "${event.metadata.title}"` : ""}
-                  </p>
-                </div>
-                <p className="text-xs text-[#555555] dark:text-[#858B99]">{formatDate(event.created_at)}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-    </section>
-  );
-}
-
-export default function AdminCMS() {
-  const { signOut } = useAuth();
-  const location = useLocation();
-  const navigate = useNavigate();
-  const view = getView(location.pathname);
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const { isSuperAdmin: contextSuperAdmin } = useAuth();
-  const [isSuperAdmin, setIsSuperAdmin] = useState(() => contextSuperAdmin ?? false);
-
-  useEffect(() => {
-    setIsSuperAdmin(Boolean(contextSuperAdmin));
-  }, [contextSuperAdmin]);
+  const handleCategoryCreated = (newCat) => {
+    setCatalogCategories((prev) => [...prev, newCat]);
+    showToast("success", `Category "${newCat.name}" created.`);
+  };
 
   const go = (path) => {
     setMobileOpen(false);
     navigate(path);
   };
 
-  const visibleNavItems = navItems.filter((item) => !item.superAdminOnly || isSuperAdmin);
-  const currentTitle =
-    view === "overview"
+  const pageTitle =
+    currentView === "overview"
       ? "Overview"
-      : view === "academic"
-      ? "Academic Content"
-      : view === "documents"
-      ? "Documents"
-      : view === "admins"
-      ? "Teachers / Admins"
-      : "Activity";
-
-  const content =
-    view === "overview" ? (
-      <Overview onNavigate={go} />
-    ) : view === "academic" ? (
-      <AcademicContentCMS />
-    ) : view === "documents" ? (
-      <DocumentsCMS />
-    ) : view === "admins" ? (
-      isSuperAdmin ? (
-        <AdminTeachers />
-      ) : (
-        <div className="rounded-2xl border border-red-200 bg-red-50 p-6 text-red-700 dark:border-red-900/60 dark:bg-red-950/20 dark:text-red-300">
-          <h2 className="text-base font-bold">Access Restricted</h2>
-          <p className="mt-1 text-xs">Only Super Administrators have permission to manage administrator accounts and invitations.</p>
-        </div>
-      )
-    ) : view === "activity" ? (
-      isSuperAdmin ? (
-        <Activity />
-      ) : (
-        <div className="rounded-2xl border border-red-200 bg-red-50 p-6 text-red-700 dark:border-red-900/60 dark:bg-red-950/20 dark:text-red-300">
-          <h2 className="text-base font-bold">Access Restricted</h2>
-          <p className="mt-1 text-xs">Only Super Administrators have permission to view activity logs.</p>
-        </div>
-      )
-    ) : (
-      <Overview onNavigate={go} />
-    );
+      : currentView === "content"
+      ? "Content Library"
+      : currentView === "categories"
+      ? "Categories"
+      : "Access Management";
 
   return (
-    <div className="min-h-screen bg-[#FFFFFF] text-[#111111] antialiased dark:bg-[#000000] dark:text-[#FFFFFF]">
+    <div className="min-h-screen bg-[#FAFAFA] text-[#151515] antialiased dark:bg-[#0B0B0B] dark:text-[#FAFAFA] transition-colors">
+      {/* Toast Notification */}
+      {toast && (
+        <div
+          className={`fixed bottom-5 right-5 z-50 flex items-center gap-2.5 rounded-2xl border px-4 py-3 text-xs font-semibold shadow-2xl transition-all ${
+            toast.type === "error"
+              ? "border-red-200 bg-red-50 text-red-700 dark:border-red-900 dark:bg-red-950/90 dark:text-red-300"
+              : "border-green-200 bg-green-50 text-green-700 dark:border-green-900 dark:bg-green-950/90 dark:text-green-300"
+          }`}
+        >
+          {toast.type === "error" ? (
+            <svg className="h-4 w-4 shrink-0 text-red-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="8" x2="12" y2="12" />
+              <line x1="12" y1="16" x2="12.01" y2="16" />
+            </svg>
+          ) : (
+            <svg className="h-4 w-4 shrink-0 text-green-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+            </svg>
+          )}
+          <span>{toast.message}</span>
+        </div>
+      )}
+
       <div className="flex min-h-screen">
-        {/* Sidebar (Requirement 24) */}
+        {/* ========================================================= */}
+        {/* SIDEBAR NAVIGATION (Requirement 3: Simplified Navigation) */}
+        {/* ========================================================= */}
         <aside
           className={`${
             mobileOpen ? "fixed inset-y-0 left-0 z-40 flex" : "hidden"
-          } w-64 shrink-0 flex-col border-r border-[#EAEAEA] bg-[#FFFFFF] px-4 py-5 shadow-subtle dark:border-[#222222] dark:bg-[#0A0A0A] lg:relative lg:flex`}
+          } w-64 shrink-0 flex-col border-r border-[#E5E5E5] bg-white px-4 py-5 shadow-xs dark:border-[#262626] dark:bg-[#151515] lg:relative lg:flex`}
         >
-          {/* Logo & Brand Header */}
-          <div className="flex items-center gap-3 border-b border-[#EAEAEA] px-2 pb-5 dark:border-[#222222]">
-            <img src="/icons.png" alt="JITS Notes" width="36" height="36" className="rounded-xl shadow-xs" />
+          {/* Brand Header */}
+          <div className="flex items-center gap-3 border-b border-[#E5E5E5] px-2 pb-5 dark:border-[#262626]">
+            <img
+              src="/icons.png"
+              alt="JITS Notes"
+              width="36"
+              height="36"
+              className="rounded-xl shadow-xs"
+            />
             <div>
-              <p className="font-semibold tracking-tight text-[#111111] dark:text-white">JITS Notes</p>
-              <p className="text-[11px] font-semibold uppercase tracking-wider text-[#666666] dark:text-[#B3B3B3]">
-                Admin CMS
+              <p className="font-bold tracking-tight text-[#151515] dark:text-[#FAFAFA]">
+                JITS Notes
+              </p>
+              <p className="text-[10px] font-bold uppercase tracking-wider text-[#8F1D32] dark:text-[#F8E9EC]">
+                Academic CMS
               </p>
             </div>
           </div>
 
-          {/* Navigation Items (Requirement 24: No emojis, clean icons) */}
-          <nav className="mt-5 space-y-1" aria-label="Admin navigation">
-            {visibleNavItems.map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                onClick={() => go(item.path)}
-                className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-medium transition ${
-                  view === item.id
-                    ? "bg-[#111111] text-white dark:bg-white dark:text-[#111111] shadow-xs"
-                    : "text-[#666666] hover:bg-[#F7F7F7] hover:text-[#111111] dark:text-[#B3B3B3] dark:hover:bg-[#111111] dark:hover:text-white"
-                }`}
-              >
-                {item.icon}
-                {item.label}
-              </button>
-            ))}
-
-            <p className="px-3 pb-1 pt-6 text-[10px] font-bold uppercase tracking-wider text-[#858B99]">
-              Administration
-            </p>
-
+          {/* Primary Action Button: Prominent + Add Note */}
+          <div className="pt-4 pb-2">
             <button
               type="button"
-              disabled
-              className="flex w-full cursor-not-allowed items-center gap-3 rounded-xl px-3 py-2 text-left text-sm font-medium text-[#858B99] opacity-60"
+              onClick={() => handleOpenAddNote()}
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#8F1D32] hover:bg-[#74152A] px-4 py-2.5 text-xs font-bold text-white shadow-xs transition cursor-pointer"
             >
-              <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="12" cy="12" r="3" />
-                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+              <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
               </svg>
-              Settings
+              <span>+ Add Note</span>
             </button>
+          </div>
+
+          {/* Navigation Items */}
+          <nav className="mt-2 space-y-1" aria-label="Admin navigation">
+            {navItems.map((item) => {
+              const active = currentView === item.id;
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => go(item.path)}
+                  className={`flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-left text-xs font-semibold transition ${
+                    active
+                      ? "bg-[#F8E9EC] text-[#8F1D32] dark:bg-[#8F1D32]/20 dark:text-[#F8E9EC]"
+                      : "text-[#666666] hover:bg-[#FAFAFA] hover:text-[#151515] dark:text-[#999999] dark:hover:bg-[#262626] dark:hover:text-[#FAFAFA]"
+                  }`}
+                >
+                  <span className={active ? "text-[#8F1D32] dark:text-[#F8E9EC]" : ""}>
+                    {item.icon}
+                  </span>
+                  <span>{item.label}</span>
+                </button>
+              );
+            })}
           </nav>
 
-          {/* Sign Out Action */}
-          <div className="mt-auto border-t border-[#EAEAEA] pt-4 dark:border-[#222222]">
+          {/* User Profile & Sign Out Footer */}
+          <div className="mt-auto border-t border-[#E5E5E5] pt-4 dark:border-[#262626] space-y-2">
+            <div className="flex items-center gap-2.5 px-2 py-1.5">
+              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[#E5E5E5] text-xs font-bold text-[#151515] dark:bg-[#262626] dark:text-white">
+                {user?.email?.charAt(0).toUpperCase() || "A"}
+              </div>
+              <div className="min-w-0">
+                <p className="truncate text-xs font-semibold text-[#151515] dark:text-[#FAFAFA]">
+                  {user?.email || "Administrator"}
+                </p>
+                <p className="text-[10px] text-[#666666] dark:text-[#999999]">
+                  {isSuperAdmin ? "Super Admin" : "Faculty Admin"}
+                </p>
+              </div>
+            </div>
+
             <button
               type="button"
               onClick={() => signOut()}
-              className="flex w-full items-center gap-2.5 rounded-xl border border-[#EAEAEA] px-3 py-2 text-sm font-medium text-[#666666] hover:bg-[#F7F7F7] hover:text-[#111111] dark:border-[#222222] dark:text-[#B3B3B3] dark:hover:bg-[#111111] dark:hover:text-white"
+              className="flex w-full items-center gap-2.5 rounded-xl border border-[#E5E5E5] px-3 py-2 text-xs font-semibold text-[#666666] hover:bg-[#FAFAFA] hover:text-[#151515] dark:border-[#262626] dark:text-[#999999] dark:hover:bg-[#262626] dark:hover:text-white transition"
             >
               <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
                 <polyline points="16 17 21 12 16 7" />
                 <line x1="21" y1="12" x2="9" y2="12" />
               </svg>
-              Sign out
+              <span>Sign Out</span>
             </button>
           </div>
         </aside>
 
         {/* Mobile backdrop */}
-        {mobileOpen ? (
+        {mobileOpen && (
           <button
             type="button"
-            aria-label="Close navigation"
+            aria-label="Close menu"
             onClick={() => setMobileOpen(false)}
-            className="fixed inset-0 z-30 bg-black/40 backdrop-blur-xs lg:hidden"
+            className="fixed inset-0 z-30 bg-black/50 backdrop-blur-xs lg:hidden"
           />
-        ) : null}
+        )}
 
         {/* Main Content Area */}
-        <main className="min-w-0 flex-1">
-          <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-[#EAEAEA] bg-[#FFFFFF]/95 px-4 backdrop-blur dark:border-[#222222] dark:bg-[#0A0A0A]/95 sm:px-6">
-            <button
-              type="button"
-              onClick={() => setMobileOpen(true)}
-              className="flex items-center gap-2 rounded-lg border border-[#EAEAEA] px-3 py-1.5 text-xs font-medium text-[#666666] dark:border-[#222222] dark:text-[#B3B3B3] lg:hidden"
-            >
-              <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <line x1="3" y1="12" x2="21" y2="12" />
-                <line x1="3" y1="6" x2="21" y2="6" />
-                <line x1="3" y1="18" x2="21" y2="18" />
-              </svg>
-              Menu
-            </button>
+        <main className="min-w-0 flex-1 flex flex-col">
+          {/* Header Bar */}
+          <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-[#E5E5E5] bg-white/95 px-4 sm:px-6 backdrop-blur dark:border-[#262626] dark:bg-[#151515]/95">
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setMobileOpen(true)}
+                className="flex items-center gap-1.5 rounded-lg border border-[#E5E5E5] px-2.5 py-1.5 text-xs font-semibold text-[#666666] dark:border-[#262626] dark:text-[#999999] lg:hidden"
+              >
+                <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <line x1="3" y1="12" x2="21" y2="12" />
+                  <line x1="3" y1="6" x2="21" y2="6" />
+                  <line x1="3" y1="18" x2="21" y2="18" />
+                </svg>
+                <span>Menu</span>
+              </button>
 
-            <div className="hidden text-sm font-semibold text-[#111111] dark:text-white sm:block">
-              {currentTitle}
+              <div className="hidden sm:block">
+                <h1 className="text-sm font-bold text-[#151515] dark:text-[#FAFAFA]">
+                  {pageTitle}
+                </h1>
+              </div>
             </div>
 
-            <div className="ml-auto flex items-center gap-3">
-              <span className="hidden text-xs text-[#666666] dark:text-[#8A8A8A] sm:inline">
-                Live Supabase + B2
-              </span>
-              <span className="h-2 w-2 rounded-full bg-[#16A34A]" title="Connected to production storage" />
+            <div className="flex items-center gap-3">
+              {/* Primary Action Button (in top bar for desktop convenience) */}
+              <button
+                type="button"
+                onClick={() => handleOpenAddNote()}
+                className="hidden sm:inline-flex items-center gap-1.5 rounded-xl bg-[#8F1D32] hover:bg-[#74152A] px-3.5 py-2 text-xs font-bold text-white shadow-xs transition cursor-pointer"
+              >
+                <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+                <span>+ Add Note</span>
+              </button>
+
+              <div className="flex items-center gap-2 pl-2 border-l border-[#E5E5E5] dark:border-[#262626]">
+                <span className="hidden md:inline text-[11px] text-[#666666] dark:text-[#999999]">
+                  Live Supabase + B2
+                </span>
+                <span
+                  className="h-2 w-2 rounded-full bg-green-500"
+                  title="Connected to production storage"
+                />
+              </div>
             </div>
           </header>
 
-          <div className="mx-auto w-full max-w-7xl p-4 sm:p-6 lg:p-8">{content}</div>
+          {/* Dynamic Page Content */}
+          <div className="mx-auto w-full max-w-7xl flex-1 p-4 sm:p-6 lg:p-8">
+            {currentView === "overview" && (
+              <OverviewCMS onNavigate={go} onOpenAddNote={handleOpenAddNote} />
+            )}
+
+            {currentView === "content" && (
+              <ContentLibrary
+                onOpenAddNote={handleOpenAddNote}
+                toast={toast}
+                showToast={showToast}
+              />
+            )}
+
+            {currentView === "categories" && <CategoriesCMS showToast={showToast} />}
+
+            {currentView === "access" && (
+              <div>
+                <AdminTeachers />
+              </div>
+            )}
+          </div>
         </main>
       </div>
+
+      {/* Global Add Note Modal */}
+      {addNoteModalOpen && (
+        <AddNoteModal
+          years={catalogYears.length ? catalogYears : undefined}
+          subjects={catalogSubjects}
+          folders={catalogFolders}
+          categories={catalogCategories}
+          initialYearId={addNoteInitialProps.yearId || 1}
+          initialSubjectId={addNoteInitialProps.subjectId || ""}
+          initialUnitId={addNoteInitialProps.unitId || ""}
+          onClose={() => setAddNoteModalOpen(false)}
+          onUploaded={handleNoteUploaded}
+          onCategoryCreated={handleCategoryCreated}
+        />
+      )}
     </div>
   );
 }
