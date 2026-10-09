@@ -290,6 +290,90 @@ export const subjectsApi = {
   },
 };
 
+export const categoriesApi = {
+  // Get all categories ordered by name
+  async getAll() {
+    const { data, error } = await supabase
+      .from('document_categories')
+      .select('id, name, slug, created_at')
+      .order('name', { ascending: true });
+    if (error) throw error;
+    return data || [];
+  },
+
+  // Find a category by name (case-insensitive and trimmed)
+  async findByName(rawName) {
+    const normalized = (rawName || '').trim().replace(/\s+/g, ' ');
+    if (!normalized) return null;
+    const { data, error } = await supabase
+      .from('document_categories')
+      .select('id, name, slug, created_at')
+      .ilike('name', normalized);
+    if (error) throw error;
+    return (
+      (data || []).find(
+        (c) => c.name.trim().toLowerCase() === normalized.toLowerCase()
+      ) || null
+    );
+  },
+
+  // Create a new custom category (admin only)
+  async create(rawName) {
+    await requireAdmin();
+
+    const normalized = (rawName || '').trim().replace(/\s+/g, ' ');
+    if (!normalized) {
+      throw new Error('Category name cannot be empty.');
+    }
+
+    // Check duplicate ignoring case and excess whitespace
+    const existing = await this.findByName(normalized);
+    if (existing) {
+      const err = new Error(`Category "${existing.name}" already exists.`);
+      err.existingCategory = existing;
+      err.isDuplicate = true;
+      throw err;
+    }
+
+    // Generate url-friendly slug
+    const baseSlug =
+      normalized
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '') || 'category';
+
+    const { data: slugMatch } = await supabase
+      .from('document_categories')
+      .select('id, slug')
+      .eq('slug', baseSlug)
+      .maybeSingle();
+
+    const finalSlug = slugMatch ? `${baseSlug}-${Date.now().toString(36)}` : baseSlug;
+
+    const { data, error } = await supabase
+      .from('document_categories')
+      .insert({
+        name: normalized,
+        slug: finalSlug,
+      })
+      .select('id, name, slug, created_at')
+      .single();
+
+    if (error) {
+      if (error.code === '23505' || /unique|duplicate/i.test(error.message)) {
+        const found = await this.findByName(normalized);
+        const err = new Error(`Category "${found?.name || normalized}" already exists.`);
+        err.existingCategory = found;
+        err.isDuplicate = true;
+        throw err;
+      }
+      throw normalizeSupabaseError(error, 'Failed to create category.');
+    }
+
+    return data;
+  },
+};
+
 export const feedbackApi = {
   // Submit feedback (public)
   async submit(feedback) {

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 import DocumentsCMS from "./DocumentsCMS";
 import { resolveSubjectName } from "../utils/academicCatalog";
+import { categoriesApi } from "../lib/api";
 
 const NAV_ITEMS = [
   { id: "subjects", label: "Subjects" },
@@ -574,6 +575,141 @@ function CreateFolderModal({ subjects, initialSubjectId, onClose, onCreated }) {
 }
 
 // ==========================================
+// ADD CATEGORY MODAL
+// ==========================================
+function AddCategoryModal({ existingCategories = [], onClose, onSuccess }) {
+  const [name, setName] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+
+  const examples = [
+    "Lab Manual",
+    "Assignments",
+    "Viva Questions",
+    "Previous Year Papers",
+    "Exam Preparation",
+    "Projects",
+    "Reference Material",
+  ];
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (saving) return;
+    setError("");
+
+    const trimmed = name.trim();
+    if (!trimmed) {
+      setError("Please enter a category name.");
+      return;
+    }
+
+    const normalized = trimmed.toLowerCase();
+    const existing = existingCategories.find(
+      (c) => (c.name || "").trim().toLowerCase() === normalized
+    );
+    if (existing) {
+      setError(`A category named "${existing.name}" already exists.`);
+      return;
+    }
+
+    setSaving(true);
+    try {
+      const created = await categoriesApi.create(trimmed);
+      onSuccess(created);
+    } catch (err) {
+      setError(err?.message || "Failed to create category.");
+      setSaving(false);
+    }
+  };
+
+  return (
+    <ModalShell onClose={onClose}>
+      <div className="flex items-center justify-between border-b border-gray-200 dark:border-[#292E3A] px-6 py-4">
+        <div>
+          <h2 className="text-base font-bold text-gray-900 dark:text-[#FFFFFF]">Create Custom Category</h2>
+          <p className="text-xs text-gray-500 dark:text-[#858B99]">Add a new classification for notes and study materials</p>
+        </div>
+        <button
+          type="button"
+          onClick={onClose}
+          disabled={saving}
+          className="text-gray-400 hover:text-gray-600 dark:text-[#858B99] dark:hover:text-[#FFFFFF]"
+        >
+          <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        {error && (
+          <div className="rounded-xl bg-red-50 dark:bg-red-950/40 p-3 text-xs text-red-700 dark:text-red-300 border border-red-200 dark:border-red-900/40">
+            {error}
+          </div>
+        )}
+
+        <div>
+          <label className="block text-xs font-semibold text-gray-700 dark:text-[#B8BDCA] mb-1">
+            Custom Category Name *
+          </label>
+          <input
+            type="text"
+            required
+            autoFocus
+            placeholder="Enter your category name..."
+            value={name}
+            onChange={(e) => {
+              setName(e.target.value);
+              if (error) setError("");
+            }}
+            className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2.5 text-sm text-gray-900 dark:text-[#FFFFFF] placeholder-gray-400 focus:border-[#111111] dark:focus:border-white focus:outline-none"
+          />
+        </div>
+
+        <div>
+          <p className="text-[11px] font-medium text-gray-500 dark:text-[#858B99] mb-1.5">
+            Suggested examples:
+          </p>
+          <div className="flex flex-wrap gap-1.5">
+            {examples.map((ex) => (
+              <button
+                key={ex}
+                type="button"
+                onClick={() => {
+                  setName(ex);
+                  if (error) setError("");
+                }}
+                className="rounded-lg bg-gray-100 hover:bg-gray-200 dark:bg-[#1A1E28] dark:hover:bg-[#252B3A] px-2 py-1 text-[11px] text-gray-700 dark:text-[#C5CAD4] transition-colors"
+              >
+                + {ex}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex justify-end gap-2 pt-2 border-t border-gray-100 dark:border-[#1E2433]">
+          <button
+            type="button"
+            onClick={onClose}
+            disabled={saving}
+            className="rounded-xl border border-gray-200 dark:border-[#292E3A] px-4 py-2 text-xs font-semibold text-gray-700 dark:text-[#B8BDCA] hover:bg-gray-50 dark:hover:bg-[#1A1E28]"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            disabled={saving || !name.trim()}
+            className="rounded-xl bg-[#111111] hover:bg-[#222222] text-white dark:bg-white dark:hover:bg-[#EAEAEA] dark:text-[#111111] disabled:opacity-50 px-4 py-2 text-xs font-medium shadow-sm transition-colors"
+          >
+            {saving ? "Creating..." : "Create Category"}
+          </button>
+        </div>
+      </form>
+    </ModalShell>
+  );
+}
+
+// ==========================================
 // MAIN COMPONENT: AcademicContentCMS
 // ==========================================
 export default function AcademicContentCMS() {
@@ -594,6 +730,7 @@ export default function AcademicContentCMS() {
   const [deletingSubject, setDeletingSubject] = useState(null);
   const [showCreateFolderModal, setShowCreateFolderModal] = useState(false);
   const [folderSubjectFilter, setFolderSubjectFilter] = useState("all");
+  const [showCreateCategoryModal, setShowCreateCategoryModal] = useState(false);
 
   const notify = useCallback((type, message) => {
     setToast({ type, message });
@@ -709,6 +846,12 @@ export default function AcademicContentCMS() {
   const handleFolderCreated = (newFolder) => {
     setShowCreateFolderModal(false);
     notify("success", `Folder "${newFolder.name}" created.`);
+    loadData();
+  };
+
+  const handleCategoryCreated = (newCategory) => {
+    setShowCreateCategoryModal(false);
+    notify("success", `Category "${newCategory.name}" created successfully.`);
     loadData();
   };
 
@@ -1056,11 +1199,23 @@ export default function AcademicContentCMS() {
   // ==========================================
   const renderCategoriesTab = () => (
     <div className="space-y-4">
-      <div>
-        <h2 className="text-lg font-bold text-gray-900 dark:text-[#FFFFFF]">Document Categories</h2>
-        <p className="text-xs text-gray-500 dark:text-[#858B99]">
-          Standard academic material classifications
-        </p>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h2 className="text-lg font-bold text-gray-900 dark:text-[#FFFFFF]">Document Categories</h2>
+          <p className="text-xs text-gray-500 dark:text-[#858B99]">
+            Standard academic material classifications
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={() => setShowCreateCategoryModal(true)}
+          className="inline-flex items-center gap-1.5 rounded-xl bg-[#111111] hover:bg-[#222222] text-white dark:bg-white dark:hover:bg-[#EAEAEA] dark:text-[#111111] px-4 py-2 text-xs font-medium shadow-sm transition-colors"
+        >
+          <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.5">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+          </svg>
+          <span>+ Create Custom Category</span>
+        </button>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -1213,6 +1368,14 @@ export default function AcademicContentCMS() {
           initialSubjectId={folderSubjectFilter !== "all" ? folderSubjectFilter : null}
           onClose={() => setShowCreateFolderModal(false)}
           onCreated={handleFolderCreated}
+        />
+      )}
+
+      {showCreateCategoryModal && (
+        <AddCategoryModal
+          existingCategories={categories}
+          onClose={() => setShowCreateCategoryModal(false)}
+          onSuccess={handleCategoryCreated}
         />
       )}
     </section>

@@ -6,6 +6,7 @@ import {
   BookOpen,
   Calendar,
   Layers,
+  ChevronDown,
   GraduationCap,
   Laptop,
   Brain,
@@ -101,17 +102,17 @@ function SubjectCardSkeleton() {
   );
 }
 
-function DocumentCardSkeleton() {
+function UnitRowSkeleton() {
   return (
-    <div className="flex items-center justify-between p-3.5 sm:p-4 rounded-xl border border-[#EDEDED] dark:border-[#222222] bg-[#FFFFFF] dark:bg-[#0B0B0B] shadow-subtle dark:shadow-subtle-dark animate-pulse gap-3">
+    <div className="flex items-center justify-between p-3.5 sm:p-4 rounded-xl border border-[#EDEDED] dark:border-[#222222] bg-[#FFFFFF] dark:bg-[#0B0B0B] animate-pulse">
       <div className="flex items-center gap-3 min-w-0 flex-1">
-        <div className="w-10 h-10 rounded-lg bg-[#F7F7F7] dark:bg-[#151515] shrink-0" />
+        <div className="w-8 h-8 rounded-lg bg-[#F7F7F7] dark:bg-[#151515] shrink-0" />
         <div className="space-y-1.5 flex-1 min-w-0">
-          <div className="h-3.5 w-1/2 bg-[#F7F7F7] dark:bg-[#151515] rounded" />
-          <div className="h-2.5 w-1/4 bg-[#F7F7F7] dark:bg-[#151515] rounded" />
+          <div className="h-3.5 w-1/3 bg-[#F7F7F7] dark:bg-[#151515] rounded" />
+          <div className="h-2.5 w-1/5 bg-[#F7F7F7] dark:bg-[#151515] rounded" />
         </div>
       </div>
-      <div className="h-9 w-24 bg-[#F7F7F7] dark:bg-[#151515] rounded-lg shrink-0" />
+      <div className="h-4 w-4 bg-[#F7F7F7] dark:bg-[#151515] rounded shrink-0" />
     </div>
   );
 }
@@ -230,6 +231,60 @@ const SubjectCard = memo(function SubjectCard({ subject, counts, onSelect }) {
   );
 });
 
+/* Collapsible Unit Row Component */
+const UnitRow = memo(function UnitRow({ group, isExpanded, onToggle, onOpenPdf }) {
+  const noteCount = group.notes.length;
+
+  return (
+    <div className="rounded-xl border border-[#EDEDED] dark:border-[#222222] bg-[#FFFFFF] dark:bg-[#0B0B0B] shadow-subtle dark:shadow-subtle-dark overflow-hidden">
+      {/* Clickable Unit Header Row */}
+      <button
+        type="button"
+        onClick={onToggle}
+        className="w-full flex items-center justify-between gap-3 p-3.5 sm:p-4 text-left hover:bg-[#FAFAFA] dark:hover:bg-[#111111] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#8F1D32] focus-visible:ring-offset-1 dark:focus-visible:ring-offset-[#0B0B0B]"
+        aria-expanded={isExpanded}
+        aria-controls={`unit-content-${group.id}`}
+      >
+        <div className="flex items-center gap-3 min-w-0">
+          <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
+            isExpanded
+              ? "bg-[#8F1D32] text-white dark:bg-[#A21F3D]"
+              : "bg-[#FCF4F5] dark:bg-[#1F1215] text-[#8F1D32] dark:text-[#A21F3D] border border-[#F8E9EC] dark:border-[#2E1A1F]"
+          }`}>
+            <Layers className="w-4 h-4" />
+          </div>
+          <div className="min-w-0">
+            <h3 className="text-xs sm:text-sm font-bold text-[#151515] dark:text-white leading-tight truncate">
+              {group.title}
+            </h3>
+            <span className="text-[11px] text-[#666666] dark:text-[#999999] font-medium">
+              {noteCount} {noteCount === 1 ? "note" : "notes"}
+            </span>
+          </div>
+        </div>
+
+        <ChevronDown
+          className={`w-4 h-4 text-[#999999] dark:text-[#666666] shrink-0 transition-transform duration-200 ${
+            isExpanded ? "rotate-180" : ""
+          }`}
+        />
+      </button>
+
+      {/* Expanded Notes Content */}
+      {isExpanded && (
+        <div
+          id={`unit-content-${group.id}`}
+          className="border-t border-[#EDEDED] dark:border-[#222222] px-3.5 sm:px-4 py-3 space-y-2.5 bg-[#FAFAFA] dark:bg-[#080808]"
+        >
+          {group.notes.map((doc) => (
+            <DocumentCard key={doc.id} doc={doc} onOpen={onOpenPdf} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+});
+
 /* Main NotesSection Component */
 const NotesSection = memo(function NotesSection({
   selectedYear = 1,
@@ -250,6 +305,9 @@ const NotesSection = memo(function NotesSection({
   const [subjectUnits, setSubjectUnits] = useState([]);
   const [subjectError, setSubjectError] = useState(null);
   const [viewingDoc, setViewingDoc] = useState(null);
+
+  // Track which units are expanded (by group id)
+  const [expandedUnits, setExpandedUnits] = useState(new Set());
 
   // Subject counts cache: { [subjectId]: { notes: number } }
   const [countsMap, setCountsMap] = useState({});
@@ -303,12 +361,12 @@ const NotesSection = memo(function NotesSection({
   }, [subjects]);
 
   // Fetch ALL active documents and units for the active subject
-  // Requirement 1 & 6: The Notes page fetches ALL active documents belonging to that subject and groups them visually by Unit.
   useEffect(() => {
     if (!activeSubject) {
       setSubjectDocuments([]);
       setSubjectUnits([]);
       setSubjectError(null);
+      setExpandedUnits(new Set());
       return;
     }
 
@@ -316,6 +374,7 @@ const NotesSection = memo(function NotesSection({
     async function loadSubjectData() {
       setSubjectDetailsLoading(true);
       setSubjectError(null);
+      setExpandedUnits(new Set());
       try {
         const [unitsRes, foldersRes, docsRes] = await Promise.all([
           supabase
@@ -388,6 +447,40 @@ const NotesSection = memo(function NotesSection({
     };
   }, [activeSubject]);
 
+  // Auto-expand the first unit with notes once data loads
+  useEffect(() => {
+    if (subjectDetailsLoading || subjectDocuments.length === 0) return;
+    // We intentionally don't auto-expand; units start collapsed for a compact view.
+    // If there's only one group, auto-expand it for convenience.
+    // This is computed after groupedDocuments is available, so we compute inline.
+    const unitMap = new Map();
+    subjectUnits.forEach((u) => {
+      unitMap.set(u.id, { notes: [] });
+    });
+    const unassigned = [];
+    subjectDocuments.forEach((doc) => {
+      const targetId = doc.unit_id || doc.folder_id;
+      if (targetId && unitMap.has(targetId)) {
+        unitMap.get(targetId).notes.push(doc);
+      } else {
+        unassigned.push(doc);
+      }
+    });
+    const nonEmptyCount = Array.from(unitMap.values()).filter((g) => g.notes.length > 0).length + (unassigned.length > 0 ? 1 : 0);
+    if (nonEmptyCount === 1) {
+      // Auto-expand the single group
+      for (const [id, g] of unitMap.entries()) {
+        if (g.notes.length > 0) {
+          setExpandedUnits(new Set([id]));
+          return;
+        }
+      }
+      if (unassigned.length > 0) {
+        setExpandedUnits(new Set(["other-notes"]));
+      }
+    }
+  }, [subjectDetailsLoading, subjectDocuments, subjectUnits]);
+
   const handleSelectSubject = useCallback((subject) => {
     trackSubjectClick(subject.short_name || "Unknown Subject", subject.year_id || selectedYear);
     if (onSubjectChange) {
@@ -420,6 +513,18 @@ const NotesSection = memo(function NotesSection({
     }
   }, [activeSubject, onOpenDocumentDirect]);
 
+  const handleToggleUnit = useCallback((groupId) => {
+    setExpandedUnits((prev) => {
+      const next = new Set(prev);
+      if (next.has(groupId)) {
+        next.delete(groupId);
+      } else {
+        next.add(groupId);
+      }
+      return next;
+    });
+  }, []);
+
   // Clean filtered subjects: remove placeholder subjects, dots, dashes, and inactive
   const visibleSubjects = useMemo(() => {
     return (subjects || []).filter((subject) => {
@@ -443,7 +548,8 @@ const NotesSection = memo(function NotesSection({
     });
   }, [subjects, selectedYear, isAdmin]);
 
-  // Group active documents by Unit / Group (Requirement 1 & 6)
+  // Group active documents by Unit / Group
+  // Empty units are filtered out. Unassigned documents go to "Other".
   const groupedDocuments = useMemo(() => {
     if (subjectDocuments.length === 0) return [];
 
@@ -469,6 +575,7 @@ const NotesSection = memo(function NotesSection({
     });
 
     // Sort groups: Unit 1, Unit 2, Unit 3... then custom folders
+    // Filter out empty units to keep the interface compact
     const sortedGroups = Array.from(unitMap.values())
       .filter((group) => group.notes.length > 0)
       .sort((a, b) => {
@@ -478,11 +585,11 @@ const NotesSection = memo(function NotesSection({
         return a.title.localeCompare(b.title);
       });
 
-    // If there are unassigned notes, add a "General Notes" section
+    // If there are unassigned notes, add an "Other" section
     if (unassignedNotes.length > 0) {
       sortedGroups.push({
-        id: "general-notes",
-        title: sortedGroups.length > 0 ? "General Subject Notes" : "All Notes",
+        id: "other-notes",
+        title: "Other",
         unit_number: null,
         notes: unassignedNotes,
       });
@@ -582,10 +689,10 @@ const NotesSection = memo(function NotesSection({
         </div>
       )}
 
-      {/* VIEW 2: NOTES PAGE (LOCKED FLOW: Subject -> Notes grouped by Unit) */}
-      {/* NO SEPARATE UNIT SCREEN! Unit is only an internal visual grouping inside the Notes page */}
+      {/* VIEW 2: NOTES PAGE (Subject -> Notes grouped by Unit, all on one page) */}
+      {/* Units are collapsible rows. Clicking expands notes inline. No separate unit screen. */}
       {activeSubject && (
-        <div className="space-y-6">
+        <div className="space-y-5">
           {/* Subject Header */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 sm:p-6 rounded-2xl border border-[#EDEDED] dark:border-[#222222] bg-[#FFFFFF] dark:bg-[#0B0B0B] shadow-subtle dark:shadow-subtle-dark">
             <div className="min-w-0">
@@ -630,9 +737,9 @@ const NotesSection = memo(function NotesSection({
 
           {/* Loading State */}
           {subjectDetailsLoading ? (
-            <div className="space-y-3">
-              {Array.from({ length: 4 }).map((_, i) => (
-                <DocumentCardSkeleton key={i} />
+            <div className="space-y-2.5">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <UnitRowSkeleton key={i} />
               ))}
             </div>
           ) : subjectError ? (
@@ -661,33 +768,16 @@ const NotesSection = memo(function NotesSection({
               </p>
             </div>
           ) : (
-            /* Locked Visual Grouping: UNIT 1, UNIT 2, UNIT 3... (Requirement 1 & 6) */
-            <div className="space-y-8">
+            /* Collapsible Unit Rows: Unit 1, Unit 2, ... Other */
+            <div className="space-y-2.5">
               {groupedDocuments.map((group) => (
-                <div key={group.id} className="space-y-3">
-                  {/* Unit Section Header */}
-                  <div className="flex items-center justify-between pb-2 border-b border-[#EDEDED] dark:border-[#222222]">
-                    <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 rounded-md bg-[#FCF4F5] dark:bg-[#1F1215] text-[#8F1D32] dark:text-[#A21F3D] flex items-center justify-center shrink-0">
-                        <Layers className="w-3.5 h-3.5" />
-                      </div>
-                      <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[#151515] dark:text-white">
-                        {group.title}
-                      </h3>
-                    </div>
-
-                    <span className="text-xs font-semibold text-[#666666] dark:text-[#999999]">
-                      {group.notes.length} {group.notes.length === 1 ? "note" : "notes"}
-                    </span>
-                  </div>
-
-                  {/* Document Cards in this Unit */}
-                  <div className="space-y-2.5">
-                    {group.notes.map((doc) => (
-                      <DocumentCard key={doc.id} doc={doc} onOpen={handleOpenPdf} />
-                    ))}
-                  </div>
-                </div>
+                <UnitRow
+                  key={group.id}
+                  group={group}
+                  isExpanded={expandedUnits.has(group.id)}
+                  onToggle={() => handleToggleUnit(group.id)}
+                  onOpenPdf={handleOpenPdf}
+                />
               ))}
             </div>
           )}

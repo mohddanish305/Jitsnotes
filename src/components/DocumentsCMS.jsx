@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState, useRef } from "react";
 import { supabase } from "../lib/supabase";
 import { resolveSubjectName } from "../utils/academicCatalog";
+import { categoriesApi } from "../lib/api";
 
 const SAFE_DOCUMENT_FIELDS =
   "id,title,description,subject_id,folder_id,unit_id,category_id,storage_provider,mime_type,file_size,page_count,is_active,created_at,updated_at";
@@ -591,6 +592,7 @@ function SimpleAddNoteModal({
   initialFolderId = "",
   onClose,
   onUploaded,
+  onCategoryCreated,
 }) {
   const [title, setTitle] = useState("");
   const [yearId, setYearId] = useState(initialYear || 1);
@@ -603,6 +605,14 @@ function SimpleAddNoteModal({
   const [statusMessage, setStatusMessage] = useState(null);
   const [error, setError] = useState(null);
   const fileInputRef = useRef(null);
+
+  // Custom Category State
+  const [isCustomCategoryMode, setIsCustomCategoryMode] = useState(false);
+  const [customCategoryName, setCustomCategoryName] = useState("");
+  const [isCreatingCategory, setIsCreatingCategory] = useState(false);
+  const [categoryValidationMessage, setCategoryValidationMessage] = useState(null);
+  const [duplicateCategoryMatch, setDuplicateCategoryMatch] = useState(null);
+  const [categorySuccessMessage, setCategorySuccessMessage] = useState(null);
 
   // Filter subjects by chosen year
   const availableSubjects = useMemo(() => {
@@ -629,11 +639,11 @@ function SimpleAddNoteModal({
 
   // Default category: 'study material' or 'notes'
   useEffect(() => {
-    if (categories.length > 0 && !categoryId) {
+    if (categories.length > 0 && !categoryId && !isCustomCategoryMode) {
       const defaultCat = categories.find((c) => /study material|notes/i.test(c.name)) || categories[0];
       if (defaultCat) setCategoryId(defaultCat.id);
     }
-  }, [categories, categoryId]);
+  }, [categories, categoryId, isCustomCategoryMode]);
 
   const handleFileSelect = (selectedFile) => {
     if (!selectedFile) return;
@@ -664,6 +674,66 @@ function SimpleAddNoteModal({
     }
   };
 
+  const handleCategorySelectChange = (e) => {
+    const val = e.target.value;
+    if (val === "__custom__") {
+      setIsCustomCategoryMode(true);
+      setCategoryValidationMessage(null);
+      setDuplicateCategoryMatch(null);
+    } else {
+      setIsCustomCategoryMode(false);
+      setCategoryId(val);
+      setCategoryValidationMessage(null);
+      setDuplicateCategoryMatch(null);
+    }
+  };
+
+  const handleCreateCustomCategory = async (rawName) => {
+    const nameToUse = (rawName !== undefined ? rawName : customCategoryName).trim().replace(/\s+/g, " ");
+    if (!nameToUse) {
+      setCategoryValidationMessage("Custom category name cannot be empty.");
+      setDuplicateCategoryMatch(null);
+      return null;
+    }
+
+    // 1. Check duplicate against currently loaded categories (ignoring case and extra whitespace)
+    const localMatch = categories.find(
+      (c) => c.name.trim().toLowerCase() === nameToUse.toLowerCase()
+    );
+    if (localMatch) {
+      setCategoryValidationMessage(`Category "${localMatch.name}" already exists.`);
+      setDuplicateCategoryMatch(localMatch);
+      return null;
+    }
+
+    setIsCreatingCategory(true);
+    setCategoryValidationMessage(null);
+    setDuplicateCategoryMatch(null);
+
+    try {
+      const newCat = await categoriesApi.create(nameToUse);
+      if (onCategoryCreated) {
+        onCategoryCreated(newCat);
+      }
+      setCategoryId(newCat.id);
+      setIsCustomCategoryMode(false);
+      setCustomCategoryName("");
+      setCategorySuccessMessage(`✓ Custom category "${newCat.name}" created and selected!`);
+      setTimeout(() => setCategorySuccessMessage(null), 4000);
+      return newCat;
+    } catch (err) {
+      if (err.isDuplicate && err.existingCategory) {
+        setCategoryValidationMessage(`Category "${err.existingCategory.name}" already exists.`);
+        setDuplicateCategoryMatch(err.existingCategory);
+      } else {
+        setCategoryValidationMessage(err.message || "Failed to create custom category.");
+      }
+      return null;
+    } finally {
+      setIsCreatingCategory(false);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!file) {
@@ -676,6 +746,24 @@ function SimpleAddNoteModal({
     }
     if (!subjectId) {
       setError("Please select a valid subject.");
+      return;
+    }
+
+    let finalCategoryId = categoryId;
+    if (isCustomCategoryMode) {
+      if (!customCategoryName.trim()) {
+        setError("Please enter a custom category name or select an existing category.");
+        return;
+      }
+      const createdCat = await handleCreateCustomCategory(customCategoryName);
+      if (!createdCat) {
+        return;
+      }
+      finalCategoryId = createdCat.id;
+    }
+
+    if (!finalCategoryId) {
+      setError("Please select or create a category.");
       return;
     }
 
@@ -693,9 +781,7 @@ function SimpleAddNoteModal({
         formData.append("folder_id", unitId);
         formData.append("unit_id", unitId);
       }
-      if (categoryId) {
-        formData.append("category_id", categoryId);
-      }
+      formData.append("category_id", finalCategoryId);
       formData.append("is_active", isActive ? "true" : "false");
 
       const { data, error: uploadErr } = await supabase.functions.invoke("upload-document", {
@@ -755,27 +841,11 @@ function SimpleAddNoteModal({
           </div>
         )}
 
-        {/* 1. Note Title */}
-        <div>
-          <label className="block text-xs font-semibold text-gray-700 dark:text-[#B8BDCA] mb-1">
-            1. Note Title *
-          </label>
-          <input
-            type="text"
-            required
-            disabled={isUploading}
-            placeholder="e.g. Unit 1 Data Structures Notes"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2.5 text-sm text-gray-900 dark:text-[#FFFFFF] focus:border-[#8F1D32] dark:focus:border-[#A21F3D] focus:outline-none"
-          />
-        </div>
-
-        {/* 2. Year & 3. Subject */}
+        {/* 1. Academic Year & 2. Subject */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label className="block text-xs font-semibold text-gray-700 dark:text-[#B8BDCA] mb-1">
-              2. Academic Year *
+              1. Academic Year *
             </label>
             <select
               value={yearId}
@@ -793,7 +863,7 @@ function SimpleAddNoteModal({
 
           <div>
             <label className="block text-xs font-semibold text-gray-700 dark:text-[#B8BDCA] mb-1">
-              3. Subject *
+              2. Subject *
             </label>
             <select
               value={subjectId}
@@ -815,44 +885,145 @@ function SimpleAddNoteModal({
           </div>
         </div>
 
-        {/* 4. Unit / Group & 5. Category */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <label className="block text-xs font-semibold text-gray-700 dark:text-[#B8BDCA] mb-1">
-              4. Unit / Group
+        {/* 3. Unit / Group */}
+        <div>
+          <label className="block text-xs font-semibold text-gray-700 dark:text-[#B8BDCA] mb-1">
+            3. Unit / Group
+          </label>
+          <select
+            value={unitId}
+            disabled={isUploading}
+            onChange={(e) => setUnitId(e.target.value)}
+            className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2.5 text-sm text-gray-900 dark:text-[#FFFFFF] focus:border-[#8F1D32] dark:focus:border-[#A21F3D] focus:outline-none"
+          >
+            <option value="">No Unit / General Notes</option>
+            {availableFolders.map((f) => (
+              <option key={f.id} value={f.id}>
+                📁 {f.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* 4. Note Title */}
+        <div>
+          <label className="block text-xs font-semibold text-gray-700 dark:text-[#B8BDCA] mb-1">
+            4. Note Title *
+          </label>
+          <input
+            type="text"
+            required
+            disabled={isUploading}
+            placeholder="e.g. Unit 1 Data Structures Notes"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2.5 text-sm text-gray-900 dark:text-[#FFFFFF] focus:border-[#8F1D32] dark:focus:border-[#A21F3D] focus:outline-none"
+          />
+        </div>
+
+        {/* 5. Category (Requirements 1, 2, 3, 5) */}
+        <div>
+          <div className="flex items-center justify-between mb-1">
+            <label className="block text-xs font-semibold text-gray-700 dark:text-[#B8BDCA]">
+              5. Category *
             </label>
-            <select
-              value={unitId}
-              disabled={isUploading}
-              onChange={(e) => setUnitId(e.target.value)}
-              className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2.5 text-sm text-gray-900 dark:text-[#FFFFFF] focus:border-[#8F1D32] dark:focus:border-[#A21F3D] focus:outline-none"
-            >
-              <option value="">No Unit / General Notes</option>
-              {availableFolders.map((f) => (
-                <option key={f.id} value={f.id}>
-                  📁 {f.name}
-                </option>
-              ))}
-            </select>
+            {isCustomCategoryMode && (
+              <button
+                type="button"
+                onClick={() => {
+                  setIsCustomCategoryMode(false);
+                  setCategoryValidationMessage(null);
+                  setDuplicateCategoryMatch(null);
+                }}
+                className="text-[11px] font-medium text-[#8F1D32] dark:text-[#A21F3D] hover:underline cursor-pointer"
+              >
+                ← Choose existing category
+              </button>
+            )}
           </div>
 
-          <div>
-            <label className="block text-xs font-semibold text-gray-700 dark:text-[#B8BDCA] mb-1">
-              5. Category
-            </label>
-            <select
-              value={categoryId}
-              disabled={isUploading}
-              onChange={(e) => setCategoryId(e.target.value)}
-              className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2.5 text-sm text-gray-900 dark:text-[#FFFFFF] focus:border-[#8F1D32] dark:focus:border-[#A21F3D] focus:outline-none"
-            >
-              {categories.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
-          </div>
+          <select
+            value={isCustomCategoryMode ? "__custom__" : categoryId}
+            disabled={isUploading}
+            onChange={handleCategorySelectChange}
+            className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2.5 text-sm text-gray-900 dark:text-[#FFFFFF] focus:border-[#8F1D32] dark:focus:border-[#A21F3D] focus:outline-none"
+          >
+            {categories.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name}
+              </option>
+            ))}
+            <option value="__custom__">+ Create Custom Category</option>
+          </select>
+
+          {categorySuccessMessage && (
+            <p className="mt-1 text-xs text-green-600 dark:text-green-400 font-medium">
+              {categorySuccessMessage}
+            </p>
+          )}
+
+          {/* Custom Category Input Panel */}
+          {isCustomCategoryMode && (
+            <div className="mt-3 p-3.5 rounded-xl border border-gray-200 dark:border-[#292E3A] bg-[#F7F8FA] dark:bg-[#12151D] space-y-2.5">
+              <div>
+                <label className="block text-xs font-semibold text-gray-800 dark:text-white mb-1">
+                  Custom Category Name *
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={customCategoryName}
+                    disabled={isUploading || isCreatingCategory}
+                    onChange={(e) => {
+                      setCustomCategoryName(e.target.value);
+                      setCategoryValidationMessage(null);
+                      setDuplicateCategoryMatch(null);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        handleCreateCustomCategory();
+                      }
+                    }}
+                    placeholder="Enter your category name..."
+                    className="flex-1 rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2 text-sm text-gray-900 dark:text-white focus:border-[#8F1D32] dark:focus:border-[#A21F3D] focus:outline-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleCreateCustomCategory()}
+                    disabled={isUploading || isCreatingCategory || !customCategoryName.trim()}
+                    className="px-4 py-2 rounded-xl bg-[#8F1D32] hover:bg-[#74152A] text-white text-xs font-semibold disabled:opacity-50 transition-colors shrink-0 cursor-pointer"
+                  >
+                    {isCreatingCategory ? "Adding..." : "Add Category"}
+                  </button>
+                </div>
+              </div>
+
+              <p className="text-[11px] text-gray-500 dark:text-[#858B99] leading-relaxed">
+                <span className="font-semibold text-gray-600 dark:text-[#A0A6B5]">Examples:</span> Lab Manual, Assignments, Viva Questions, Previous Year Papers, Exam Preparation, Projects, Reference Material
+              </p>
+
+              {categoryValidationMessage && (
+                <div className="rounded-lg bg-amber-50 dark:bg-amber-950/40 p-2.5 text-xs text-amber-800 dark:text-amber-200 border border-amber-200 dark:border-amber-900/40 space-y-1">
+                  <p>{categoryValidationMessage}</p>
+                  {duplicateCategoryMatch && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setCategoryId(duplicateCategoryMatch.id);
+                        setIsCustomCategoryMode(false);
+                        setCategoryValidationMessage(null);
+                        setDuplicateCategoryMatch(null);
+                      }}
+                      className="inline-block text-xs font-bold text-[#8F1D32] dark:text-[#A21F3D] hover:underline cursor-pointer"
+                    >
+                      Select existing "{duplicateCategoryMatch.name}" instead →
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* 6. PDF File Dropzone */}
@@ -976,7 +1147,7 @@ function SimpleAddNoteModal({
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
             )}
-            <span>{isUploading ? "Uploading..." : "Upload Note"}</span>
+            <span>{isUploading ? "Uploading..." : "Save Note"}</span>
           </button>
         </div>
       </form>
@@ -987,7 +1158,7 @@ function SimpleAddNoteModal({
 // ==========================================
 // EDIT NOTE MODAL (REQUIREMENT 13)
 // ==========================================
-function EditNoteModal({ note, years = YEAR_TABS, subjects = [], folders = [], categories = [], onClose, onSaved }) {
+function EditNoteModal({ note, years = YEAR_TABS, subjects = [], folders = [], categories = [], onClose, onSaved, onCategoryCreated }) {
   const [title, setTitle] = useState(note.title || "");
   const [yearId, setYearId] = useState(() => {
     const sub = subjects.find((s) => s.id === note.subject_id);
@@ -1000,6 +1171,14 @@ function EditNoteModal({ note, years = YEAR_TABS, subjects = [], folders = [], c
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
 
+  // Custom Category State
+  const [isCustomCategoryMode, setIsCustomCategoryMode] = useState(false);
+  const [customCategoryName, setCustomCategoryName] = useState("");
+  const [isCreatingCategory, setIsCreatingCategory] = useState(false);
+  const [categoryValidationMessage, setCategoryValidationMessage] = useState(null);
+  const [duplicateCategoryMatch, setDuplicateCategoryMatch] = useState(null);
+  const [categorySuccessMessage, setCategorySuccessMessage] = useState(null);
+
   // Available subjects for selected year
   const availableSubjects = useMemo(() => {
     return subjects.filter((s) => Number(s.year_id) === Number(yearId));
@@ -1011,6 +1190,65 @@ function EditNoteModal({ note, years = YEAR_TABS, subjects = [], folders = [], c
     return folders.filter((f) => f.subject_id === subjectId);
   }, [folders, subjectId]);
 
+  const handleCategorySelectChange = (e) => {
+    const val = e.target.value;
+    if (val === "__custom__") {
+      setIsCustomCategoryMode(true);
+      setCategoryValidationMessage(null);
+      setDuplicateCategoryMatch(null);
+    } else {
+      setIsCustomCategoryMode(false);
+      setCategoryId(val);
+      setCategoryValidationMessage(null);
+      setDuplicateCategoryMatch(null);
+    }
+  };
+
+  const handleCreateCustomCategory = async (rawName) => {
+    const nameToUse = (rawName !== undefined ? rawName : customCategoryName).trim().replace(/\s+/g, " ");
+    if (!nameToUse) {
+      setCategoryValidationMessage("Custom category name cannot be empty.");
+      setDuplicateCategoryMatch(null);
+      return null;
+    }
+
+    const localMatch = categories.find(
+      (c) => c.name.trim().toLowerCase() === nameToUse.toLowerCase()
+    );
+    if (localMatch) {
+      setCategoryValidationMessage(`Category "${localMatch.name}" already exists.`);
+      setDuplicateCategoryMatch(localMatch);
+      return null;
+    }
+
+    setIsCreatingCategory(true);
+    setCategoryValidationMessage(null);
+    setDuplicateCategoryMatch(null);
+
+    try {
+      const newCat = await categoriesApi.create(nameToUse);
+      if (onCategoryCreated) {
+        onCategoryCreated(newCat);
+      }
+      setCategoryId(newCat.id);
+      setIsCustomCategoryMode(false);
+      setCustomCategoryName("");
+      setCategorySuccessMessage(`✓ Custom category "${newCat.name}" created and selected!`);
+      setTimeout(() => setCategorySuccessMessage(null), 4000);
+      return newCat;
+    } catch (err) {
+      if (err.isDuplicate && err.existingCategory) {
+        setCategoryValidationMessage(`Category "${err.existingCategory.name}" already exists.`);
+        setDuplicateCategoryMatch(err.existingCategory);
+      } else {
+        setCategoryValidationMessage(err.message || "Failed to create custom category.");
+      }
+      return null;
+    } finally {
+      setIsCreatingCategory(false);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!title.trim()) {
@@ -1020,6 +1258,17 @@ function EditNoteModal({ note, years = YEAR_TABS, subjects = [], folders = [], c
     if (!subjectId) {
       setError("Subject is required.");
       return;
+    }
+
+    let finalCategoryId = categoryId;
+    if (isCustomCategoryMode) {
+      if (!customCategoryName.trim()) {
+        setError("Please enter a custom category name or select an existing category.");
+        return;
+      }
+      const createdCat = await handleCreateCustomCategory(customCategoryName);
+      if (!createdCat) return;
+      finalCategoryId = createdCat.id;
     }
 
     setSaving(true);
@@ -1033,7 +1282,7 @@ function EditNoteModal({ note, years = YEAR_TABS, subjects = [], folders = [], c
           subject_id: subjectId,
           folder_id: folderId || null,
           unit_id: folderId || null,
-          category_id: categoryId,
+          category_id: finalCategoryId,
           is_active: isActive,
           updated_at: new Date().toISOString(),
         })
@@ -1147,12 +1396,28 @@ function EditNoteModal({ note, years = YEAR_TABS, subjects = [], folders = [], c
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-gray-700 dark:text-[#B8BDCA] mb-1">
-            Category
-          </label>
+          <div className="flex items-center justify-between mb-1">
+            <label className="block text-xs font-semibold text-gray-700 dark:text-[#B8BDCA]">
+              Category
+            </label>
+            {isCustomCategoryMode && (
+              <button
+                type="button"
+                onClick={() => {
+                  setIsCustomCategoryMode(false);
+                  setCategoryValidationMessage(null);
+                  setDuplicateCategoryMatch(null);
+                }}
+                className="text-[11px] font-medium text-[#8F1D32] dark:text-[#A21F3D] hover:underline cursor-pointer"
+              >
+                ← Choose existing category
+              </button>
+            )}
+          </div>
+
           <select
-            value={categoryId}
-            onChange={(e) => setCategoryId(e.target.value)}
+            value={isCustomCategoryMode ? "__custom__" : categoryId}
+            onChange={handleCategorySelectChange}
             className="w-full rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3.5 py-2.5 text-sm text-gray-900 dark:text-[#FFFFFF] focus:border-[#8F1D32] dark:focus:border-[#A21F3D] focus:outline-none"
           >
             {categories.map((c) => (
@@ -1160,7 +1425,77 @@ function EditNoteModal({ note, years = YEAR_TABS, subjects = [], folders = [], c
                 {c.name}
               </option>
             ))}
+            <option value="__custom__">+ Create Custom Category</option>
           </select>
+
+          {categorySuccessMessage && (
+            <p className="mt-1 text-xs text-green-600 dark:text-green-400 font-medium">
+              {categorySuccessMessage}
+            </p>
+          )}
+
+          {/* Custom Category Input Panel */}
+          {isCustomCategoryMode && (
+            <div className="mt-3 p-3 rounded-xl border border-gray-200 dark:border-[#292E3A] bg-[#F7F8FA] dark:bg-[#12151D] space-y-2">
+              <div>
+                <label className="block text-xs font-semibold text-gray-800 dark:text-white mb-1">
+                  Custom Category Name *
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={customCategoryName}
+                    disabled={isCreatingCategory}
+                    onChange={(e) => {
+                      setCustomCategoryName(e.target.value);
+                      setCategoryValidationMessage(null);
+                      setDuplicateCategoryMatch(null);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        handleCreateCustomCategory();
+                      }
+                    }}
+                    placeholder="Enter your category name..."
+                    className="flex-1 rounded-xl border border-gray-200 dark:border-[#292E3A] bg-white dark:bg-[#1A1E28] px-3 py-1.5 text-xs text-gray-900 dark:text-white focus:border-[#8F1D32] dark:focus:border-[#A21F3D] focus:outline-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleCreateCustomCategory()}
+                    disabled={isCreatingCategory || !customCategoryName.trim()}
+                    className="px-3 py-1.5 rounded-xl bg-[#8F1D32] hover:bg-[#74152A] text-white text-xs font-semibold disabled:opacity-50 transition-colors shrink-0 cursor-pointer"
+                  >
+                    {isCreatingCategory ? "Adding..." : "Add"}
+                  </button>
+                </div>
+              </div>
+
+              <p className="text-[10px] text-gray-500 dark:text-[#858B99] leading-relaxed">
+                <span className="font-semibold text-gray-600 dark:text-[#A0A6B5]">Examples:</span> Lab Manual, Assignments, Viva Questions, Previous Year Papers, Exam Preparation, Projects, Reference Material
+              </p>
+
+              {categoryValidationMessage && (
+                <div className="rounded-lg bg-amber-50 dark:bg-amber-950/40 p-2 text-xs text-amber-800 dark:text-amber-200 border border-amber-200 dark:border-amber-900/40 space-y-1">
+                  <p>{categoryValidationMessage}</p>
+                  {duplicateCategoryMatch && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setCategoryId(duplicateCategoryMatch.id);
+                        setIsCustomCategoryMode(false);
+                        setCategoryValidationMessage(null);
+                        setDuplicateCategoryMatch(null);
+                      }}
+                      className="inline-block text-xs font-bold text-[#8F1D32] dark:text-[#A21F3D] hover:underline cursor-pointer"
+                    >
+                      Select existing "{duplicateCategoryMatch.name}" instead →
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         <div className="flex items-center gap-2 pt-1">
@@ -2631,6 +2966,12 @@ export default function DocumentsCMS({ initialSubjectId = null }) {
           initialFolderId={selectedFolderId || ""}
           onClose={() => setUploadOpen(false)}
           onUploaded={handleNotesUploaded}
+          onCategoryCreated={(newCat) => {
+            setCategories((prev) => {
+              if (prev.some((c) => c.id === newCat.id)) return prev;
+              return [...prev, newCat].sort((a, b) => a.name.localeCompare(b.name));
+            });
+          }}
         />
       )}
 
@@ -2643,6 +2984,12 @@ export default function DocumentsCMS({ initialSubjectId = null }) {
           categories={categories}
           onClose={() => setEditingNote(null)}
           onSaved={handleNoteSaved}
+          onCategoryCreated={(newCat) => {
+            setCategories((prev) => {
+              if (prev.some((c) => c.id === newCat.id)) return prev;
+              return [...prev, newCat].sort((a, b) => a.name.localeCompare(b.name));
+            });
+          }}
         />
       )}
 

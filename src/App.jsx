@@ -187,7 +187,7 @@ export default function App() {
           if (found.year_id && found.year_id !== selectedYear) {
             setSelectedYear(found.year_id);
           }
-        } else if (subjects.length > 0) {
+        } else {
           supabase
             .from("subjects")
             .select("id, name, short_name, year_id, description, is_active")
@@ -727,7 +727,7 @@ export default function App() {
         <Suspense fallback={<div className="min-h-[50vh]" />}>
           <SeoLandingPage />
         </Suspense>
-      ) : (location.pathname === "/" || location.pathname.startsWith("/year/") || location.pathname.startsWith("/subjects/")) ? (
+      ) : (location.pathname === "/" || location.pathname.startsWith("/year") || location.pathname.startsWith("/subject")) ? (
         <main id="main-content">
           {/* HERO & ACADEMIC YEARS SECTION */}
           <section className="relative w-full border-b border-[#EDEDED] dark:border-[#292929] bg-white dark:bg-[#0B0B0B] py-10 sm:py-12 lg:py-14 overflow-hidden">
