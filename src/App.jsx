@@ -1100,7 +1100,7 @@ export default function App() {
 
           {/* Bottom Row */}
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-6 text-[11px] text-[#858585]">
-            <p>© 2026 JITS Notes. Built for B.Tech CSE & AIML students.</p>
+            <p>© 2026 JITS Notes. Built by Mohd Danish.</p>
             <p className="flex items-center gap-1.5">
               <span>Academic regulation: JNTUH R22</span>
             </p>
