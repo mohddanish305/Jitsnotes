@@ -36,7 +36,7 @@ function MetricCard({ label, value, detail, icon }) {
   );
 }
 
-export default function OverviewCMS({ onNavigate, onOpenAddNote }) {
+export default function OverviewCMS({ onNavigate }) {
   const [stats, setStats] = useState(null);
   const [recentDocs, setRecentDocs] = useState([]);
   const [subjectsMap, setSubjectsMap] = useState(new Map());
@@ -161,17 +161,6 @@ export default function OverviewCMS({ onNavigate, onOpenAddNote }) {
             className="rounded-xl border border-[#E5E5E5] dark:border-[#262626] bg-white dark:bg-[#151515] px-3.5 py-2 text-xs font-semibold text-[#151515] dark:text-[#FAFAFA] hover:bg-[#FAFAFA] dark:hover:bg-[#262626] transition shadow-xs"
           >
             {loading ? "Refreshing..." : "Refresh"}
-          </button>
-
-          <button
-            type="button"
-            onClick={() => onOpenAddNote?.()}
-            className="inline-flex items-center gap-1.5 rounded-xl bg-[#8F1D32] hover:bg-[#74152A] px-4 py-2 text-xs font-semibold text-white transition shadow-xs cursor-pointer"
-          >
-            <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-            </svg>
-            <span>+ Add Note</span>
           </button>
         </div>
       </div>

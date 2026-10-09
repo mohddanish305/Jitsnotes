@@ -224,22 +224,8 @@ export default function AdminCMS() {
             </div>
           </div>
 
-          {/* Primary Action Button: Prominent + Add Note */}
-          <div className="pt-4 pb-2">
-            <button
-              type="button"
-              onClick={() => handleOpenAddNote()}
-              className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#8F1D32] hover:bg-[#74152A] px-4 py-2.5 text-xs font-bold text-white shadow-xs transition cursor-pointer"
-            >
-              <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-              </svg>
-              <span>+ Add Note</span>
-            </button>
-          </div>
-
           {/* Navigation Items */}
-          <nav className="mt-2 space-y-1" aria-label="Admin navigation">
+          <nav className="mt-5 space-y-1" aria-label="Admin navigation">
             {navItems.map((item) => {
               const active = currentView === item.id;
               return (
@@ -329,16 +315,17 @@ export default function AdminCMS() {
             </div>
 
             <div className="flex items-center gap-3">
-              {/* Primary Action Button (in top bar for desktop convenience) */}
+              {/* Single Primary Persistent Action: + Add Note */}
               <button
                 type="button"
                 onClick={() => handleOpenAddNote()}
-                className="hidden sm:inline-flex items-center gap-1.5 rounded-xl bg-[#8F1D32] hover:bg-[#74152A] px-3.5 py-2 text-xs font-bold text-white shadow-xs transition cursor-pointer"
+                className="inline-flex items-center gap-1.5 rounded-xl bg-[#8F1D32] hover:bg-[#74152A] px-3.5 py-2 text-xs font-bold text-white shadow-xs transition cursor-pointer"
+                aria-label="Add Note"
               >
-                <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="2.5">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                 </svg>
-                <span>+ Add Note</span>
+                <span>Add Note</span>
               </button>
 
               <div className="flex items-center gap-2 pl-2 border-l border-[#E5E5E5] dark:border-[#262626]">
@@ -355,14 +342,10 @@ export default function AdminCMS() {
 
           {/* Dynamic Page Content */}
           <div className="mx-auto w-full max-w-7xl flex-1 p-4 sm:p-6 lg:p-8">
-            {currentView === "overview" && (
-              <OverviewCMS onNavigate={go} onOpenAddNote={handleOpenAddNote} />
-            )}
+            {currentView === "overview" && <OverviewCMS onNavigate={go} />}
 
             {currentView === "content" && (
               <ContentLibrary
-                onOpenAddNote={handleOpenAddNote}
-                toast={toast}
                 showToast={showToast}
               />
             )}

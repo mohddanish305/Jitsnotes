@@ -37,7 +37,6 @@ const formatDate = (val) => {
 };
 
 export default function ContentLibrary({
-  onOpenAddNote,
   initialSubjectId = null,
   showToast,
 }) {
@@ -713,24 +712,9 @@ export default function ContentLibrary({
                     <button
                       type="button"
                       onClick={() => setAddingFolderSubject(activeSubject)}
-                      className="rounded-xl border border-[#E5E5E5] dark:border-[#262626] bg-white dark:bg-[#151515] px-3 py-1.5 text-xs font-semibold text-[#151515] dark:text-[#FAFAFA] hover:bg-[#FAFAFA] dark:hover:bg-[#262626] transition shadow-xs"
+                      className="rounded-xl border border-[#E5E5E5] dark:border-[#262626] bg-white dark:bg-[#151515] px-3.5 py-2 text-xs font-semibold text-[#151515] dark:text-[#FAFAFA] hover:bg-[#FAFAFA] dark:hover:bg-[#262626] transition shadow-xs"
                     >
                       + Add Unit / Folder
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (onOpenAddNote) {
-                          onOpenAddNote({
-                            yearId: activeSubject.year_id,
-                            subjectId: activeSubject.id,
-                            unitId: activeFolderId || "",
-                          });
-                        }
-                      }}
-                      className="rounded-xl bg-[#8F1D32] hover:bg-[#74152A] px-3.5 py-1.5 text-xs font-semibold text-white transition shadow-xs"
-                    >
-                      + Add Note
                     </button>
                   </div>
                 </div>
@@ -797,23 +781,8 @@ export default function ContentLibrary({
                     No notes in this section
                   </p>
                   <p className="mt-1 text-xs text-[#666666] dark:text-[#999999]">
-                    Upload a lecture note, previous question paper, or study material PDF.
+                    Use the persistent "+ Add Note" button in the top bar to upload lecture notes or study material.
                   </p>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (onOpenAddNote) {
-                        onOpenAddNote({
-                          yearId: activeSubject.year_id,
-                          subjectId: activeSubject.id,
-                          unitId: activeFolderId || "",
-                        });
-                      }
-                    }}
-                    className="mt-4 rounded-xl bg-[#8F1D32] hover:bg-[#74152A] px-4 py-2 text-xs font-semibold text-white shadow-xs transition"
-                  >
-                    + Add Note
-                  </button>
                 </div>
               ) : (
                 <div className="divide-y divide-[#E5E5E5] dark:divide-[#262626] rounded-2xl border border-[#E5E5E5] dark:border-[#262626] bg-white dark:bg-[#151515] overflow-hidden shadow-xs">
