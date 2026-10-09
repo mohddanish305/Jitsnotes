@@ -247,7 +247,7 @@ export default function EditNoteModal({
               >
                 {years.map((y) => (
                   <option key={y.id} value={y.id}>
-                    {y.label}
+                    {y.label || y.name || (Number(y.id) === 1 ? "1st Year" : Number(y.id) === 2 ? "2nd Year" : Number(y.id) === 3 ? "3rd Year" : Number(y.id) === 4 ? "4th Year" : `Year ${y.id}`)}
                   </option>
                 ))}
               </select>

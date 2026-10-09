@@ -1,7 +1,9 @@
 import { useState, useEffect, lazy, Suspense, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sun, Moon, Menu, X, Mail, Shield, Search, GraduationCap, Laptop, Brain, Award } from "lucide-react";
+import { Sun, Moon, Menu, X, Mail, Shield, Search, GraduationCap, Laptop, Brain, Award, BookOpen } from "lucide-react";
 import { FaGithub, FaLinkedin } from "./components/icons";
+import heroImage from "./assets/Hero_image.png";
+import appIcon from "./assets/app_icon.png";
 import { useLocation, useNavigate, Navigate } from "react-router-dom";
 import Modal from "./components/Modal";
 import NotesSection from "./components/NotesSection";
@@ -462,13 +464,13 @@ export default function App() {
               }}
             >
               <img
-                src="/icons.png"
+                src={appIcon}
                 alt="JITS Notes logo"
                 width="40"
                 height="40"
                 decoding="async"
                 fetchPriority="high"
-                className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl object-cover border border-[#EAEAEA] dark:border-[#222222] bg-[#F7F7F7] dark:bg-[#0A0A0A] shrink-0"
+                className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl object-contain border border-[#EAEAEA] dark:border-[#222222] bg-[#8F1D32] shrink-0 shadow-xs"
               />
               <div className="flex flex-col">
                 <span className="font-bold text-base sm:text-lg tracking-tight leading-tight">
@@ -734,46 +736,61 @@ export default function App() {
             <div className="relative z-10 w-full max-w-content mx-auto px-4 sm:px-6 lg:px-8">
               <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.2fr)_minmax(320px,0.8fr)] gap-8 lg:gap-12 items-center">
                 
-                {/* LEFT COLUMN: HERO CONTENT */}
-                <div className="text-left">
-                  {/* Curriculum Badge */}
-                  <div className="mb-3 inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-[#FCF4F5] dark:bg-[#241217] border border-[#F8E9EC] dark:border-[#381B22] text-[#8F1D32] dark:text-[#A21F3D] text-[11px] font-bold">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#8F1D32] dark:bg-[#A21F3D]" />
-                    <span>JNTUH R22 Curriculum</span>
+                {/* LEFT COLUMN: HERO CONTENT WITH SUBTLE HERO IMAGE ACCENT */}
+                <div className="relative text-left">
+                  {/* Subtle low-contrast background visual within the left hero area */}
+                  <div
+                    className="absolute right-0 -bottom-4 top-0 w-2/3 pointer-events-none select-none opacity-15 dark:opacity-[0.08] overflow-hidden hidden sm:block"
+                    aria-hidden="true"
+                  >
+                    <img
+                      src={heroImage}
+                      alt=""
+                      className="w-full h-full object-cover object-right-bottom"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-r from-white via-white/50 to-transparent dark:from-[#0B0B0B] dark:via-[#0B0B0B]/50 dark:to-transparent" />
                   </div>
 
-                  {/* Main Title */}
-                  <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-2 leading-tight tracking-tight">
-                    <span className="text-[#151515] dark:text-white">JITS </span>
-                    <span className="text-[#8F1D32] dark:text-[#A21F3D]">Notes</span>
-                  </h1>
+                  <div className="relative z-10">
+                    {/* Curriculum Badge */}
+                    <div className="mb-3 inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-[#FCF4F5] dark:bg-[#241217] border border-[#F8E9EC] dark:border-[#381B22] text-[#8F1D32] dark:text-[#A21F3D] text-[11px] font-bold">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#8F1D32] dark:bg-[#A21F3D]" />
+                      <span>JNTUH R22 Curriculum</span>
+                    </div>
 
-                  {/* Subtitle */}
-                  <h2 className="text-base sm:text-lg lg:text-xl font-medium text-[#666666] dark:text-[#B5B5B5] mb-3 tracking-tight">
-                    B.Tech CSE & AIML • Academic Study Material
-                  </h2>
+                    {/* Main Title */}
+                    <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-2 leading-tight tracking-tight">
+                      <span className="text-[#151515] dark:text-white">JITS </span>
+                      <span className="text-[#8F1D32] dark:text-[#A21F3D]">Notes</span>
+                    </h1>
 
-                  {/* Summary */}
-                  <p className="text-xs sm:text-sm text-[#666666] dark:text-[#858585] mb-6 max-w-lg leading-relaxed">
-                    Access organized unit-wise lecture notes, question papers, and study guides curated for engineering students.
-                  </p>
+                    {/* Subtitle */}
+                    <h2 className="text-base sm:text-lg lg:text-xl font-medium text-[#666666] dark:text-[#B5B5B5] mb-3 tracking-tight">
+                      B.Tech CSE & AIML • Academic Study Material
+                    </h2>
 
-                  {/* CTAs */}
-                  <div className="flex flex-wrap items-center gap-3">
-                    <button
-                      type="button"
-                      onClick={scrollToNotes}
-                      className="bg-[#151515] hover:bg-[#8F1D32] text-white dark:bg-white dark:hover:bg-[#FCF4F5] dark:hover:text-[#8F1D32] dark:text-black px-5 py-2.5 rounded-xl font-semibold text-xs sm:text-sm shadow-subtle dark:shadow-subtle-dark transition-colors duration-150 min-h-[40px] cursor-pointer"
-                    >
-                      Browse Notes
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => navigate("/about")}
-                      className="border border-[#EDEDED] dark:border-[#292929] text-[#151515] dark:text-white bg-white dark:bg-[#151515] hover:bg-[#FCF4F5] dark:hover:bg-[#1F1F1F] hover:border-[#8F1D32]/30 px-5 py-2.5 rounded-xl font-semibold text-xs sm:text-sm transition-colors duration-150 min-h-[40px] cursor-pointer"
-                    >
-                      About Platform
-                    </button>
+                    {/* Summary */}
+                    <p className="text-xs sm:text-sm text-[#666666] dark:text-[#858585] mb-6 max-w-lg leading-relaxed">
+                      Access organized unit-wise lecture notes, question papers, and study guides curated for engineering students.
+                    </p>
+
+                    {/* CTAs */}
+                    <div className="flex flex-wrap items-center gap-3">
+                      <button
+                        type="button"
+                        onClick={scrollToNotes}
+                        className="bg-[#151515] hover:bg-[#8F1D32] text-white dark:bg-white dark:hover:bg-[#FCF4F5] dark:hover:text-[#8F1D32] dark:text-black px-5 py-2.5 rounded-xl font-semibold text-xs sm:text-sm shadow-subtle dark:shadow-subtle-dark transition-colors duration-150 min-h-[40px] cursor-pointer"
+                      >
+                        Browse Notes
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => navigate("/about")}
+                        className="border border-[#EDEDED] dark:border-[#292929] text-[#151515] dark:text-white bg-white dark:bg-[#151515] hover:bg-[#FCF4F5] dark:hover:bg-[#1F1F1F] hover:border-[#8F1D32]/30 px-5 py-2.5 rounded-xl font-semibold text-xs sm:text-sm transition-colors duration-150 min-h-[40px] cursor-pointer"
+                      >
+                        About Platform
+                      </button>
+                    </div>
                   </div>
                 </div>
 
@@ -895,11 +912,11 @@ export default function App() {
             <div className="lg:col-span-2 space-y-3">
               <div className="flex items-center gap-2.5">
                 <img
-                  src="/icons.png"
+                  src={appIcon}
                   alt="JITS Notes logo"
                   width="28"
                   height="28"
-                  className="w-7 h-7 rounded-lg object-cover border border-[#EDEDED] dark:border-[#292929] shrink-0"
+                  className="w-7 h-7 rounded-lg object-contain border border-[#EDEDED] dark:border-[#292929] bg-[#8F1D32] shrink-0"
                 />
                 <h3 className="font-bold text-base tracking-tight leading-tight">
                   <span className="text-[#151515] dark:text-white">JITS </span>

@@ -372,6 +372,88 @@ export const categoriesApi = {
 
     return data;
   },
+
+  // Update category (admin only)
+  async update(id, rawName) {
+    await requireAdmin();
+
+    if (!id) throw new Error('Category ID is required.');
+    const normalized = (rawName || '').trim().replace(/\s+/g, ' ');
+    if (!normalized) throw new Error('Category name cannot be empty.');
+
+    const existing = await this.findByName(normalized);
+    if (existing && existing.id !== id) {
+      const err = new Error(`Category "${existing.name}" already exists.`);
+      err.existingCategory = existing;
+      err.isDuplicate = true;
+      throw err;
+    }
+
+    const baseSlug =
+      normalized
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '') || 'category';
+
+    const { data, error } = await supabase
+      .from('document_categories')
+      .update({
+        name: normalized,
+        slug: baseSlug,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', id)
+      .select('id, name, slug, created_at')
+      .single();
+
+    if (error) {
+      throw normalizeSupabaseError(error, 'Failed to update category.');
+    }
+    return data;
+  },
+
+  // Delete category safely (admin only)
+  async delete(id) {
+    await requireAdmin();
+
+    if (!id) throw new Error('Category ID is required.');
+
+    // 1. Check if any documents use this category
+    const { count, error: countErr } = await supabase
+      .from('documents')
+      .select('id', { count: 'exact', head: true })
+      .eq('category_id', id);
+
+    if (countErr) throw countErr;
+
+    if (count && count > 0) {
+      const err = new Error(
+        `Cannot delete this category because ${count} academic note${count === 1 ? '' : 's'} are currently assigned to it.`
+      );
+      err.noteCount = count;
+      err.isAssigned = true;
+      throw err;
+    }
+
+    // 2. Perform deletion
+    const { error: delErr } = await supabase
+      .from('document_categories')
+      .delete()
+      .eq('id', id);
+
+    if (delErr) {
+      if (delErr.code === '23503' || /foreign key/i.test(delErr.message)) {
+        const err = new Error(
+          'Cannot delete this category because it is still referenced by existing documents.'
+        );
+        err.isAssigned = true;
+        throw err;
+      }
+      throw normalizeSupabaseError(delErr, 'Failed to delete category.');
+    }
+
+    return { success: true, id };
+  },
 };
 
 export const feedbackApi = {

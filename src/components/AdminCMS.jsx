@@ -7,6 +7,7 @@ import ContentLibrary from "./admin/ContentLibrary";
 import CategoriesCMS from "./admin/CategoriesCMS";
 import AdminTeachers from "./AdminTeachers";
 import AddNoteModal from "./admin/AddNoteModal";
+import appIcon from "../assets/app_icon.png";
 
 const navItems = [
   {
@@ -81,6 +82,7 @@ export default function AdminCMS() {
 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [toast, setToast] = useState(null);
+  const [dataRefreshTrigger, setDataRefreshTrigger] = useState(0);
 
   // Global Add Note Modal State
   const [addNoteModalOpen, setAddNoteModalOpen] = useState(false);
@@ -111,7 +113,27 @@ export default function AdminCMS() {
         supabase.from("document_categories").select("id, name, slug").order("name"),
       ]);
 
-      setCatalogYears(yearsRes.data || []);
+      const formattedYears = (yearsRes.data || []).map((y) => {
+        const num = Number(y.id);
+        const name =
+          y.name ||
+          (num === 1
+            ? "1st Year"
+            : num === 2
+            ? "2nd Year"
+            : num === 3
+            ? "3rd Year"
+            : num === 4
+            ? "4th Year"
+            : `Year ${num}`);
+        return {
+          id: num,
+          name,
+          label: name,
+        };
+      });
+
+      setCatalogYears(formattedYears);
       setCatalogSubjects(subjectsRes.data || []);
       setCatalogCategories(categoriesRes.data || []);
 
@@ -128,6 +150,7 @@ export default function AdminCMS() {
             id: u.id,
             subject_id: u.subject_id,
             name: u.title || `Unit ${u.unit_number}`,
+            unit_number: u.unit_number,
           });
         }
       });
@@ -149,11 +172,29 @@ export default function AdminCMS() {
   const handleNoteUploaded = () => {
     showToast("success", "Note saved and published to catalog.");
     loadSharedCatalog();
+    setDataRefreshTrigger((prev) => prev + 1);
   };
 
   const handleCategoryCreated = (newCat) => {
-    setCatalogCategories((prev) => [...prev, newCat]);
+    setCatalogCategories((prev) => {
+      const exists = prev.some((c) => c.id === newCat.id);
+      return exists ? prev : [...prev, newCat];
+    });
     showToast("success", `Category "${newCat.name}" created.`);
+    loadSharedCatalog();
+  };
+
+  const handleCategoryDeleted = (deletedId) => {
+    setCatalogCategories((prev) => prev.filter((c) => c.id !== deletedId));
+    loadSharedCatalog();
+  };
+
+  const handleUnitCreated = (newUnit) => {
+    setCatalogFolders((prev) => {
+      const exists = prev.some((f) => f.id === newUnit.id);
+      return exists ? prev : [...prev, newUnit];
+    });
+    showToast("success", `Unit "${newUnit.name}" created.`);
   };
 
   const go = (path) => {
@@ -208,7 +249,7 @@ export default function AdminCMS() {
           {/* Brand Header */}
           <div className="flex items-center gap-3 border-b border-[#E5E5E5] px-2 pb-5 dark:border-[#262626]">
             <img
-              src="/icons.png"
+              src={appIcon}
               alt="JITS Notes"
               width="36"
               height="36"
@@ -342,15 +383,24 @@ export default function AdminCMS() {
 
           {/* Dynamic Page Content */}
           <div className="mx-auto w-full max-w-7xl flex-1 p-4 sm:p-6 lg:p-8">
-            {currentView === "overview" && <OverviewCMS onNavigate={go} />}
+            {currentView === "overview" && (
+              <OverviewCMS onNavigate={go} refreshKey={dataRefreshTrigger} />
+            )}
 
             {currentView === "content" && (
               <ContentLibrary
                 showToast={showToast}
+                refreshKey={dataRefreshTrigger}
               />
             )}
 
-            {currentView === "categories" && <CategoriesCMS showToast={showToast} />}
+            {currentView === "categories" && (
+              <CategoriesCMS
+                showToast={showToast}
+                onCategoryCreated={handleCategoryCreated}
+                onCategoryDeleted={handleCategoryDeleted}
+              />
+            )}
 
             {currentView === "access" && (
               <div>
@@ -374,6 +424,7 @@ export default function AdminCMS() {
           onClose={() => setAddNoteModalOpen(false)}
           onUploaded={handleNoteUploaded}
           onCategoryCreated={handleCategoryCreated}
+          onUnitCreated={handleUnitCreated}
         />
       )}
     </div>

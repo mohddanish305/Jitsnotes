@@ -39,6 +39,7 @@ const formatDate = (val) => {
 export default function ContentLibrary({
   initialSubjectId = null,
   showToast,
+  refreshKey = 0,
 }) {
   // View mode: 'hierarchy' (Year -> Subject -> Units -> Notes) | 'table' (Global search & filter)
   const [viewMode, setViewMode] = useState("table");
@@ -162,7 +163,7 @@ export default function ContentLibrary({
 
   useEffect(() => {
     loadData();
-  }, [loadData]);
+  }, [loadData, refreshKey]);
 
   // Derived maps
   const subjectMap = useMemo(() => {
@@ -592,7 +593,7 @@ export default function ContentLibrary({
                   </button>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5">
                   {yearSubjects.map((sub) => {
                     const docCount = subjectDocCounts.get(sub.id) || 0;
                     const folderCount = folders.filter((f) => f.subject_id === sub.id).length;
@@ -600,82 +601,114 @@ export default function ContentLibrary({
                     return (
                       <div
                         key={sub.id}
-                        className="group relative rounded-2xl border border-[#E5E5E5] dark:border-[#262626] bg-white dark:bg-[#151515] p-4.5 shadow-xs hover:border-[#8F1D32]/50 transition-all flex flex-col justify-between"
+                        className="group relative flex flex-col justify-between rounded-2xl border border-[#E5E5E5] dark:border-[#262626] bg-white dark:bg-[#151515] p-5 shadow-xs hover:shadow-md hover:border-[#8F1D32]/50 transition-all duration-200"
                       >
-                        <div
-                          onClick={() => {
-                            setActiveSubjectId(sub.id);
-                            setActiveFolderId(null);
-                          }}
-                          className="cursor-pointer space-y-2.5"
-                        >
-                          <div className="flex items-center justify-between">
-                            <span className="rounded-lg bg-[#F8E9EC] text-[#8F1D32] dark:bg-[#8F1D32]/20 dark:text-[#F8E9EC] px-2 py-0.5 text-[11px] font-bold">
+                        <div>
+                          {/* Header: Subject Code Badge & Actions */}
+                          <div className="flex items-center justify-between gap-2 mb-3">
+                            <span className="inline-flex items-center px-2.5 py-1 rounded-lg bg-[#FCF4F5] dark:bg-[#1F1215] border border-[#F8E9EC] dark:border-[#2E1A1F] text-[11px] font-bold tracking-wide text-[#8F1D32] dark:text-[#A21F3D]">
                               {sub.short_name || "SUB"}
                             </span>
-                            <span className="text-[11px] text-[#666666] dark:text-[#999999]">
-                              {docCount} note{docCount === 1 ? "" : "s"}
-                            </span>
+
+                            {/* Compact Action Icons */}
+                            <div className="flex items-center gap-1">
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setEditingSubject(sub);
+                                }}
+                                title="Edit subject"
+                                aria-label={`Edit ${sub.name}`}
+                                className="rounded-lg p-1.5 text-[#666666] hover:text-[#151515] hover:bg-[#F5F5F5] dark:text-[#999999] dark:hover:text-[#FAFAFA] dark:hover:bg-[#262626] transition cursor-pointer"
+                              >
+                                <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                  <path d="M12 20h9" />
+                                  <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                                </svg>
+                              </button>
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setDeletingSubject({
+                                    subject: sub,
+                                    noteCount: docCount,
+                                    folderCount,
+                                  });
+                                }}
+                                title="Delete subject"
+                                aria-label={`Delete ${sub.name}`}
+                                className="rounded-lg p-1.5 text-[#666666] hover:text-red-600 hover:bg-red-50 dark:text-[#999999] dark:hover:text-red-400 dark:hover:bg-red-950/30 transition cursor-pointer"
+                              >
+                                <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                  <polyline points="3 6 5 6 21 6" />
+                                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                                </svg>
+                              </button>
+                            </div>
                           </div>
 
-                          <div>
-                            <h4 className="text-sm font-bold text-[#151515] dark:text-[#FAFAFA] group-hover:text-[#8F1D32] transition">
+                          {/* Subject Title & Description */}
+                          <div
+                            onClick={() => {
+                              setActiveSubjectId(sub.id);
+                              setActiveFolderId(null);
+                            }}
+                            className="cursor-pointer space-y-1.5"
+                          >
+                            <h4 className="text-sm sm:text-base font-bold text-[#151515] dark:text-[#FAFAFA] group-hover:text-[#8F1D32] dark:group-hover:text-[#F8E9EC] transition line-clamp-2 leading-snug">
                               {resolveSubjectName(sub.id, sub.name, sub.short_name)}
                             </h4>
-                            {sub.description && (
-                              <p className="mt-1 text-xs text-[#666666] dark:text-[#999999] line-clamp-2">
+                            {sub.description ? (
+                              <p className="mt-1 text-xs text-[#666666] dark:text-[#999999] line-clamp-2 leading-relaxed">
                                 {sub.description}
+                              </p>
+                            ) : (
+                              <p className="mt-1 text-xs text-[#999999] dark:text-[#666666] italic">
+                                Course notes and syllabus content
                               </p>
                             )}
                           </div>
+
+                          {/* Stats Pills: Total Notes & Units */}
+                          <div className="flex items-center gap-3 mt-4 pt-1">
+                            <div className="flex items-center gap-1.5 text-xs text-[#666666] dark:text-[#999999]">
+                              <svg className="h-3.5 w-3.5 text-[#8F1D32] dark:text-[#A21F3D]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                <polyline points="14 2 14 8 20 8" />
+                              </svg>
+                              <span className="font-semibold text-[#151515] dark:text-[#FAFAFA]">{docCount}</span>
+                              <span>{docCount === 1 ? "Note" : "Notes"}</span>
+                            </div>
+
+                            <span className="text-[#E5E5E5] dark:text-[#262626]">•</span>
+
+                            <div className="flex items-center gap-1.5 text-xs text-[#666666] dark:text-[#999999]">
+                              <svg className="h-3.5 w-3.5 text-[#8F1D32] dark:text-[#A21F3D]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+                              </svg>
+                              <span className="font-semibold text-[#151515] dark:text-[#FAFAFA]">{folderCount}</span>
+                              <span>{folderCount === 1 ? "Unit" : "Units"}</span>
+                            </div>
+                          </div>
                         </div>
 
-                        <div className="flex items-center justify-between pt-3 mt-3 border-t border-[#E5E5E5] dark:border-[#262626] text-xs">
+                        {/* Card Footer: Explore Units Action */}
+                        <div className="pt-3 mt-4 border-t border-[#EDEDED] dark:border-[#262626]">
                           <button
                             type="button"
                             onClick={() => {
                               setActiveSubjectId(sub.id);
                               setActiveFolderId(null);
                             }}
-                            className="text-xs font-semibold text-[#8F1D32] hover:underline"
+                            className="w-full inline-flex items-center justify-between py-0.5 text-xs font-semibold text-[#8F1D32] dark:text-[#F8E9EC] group-hover:underline cursor-pointer"
                           >
-                            Explore {folderCount} unit{folderCount === 1 ? "" : "s"} →
+                            <span>Explore Units</span>
+                            <svg className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                            </svg>
                           </button>
-
-                          <div className="flex items-center gap-1 opacity-80 group-hover:opacity-100 transition">
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setEditingSubject(sub);
-                              }}
-                              title="Edit subject"
-                              className="rounded-lg p-1 text-[#666666] hover:bg-[#E5E5E5] dark:hover:bg-[#262626] dark:text-[#999999]"
-                            >
-                              <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <path d="M12 20h9" />
-                                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
-                              </svg>
-                            </button>
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setDeletingSubject({
-                                  subject: sub,
-                                  noteCount: docCount,
-                                  folderCount,
-                                });
-                              }}
-                              title="Delete subject"
-                              className="rounded-lg p-1 text-[#666666] hover:text-red-600 hover:bg-[#E5E5E5] dark:hover:bg-[#262626] dark:text-[#999999]"
-                            >
-                              <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <polyline points="3 6 5 6 21 6" />
-                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                              </svg>
-                            </button>
-                          </div>
                         </div>
                       </div>
                     );

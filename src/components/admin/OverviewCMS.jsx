@@ -36,7 +36,7 @@ function MetricCard({ label, value, detail, icon }) {
   );
 }
 
-export default function OverviewCMS({ onNavigate }) {
+export default function OverviewCMS({ onNavigate, refreshKey = 0 }) {
   const [stats, setStats] = useState(null);
   const [recentDocs, setRecentDocs] = useState([]);
   const [subjectsMap, setSubjectsMap] = useState(new Map());
@@ -96,7 +96,7 @@ export default function OverviewCMS({ onNavigate }) {
       setStats({
         years: yearsCount,
         subjects: subjectsCount,
-        units: unitsCount + foldersCount,
+        units: Math.max(unitsCount, foldersCount) || unitsCount || foldersCount || 0,
         categories: categoriesCount,
         documents: documentsCount,
         activeDocuments: activeDocsCount,
@@ -121,7 +121,7 @@ export default function OverviewCMS({ onNavigate }) {
 
   useEffect(() => {
     loadOverview();
-  }, [loadOverview]);
+  }, [loadOverview, refreshKey]);
 
   const handleOpenPdf = async (docId) => {
     setOpeningDocId(docId);
