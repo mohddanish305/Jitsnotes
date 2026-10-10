@@ -228,10 +228,10 @@ export const subjectsApi = {
   // Get all subjects, optionally filtered by year
   async getAll(year) {
     let query = supabase.from('subjects').select('*').eq('is_deleted', false);
-    if (year !== undefined) {
-      query = query.or(`year.eq.${year},year_id.eq.${year}`);
+    if (year !== undefined && year !== null) {
+      query = query.eq('year_id', Number(year));
     }
-    const { data, error } = await query.order('created_at', { ascending: false });
+    const { data, error } = await query.order('name', { ascending: true });
     if (error) throw error;
     return (data || []).map(normalizeSubjectRow);
   },

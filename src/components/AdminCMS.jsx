@@ -133,9 +133,9 @@ export default function AdminCMS() {
         };
       });
 
-      setCatalogYears(formattedYears);
-      setCatalogSubjects(subjectsRes.data || []);
-      setCatalogCategories(categoriesRes.data || []);
+      if (formattedYears.length > 0) setCatalogYears(formattedYears);
+      if (subjectsRes.data && subjectsRes.data.length > 0) setCatalogSubjects(subjectsRes.data);
+      if (categoriesRes.data && categoriesRes.data.length > 0) setCatalogCategories(categoriesRes.data);
 
       const combined = [];
       const seen = new Set();
@@ -391,6 +391,8 @@ export default function AdminCMS() {
               <ContentLibrary
                 showToast={showToast}
                 refreshKey={dataRefreshTrigger}
+                onOpenAddNote={handleOpenAddNote}
+                onSubjectCreated={loadSharedCatalog}
               />
             )}
 

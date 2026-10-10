@@ -40,6 +40,8 @@ export default function ContentLibrary({
   initialSubjectId = null,
   showToast,
   refreshKey = 0,
+  onOpenAddNote = null,
+  onSubjectCreated = null,
 }) {
   // View mode: 'hierarchy' (Year -> Subject -> Units -> Notes) | 'table' (Global search & filter)
   const [viewMode, setViewMode] = useState("table");
@@ -745,10 +747,28 @@ export default function ContentLibrary({
                     <button
                       type="button"
                       onClick={() => setAddingFolderSubject(activeSubject)}
-                      className="rounded-xl border border-[#E5E5E5] dark:border-[#262626] bg-white dark:bg-[#151515] px-3.5 py-2 text-xs font-semibold text-[#151515] dark:text-[#FAFAFA] hover:bg-[#FAFAFA] dark:hover:bg-[#262626] transition shadow-xs"
+                      className="rounded-xl border border-[#E5E5E5] dark:border-[#262626] bg-white dark:bg-[#151515] px-3.5 py-2 text-xs font-semibold text-[#151515] dark:text-[#FAFAFA] hover:bg-[#FAFAFA] dark:hover:bg-[#262626] transition shadow-xs cursor-pointer"
                     >
                       + Add Unit / Folder
                     </button>
+                    {onOpenAddNote && (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          onOpenAddNote({
+                            yearId: activeYear,
+                            subjectId: activeSubject.id,
+                            unitId: activeFolderId || "",
+                          })
+                        }
+                        className="inline-flex items-center gap-1.5 rounded-xl bg-[#8F1D32] hover:bg-[#74152A] px-3.5 py-2 text-xs font-bold text-white shadow-xs transition cursor-pointer"
+                      >
+                        <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2.5">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                        </svg>
+                        <span>Add Note</span>
+                      </button>
+                    )}
                   </div>
                 </div>
 
@@ -809,13 +829,33 @@ export default function ContentLibrary({
 
               {/* Notes List inside this subject / unit */}
               {hierarchyDisplayedDocs.length === 0 ? (
-                <div className="rounded-2xl border border-dashed border-[#E5E5E5] dark:border-[#262626] p-10 text-center bg-[#FAFAFA] dark:bg-[#151515]">
-                  <p className="text-sm font-semibold text-[#151515] dark:text-[#FAFAFA]">
-                    No notes in this section
-                  </p>
-                  <p className="mt-1 text-xs text-[#666666] dark:text-[#999999]">
-                    Use the persistent "+ Add Note" button in the top bar to upload lecture notes or study material.
-                  </p>
+                <div className="rounded-2xl border border-dashed border-[#E5E5E5] dark:border-[#262626] p-10 text-center bg-[#FAFAFA] dark:bg-[#151515] space-y-3">
+                  <div>
+                    <p className="text-sm font-semibold text-[#151515] dark:text-[#FAFAFA]">
+                      No notes in this section
+                    </p>
+                    <p className="mt-1 text-xs text-[#666666] dark:text-[#999999]">
+                      Upload lecture notes or study material to this subject.
+                    </p>
+                  </div>
+                  {onOpenAddNote && (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        onOpenAddNote({
+                          yearId: activeYear,
+                          subjectId: activeSubject.id,
+                          unitId: activeFolderId || "",
+                        })
+                      }
+                      className="inline-flex items-center gap-1.5 rounded-xl bg-[#8F1D32] hover:bg-[#74152A] px-4 py-2 text-xs font-bold text-white shadow-xs transition cursor-pointer"
+                    >
+                      <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                      </svg>
+                      <span>Upload Note to {activeSubject.short_name || "Subject"}</span>
+                    </button>
+                  )}
                 </div>
               ) : (
                 <div className="divide-y divide-[#E5E5E5] dark:divide-[#262626] rounded-2xl border border-[#E5E5E5] dark:border-[#262626] bg-white dark:bg-[#151515] overflow-hidden shadow-xs">
@@ -1264,6 +1304,7 @@ export default function ContentLibrary({
             setSubjects((prev) => [...prev, newSub]);
             setAddingSubjectYear(null);
             if (showToast) showToast("success", `Subject "${newSub.name}" created.`);
+            onSubjectCreated?.();
           }}
         />
       )}
@@ -1278,6 +1319,7 @@ export default function ContentLibrary({
             );
             setEditingSubject(null);
             if (showToast) showToast("success", `Subject "${updatedSub.name}" updated.`);
+            onSubjectCreated?.();
           }}
         />
       )}
@@ -1296,6 +1338,7 @@ export default function ContentLibrary({
               setActiveSubjectId(null);
             }
             if (showToast) showToast("success", "Subject permanently deleted.");
+            onSubjectCreated?.();
           }}
         />
       )}

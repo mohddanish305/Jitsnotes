@@ -12,6 +12,7 @@ export const KNOWN_SUBJECTS = {
   CAEG: "Computer Aided Engineering Graphics",
   CHEM: "Engineering Chemistry",
   CHEMISTRY: "Engineering Chemistry",
+  CHM: "Engineering Chemistry",
   EDC: "Electronic Devices and Circuits",
   ENG: "English",
   ENGLISH: "English",
@@ -31,6 +32,7 @@ export const KNOWN_SUBJECTS = {
   DM: "Discrete Mathematics",
   DS: "Data Structures",
   JAVA: "Java Programming",
+  LAB: "Laboratory Manuals & Practicals",
   LABS: "Laboratory Manuals & Practicals",
   MSF: "Mathematical Foundations & Software Engineering",
   OS: "Operating Systems",
@@ -51,6 +53,7 @@ export const KNOWN_SUBJECTS = {
   PPL: "Principles of Programming Languages",
   STM: "Software Testing Methodologies",
   // Year 4
+  BCT: "Blockchain Technologies",
   CC: "Cloud Computing",
   CD: "Compiler Design",
   "CD LABS": "Compiler Design Lab",
@@ -62,6 +65,7 @@ export const KNOWN_SUBJECTS = {
   NIC: "Nature Inspired Computing",
   OB: "Organizational Behaviour",
   SPPM: "Software Process & Project Management",
+  SWM: "Solid Waste Management",
   WS: "Web Services & Semantic Web",
 };
 

@@ -1,15 +1,21 @@
-import { memo, useState } from "react";
+import { memo, useState, useEffect } from "react";
 import { getAcademicYearIllustration, normalizeYearId } from "../utils/academicYearAssets";
 import { resolveSubjectName } from "../utils/academicCatalog";
+import { getSubjectIllustration } from "../utils/subjectImages";
 
 /**
  * SubjectVisual Component
- * Renders the Subject illustration (custom thumbnail or dedicated academic year artwork)
+ * Renders the Subject illustration (dedicated subject image, custom thumbnail, or academic year artwork)
  * with 16:9 aspect ratio, rounded-xl border-radius, object-cover, and robust monochrome fallback.
  */
-const SubjectVisual = memo(function SubjectVisual({ subject, compact = false, showBadge = false }) {
+const SubjectVisual = memo(function SubjectVisual({ subject, compact = false, showBadge = true }) {
   const [imageError, setImageError] = useState(false);
   const yearId = normalizeYearId(subject);
+
+  // Reset error state if subject changes
+  useEffect(() => {
+    setImageError(false);
+  }, [subject?.id, subject?.short_name]);
 
   const customImage =
     typeof subject?.thumbnail_url === "string" && subject.thumbnail_url.startsWith("http")
@@ -20,13 +26,14 @@ const SubjectVisual = memo(function SubjectVisual({ subject, compact = false, sh
           ? subject.image
           : null;
 
-  const illustrationSrc = customImage || getAcademicYearIllustration(subject);
+  const subjectIllustration = getSubjectIllustration(subject);
+  const illustrationSrc = subjectIllustration || customImage || getAcademicYearIllustration(subject);
   const shortCode = String(subject?.short_name || "").trim().toUpperCase();
-  const displayName = resolveSubjectName(subject) || String(subject?.name || "").trim();
+  const displayName = resolveSubjectName(subject) || String(subject?.name || "").trim() || "Subject";
 
   return (
     <div
-      className={`relative w-full overflow-hidden rounded-xl border border-[#EAEAEA] dark:border-[#222222] bg-[#F7F7F7] dark:bg-[#111111] transition-all duration-200 flex items-center justify-center select-none ${
+      className={`relative w-full overflow-hidden rounded-lg sm:rounded-xl border border-[#EAEAEA] dark:border-[#222222] bg-[#F7F7F7] dark:bg-[#111111] transition-all duration-200 flex items-center justify-center select-none ${
         compact ? "h-[85px]" : "aspect-[16/9] w-full"
       }`}
     >
@@ -52,7 +59,7 @@ const SubjectVisual = memo(function SubjectVisual({ subject, compact = false, sh
       )}
 
       {showBadge && shortCode && (
-        <div className="absolute top-2.5 right-2.5 z-10 rounded-md bg-white/90 dark:bg-black/90 backdrop-blur-md px-2 py-0.5 text-[10px] font-bold text-[#111111] dark:text-white shadow-sm border border-[#EAEAEA] dark:border-[#222222]">
+        <div className="absolute top-1.5 left-1.5 sm:top-2 sm:left-2 z-10 rounded-md bg-white/95 dark:bg-[#151515]/95 backdrop-blur-md px-1.5 sm:px-2 py-0.5 text-[9px] sm:text-[10px] font-bold text-[#8F1D32] dark:text-[#F8E9EC] shadow-xs border border-[#F8E9EC] dark:border-[#2E1A1F] tracking-wide pointer-events-none">
           {shortCode}
         </div>
       )}

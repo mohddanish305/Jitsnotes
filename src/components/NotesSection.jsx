@@ -85,18 +85,15 @@ const formatDate = (val) => {
 /* Skeleton Loaders */
 function SubjectCardSkeleton() {
   return (
-    <div className="flex w-full flex-col justify-between overflow-hidden rounded-xl sm:rounded-2xl border border-[#EDEDED] dark:border-[#222222] bg-[#FFFFFF] dark:bg-[#0B0B0B] p-2.5 sm:p-4 shadow-subtle dark:shadow-subtle-dark animate-pulse">
+    <div className="flex w-full flex-col justify-between overflow-hidden rounded-xl sm:rounded-2xl border border-[#EDEDED] dark:border-[#222222] bg-[#FFFFFF] dark:bg-[#0B0B0B] p-2 sm:p-3.5 shadow-subtle dark:shadow-subtle-dark animate-pulse">
       <div className="aspect-[16/9] w-full rounded-lg sm:rounded-xl bg-[#F7F7F7] dark:bg-[#151515]" />
-      <div className="mt-3 space-y-2">
-        <div className="flex justify-between items-center">
-          <div className="h-3.5 w-12 sm:w-16 bg-[#F7F7F7] dark:bg-[#151515] rounded-md" />
-          <div className="h-3 w-14 sm:w-20 bg-[#F7F7F7] dark:bg-[#151515] rounded-md" />
-        </div>
-        <div className="h-4 w-3/4 bg-[#F7F7F7] dark:bg-[#151515] rounded" />
+      <div className="mt-2 sm:mt-2.5 space-y-1.5">
+        <div className="h-3 sm:h-4 w-3/4 bg-[#F7F7F7] dark:bg-[#151515] rounded" />
+        <div className="h-2.5 sm:h-3 w-1/2 bg-[#F7F7F7] dark:bg-[#151515] rounded" />
       </div>
-      <div className="mt-4 pt-3 border-t border-[#EDEDED] dark:border-[#222222] flex justify-between items-center">
-        <div className="h-3 w-16 bg-[#F7F7F7] dark:bg-[#151515] rounded" />
-        <div className="h-3 w-12 bg-[#F7F7F7] dark:bg-[#151515] rounded" />
+      <div className="mt-2.5 sm:mt-3 pt-2 sm:pt-2.5 border-t border-[#EDEDED] dark:border-[#222222] flex justify-between items-center">
+        <div className="h-2.5 sm:h-3 w-12 sm:w-16 bg-[#F7F7F7] dark:bg-[#151515] rounded" />
+        <div className="h-2.5 sm:h-3 w-10 sm:w-12 bg-[#F7F7F7] dark:bg-[#151515] rounded" />
       </div>
     </div>
   );
@@ -182,49 +179,43 @@ const DocumentCard = memo(function DocumentCard({ doc, onOpen }) {
   );
 });
 
-/* Subject Card Component — Preserving Subject Image Artwork (2 cols on mobile, 3-4 cols desktop) */
+/* Subject Card Component — Preserving Subject Image Artwork (2 cols on mobile, 3 cols tablet, 4 cols desktop) */
 const SubjectCard = memo(function SubjectCard({ subject, counts, onSelect }) {
   const displayName = resolveSubjectName(subject) || subject.name || "Subject";
-  const shortCode = String(subject.short_name || "").trim().toUpperCase() || "SUB";
   const notesCount = counts?.notes ?? 0;
 
   return (
     <article
       onClick={() => onSelect(subject)}
-      className="group flex w-full flex-col justify-between overflow-hidden rounded-xl sm:rounded-2xl border border-[#EDEDED] dark:border-[#222222] bg-[#FFFFFF] dark:bg-[#0B0B0B] hover:border-[#8F1D32] dark:hover:border-[#A21F3D] p-2.5 sm:p-4 shadow-subtle dark:shadow-subtle-dark hover:-translate-y-0.5 transition-all duration-200 cursor-pointer"
+      className="group flex w-full flex-col justify-between overflow-hidden rounded-xl sm:rounded-2xl border border-[#EDEDED] dark:border-[#222222] bg-[#FFFFFF] dark:bg-[#0B0B0B] hover:border-[#8F1D32] dark:hover:border-[#A21F3D] p-2 sm:p-3.5 shadow-subtle dark:shadow-subtle-dark hover:-translate-y-0.5 transition-all duration-200 cursor-pointer select-none"
     >
       <div>
-        {/* Preserved Subject Artwork / Illustration */}
-        <SubjectVisual subject={subject} />
+        {/* Top: Preserved Subject Illustration with Short Code at Top-Left */}
+        <SubjectVisual subject={subject} showBadge={true} />
 
-        {/* Code & Notes Badge */}
-        <div className="flex items-center justify-between gap-1 mt-2.5 sm:mt-3 mb-1.5">
-          <span className="px-2 py-0.5 rounded-md bg-[#FCF4F5] dark:bg-[#1F1215] border border-[#F8E9EC] dark:border-[#2E1A1F] font-bold text-[10px] sm:text-[11px] text-[#8F1D32] dark:text-[#A21F3D] tracking-wide shrink-0">
-            {shortCode}
-          </span>
-          <span className="text-[10px] sm:text-[11px] font-medium text-[#666666] dark:text-[#999999] truncate text-right">
-            {notesCount > 0 ? `${notesCount} ${notesCount === 1 ? "Note" : "Notes"}` : "Study Material"}
-          </span>
-        </div>
-
-        {/* Full Subject Name */}
+        {/* Full Subject Name Beneath Illustration (Natural wrapping, no clipping) */}
         <h3
-          className="text-xs sm:text-sm lg:text-base font-semibold text-[#151515] dark:text-white leading-snug line-clamp-2 text-left group-hover:text-[#8F1D32] dark:group-hover:text-[#A21F3D] transition-colors"
+          className="text-xs sm:text-sm font-semibold text-[#151515] dark:text-white leading-snug line-clamp-2 text-left group-hover:text-[#8F1D32] dark:group-hover:text-[#A21F3D] transition-colors mt-2 sm:mt-2.5"
           title={displayName}
         >
           {displayName}
         </h3>
+
+        {/* Category / Metadata Beneath Title */}
+        <p className="text-[10px] sm:text-[11px] font-medium text-[#666666] dark:text-[#999999] mt-1 text-left truncate">
+          {notesCount > 0 ? `${notesCount} ${notesCount === 1 ? "Note" : "Notes"}` : "Study Material"}
+        </p>
       </div>
 
-      {/* Card Footer: Explore Action */}
-      <div className="pt-2 sm:pt-3 border-t border-[#EDEDED] dark:border-[#222222] mt-3 flex items-center justify-between gap-1">
-        <span className="text-[10px] sm:text-xs text-[#666666] dark:text-[#999999] font-medium truncate">
+      {/* Card Footer: View Notes & Browse → Actions */}
+      <div className="pt-2 sm:pt-2.5 border-t border-[#EDEDED] dark:border-[#222222] mt-2.5 sm:mt-3 flex items-center justify-between gap-1">
+        <span className="text-[9px] sm:text-xs text-[#666666] dark:text-[#999999] font-medium truncate">
           View Notes
         </span>
 
-        <span className="inline-flex items-center gap-1 text-[10px] sm:text-xs font-semibold text-[#8F1D32] dark:text-[#A21F3D] group-hover:translate-x-0.5 transition-transform shrink-0">
+        <span className="inline-flex items-center gap-0.5 sm:gap-1 text-[9px] sm:text-xs font-semibold text-[#8F1D32] dark:text-[#A21F3D] group-hover:translate-x-0.5 transition-transform shrink-0">
           <span>Browse</span>
-          <ArrowRight className="w-3 sm:w-3.5 h-3 sm:h-3.5" />
+          <ArrowRight className="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5" />
         </span>
       </div>
     </article>
@@ -603,7 +594,7 @@ const NotesSection = memo(function NotesSection({
   return (
     <section
       id="notes-section"
-      className="w-full max-w-content mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-14 transition-colors duration-200"
+      className="w-full max-w-content mx-auto px-3 sm:px-6 lg:px-8 pt-6 pb-14 transition-colors duration-200"
     >
       {/* Dynamic Hierarchical Breadcrumbs: Home -> Year -> Subject */}
       <div className="mb-6">
@@ -646,9 +637,9 @@ const NotesSection = memo(function NotesSection({
             )}
           </div>
 
-          {/* Subjects Content (Desktop: 3-4 cols, Mobile: 2 cols) */}
+          {/* Subjects Content (Mobile: 2 cols, Tablet: 3 cols, Desktop: 4 cols) */}
           {loading ? (
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-5 w-full">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-3.5 md:gap-4 lg:gap-5 w-full">
               {Array.from({ length: 4 }).map((_, i) => (
                 <SubjectCardSkeleton key={i} />
               ))}
@@ -675,7 +666,7 @@ const NotesSection = memo(function NotesSection({
               )}
             </div>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-5 w-full">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-3.5 md:gap-4 lg:gap-5 w-full">
               {visibleSubjects.map((subject) => (
                 <SubjectCard
                   key={subject.id}
